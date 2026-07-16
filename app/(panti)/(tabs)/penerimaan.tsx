@@ -1,10 +1,18 @@
 import { useCallback, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Badge, Chip, Kartu, ProgressBar, Tombol, FotoPlaceholder } from '../../../components/ui';
-import { warna, spacing, radius, teks } from '../../../constants/theme';
+import {
+  Badge,
+  Chip,
+  Kartu,
+  ProgressBar,
+  FotoPlaceholder,
+  SkeletonKartuProgress,
+  StatusLayar,
+} from '../../../components/ui';
+import { warna, spacing, teks } from '../../../constants/theme';
 import { labelProgress, rasio } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
 import {
@@ -27,6 +35,7 @@ export default function Penerimaan() {
   const [daftar, setDaftar] = useState<RequestDenganDonasi[]>([]);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
+  const [segar, setSegar] = useState(false);
 
   const ambil = useCallback(async () => {
     if (!akun.pantiId) {
@@ -50,6 +59,12 @@ export default function Penerimaan() {
     }, [ambil])
   );
 
+  const segarkan = useCallback(async () => {
+    setSegar(true);
+    await ambil();
+    setSegar(false);
+  }, [ambil]);
+
   const totalDonasi = daftar.reduce((n, r) => n + (r.donasi?.length ?? 0), 0);
 
   return (
@@ -64,32 +79,39 @@ export default function Penerimaan() {
       </View>
 
       {muat ? (
-        <View style={s.tengah}>
-          <ActivityIndicator color={warna.biru} />
+        <View style={s.isi}>
+          <SkeletonKartuProgress />
+          <SkeletonKartuProgress />
+          <SkeletonKartuProgress />
         </View>
       ) : galat ? (
-        <View style={s.tengah}>
-          <Text style={[teks.body, s.rata]}>{galat}</Text>
-          <Tombol label="Coba lagi" varian="sekunder" penuh={false} onPress={ambil} />
-        </View>
+        <StatusLayar
+          ikon="wifi-off"
+          judul="Gagal memuat penerimaan"
+          pesan={galat}
+          aksiLabel="Coba lagi"
+          onAksi={ambil}
+        />
       ) : !daftar.length ? (
-        <View style={s.tengah}>
-          <View style={s.ikonKosong}>
-            <Feather name="inbox" size={28} color={warna.biru} />
-          </View>
-          <Text style={[teks.subjudul, s.rata]}>Belum ada penerimaan</Text>
-          <Text style={[teks.caption, s.rata, s.subKosong]}>
-            Barang yang disalurkan donatur ke panti ini akan tercatat di sini.
-          </Text>
-          <Tombol
-            label="Ajukan kebutuhan"
-            varian="sekunder"
-            penuh={false}
-            onPress={() => router.replace('/katalog')}
-          />
-        </View>
+        <StatusLayar
+          ikon="inbox"
+          judul="Belum ada penerimaan"
+          pesan="Barang yang disalurkan donatur ke panti ini akan tercatat di sini."
+          aksiLabel="Ajukan kebutuhan"
+          onAksi={() => router.replace('/katalog')}
+        />
       ) : (
-        <ScrollView contentContainerStyle={s.isi}>
+        <ScrollView
+          contentContainerStyle={s.isi}
+          refreshControl={
+            <RefreshControl
+              refreshing={segar}
+              onRefresh={segarkan}
+              tintColor={warna.biru}
+              colors={[warna.biru]}
+            />
+          }
+        >
           {daftar.map((r) => {
             const st = STATUS[r.status];
             const nDonatur = jumlahDonatur(r);
@@ -167,21 +189,4 @@ const s = StyleSheet.create({
   },
   kontributor: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   kontributorTeks: { color: warna.biru },
-  tengah: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.xl,
-  },
-  ikonKosong: {
-    width: 56,
-    height: 56,
-    borderRadius: radius.pill,
-    backgroundColor: warna.skyTint,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rata: { textAlign: 'center' },
-  subKosong: { maxWidth: 270, marginTop: -spacing.sm },
 });

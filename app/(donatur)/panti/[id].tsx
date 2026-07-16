@@ -1,10 +1,17 @@
 import { useCallback, useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { BarisKebutuhan } from '../../../components/BarisKebutuhan';
 import { SheetPilihPorsi } from '../../../components/SheetPilihPorsi';
-import { Badge, Kartu, Tombol, FotoPlaceholder } from '../../../components/ui';
+import {
+  Badge,
+  Kartu,
+  FotoPlaceholder,
+  Skeleton,
+  SkeletonKartuProgress,
+  StatusLayar,
+} from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
 import { formatAngka, formatJumlah } from '../../../lib/format';
 import {
@@ -57,18 +64,29 @@ export default function DetailPanti() {
 
   if (muat) {
     return (
-      <View style={s.tengah}>
-        <ActivityIndicator color={warna.biru} />
+      <View style={s.layar}>
+        <Skeleton tinggi={220} bulat={0} />
+        <View style={s.headerSkeleton}>
+          <Skeleton lebar="70%" tinggi={18} />
+          <Skeleton lebar="45%" tinggi={12} />
+        </View>
+        <View style={s.daftar}>
+          <SkeletonKartuProgress />
+          <SkeletonKartuProgress />
+        </View>
       </View>
     );
   }
 
   if (galat || !panti) {
     return (
-      <View style={s.tengah}>
-        <Text style={[teks.body, s.pesan]}>{galat ?? 'Panti tidak ditemukan.'}</Text>
-        <Tombol label="Kembali ke etalase" varian="sekunder" penuh={false} onPress={kembali} />
-      </View>
+      <StatusLayar
+        ikon="wifi-off"
+        judul="Gagal memuat panti"
+        pesan={galat ?? 'Panti tidak ditemukan.'}
+        aksiLabel="Kembali ke etalase"
+        onAksi={kembali}
+      />
     );
   }
 
@@ -111,9 +129,12 @@ export default function DetailPanti() {
           <BarisKebutuhan key={r.id} kebutuhan={r} onNyalur={() => setDipilih(r)} />
         ))}
         {!aktif.length && (
-          <Text style={[teks.caption, s.pesan]}>
-            Tidak ada kebutuhan aktif. Semua sudah terpenuhi.
-          </Text>
+          <View style={s.kosongAktif}>
+            <Feather name="check-circle" size={16} color={warna.hijau} />
+            <Text style={[teks.caption, s.kosongAktifTeks]}>
+              Semua kebutuhan panti ini sudah terpenuhi. Terima kasih, para donatur.
+            </Text>
+          </View>
         )}
       </View>
 
@@ -190,13 +211,21 @@ const s = StyleSheet.create({
   daftarSelesai: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg, gap: 10 },
   barisSelesai: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: 14 },
   selesaiInfo: { flex: 1, minWidth: 0, gap: 1 },
-  tengah: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.xl,
-    backgroundColor: warna.pageBg,
+  headerSkeleton: {
+    backgroundColor: warna.putih,
+    borderBottomWidth: 1,
+    borderBottomColor: warna.border,
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    gap: 8,
   },
-  pesan: { textAlign: 'center' },
+  kosongAktif: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: warna.hijauTint,
+    borderRadius: radius.tombol,
+    padding: spacing.md,
+  },
+  kosongAktifTeks: { flex: 1, color: warna.hijau },
 });

@@ -1,10 +1,16 @@
 import { useCallback, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Badge, Kartu, Tombol, FotoPlaceholder } from '../../../components/ui';
-import { warna, spacing, radius, teks } from '../../../constants/theme';
+import {
+  Badge,
+  Kartu,
+  FotoPlaceholder,
+  SkeletonBaris,
+  StatusLayar,
+} from '../../../components/ui';
+import { warna, spacing, teks } from '../../../constants/theme';
 import { formatJumlah, formatRupiah, formatTanggal } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
 import { getDonasiByDonatur, type DonasiLengkap, type StatusDonasi } from '../../../lib/queries';
@@ -22,6 +28,7 @@ export default function Riwayat() {
   const [donasi, setDonasi] = useState<DonasiLengkap[]>([]);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
+  const [segar, setSegar] = useState(false);
 
   const ambil = useCallback(async () => {
     try {
@@ -40,6 +47,12 @@ export default function Riwayat() {
     }, [ambil])
   );
 
+  const segarkan = useCallback(async () => {
+    setSegar(true);
+    await ambil();
+    setSegar(false);
+  }, [ambil]);
+
   const total = donasi.reduce((n, d) => n + d.total, 0);
 
   return (
@@ -54,32 +67,40 @@ export default function Riwayat() {
       </View>
 
       {muat ? (
-        <View style={s.tengah}>
-          <ActivityIndicator color={warna.biru} />
+        <View style={s.isi}>
+          <SkeletonBaris />
+          <SkeletonBaris />
+          <SkeletonBaris />
+          <SkeletonBaris />
         </View>
       ) : galat ? (
-        <View style={s.tengah}>
-          <Text style={[teks.body, s.rata]}>{galat}</Text>
-          <Tombol label="Coba lagi" varian="sekunder" penuh={false} onPress={ambil} />
-        </View>
+        <StatusLayar
+          ikon="wifi-off"
+          judul="Gagal memuat riwayat"
+          pesan={galat}
+          aksiLabel="Coba lagi"
+          onAksi={ambil}
+        />
       ) : !donasi.length ? (
-        <View style={s.tengah}>
-          <View style={s.ikonKosong}>
-            <Feather name="clock" size={28} color={warna.biru} />
-          </View>
-          <Text style={[teks.subjudul, s.rata]}>Belum ada riwayat</Text>
-          <Text style={[teks.caption, s.rata, s.subKosong]}>
-            Donasi yang sudah kamu salurkan akan tercatat di sini.
-          </Text>
-          <Tombol
-            label="Lihat etalase"
-            varian="sekunder"
-            penuh={false}
-            onPress={() => router.replace('/etalase')}
-          />
-        </View>
+        <StatusLayar
+          ikon="clock"
+          judul="Belum ada riwayat"
+          pesan="Donasi yang sudah kamu salurkan akan tercatat di sini."
+          aksiLabel="Lihat etalase"
+          onAksi={() => router.replace('/etalase')}
+        />
       ) : (
-        <ScrollView contentContainerStyle={s.isi}>
+        <ScrollView
+          contentContainerStyle={s.isi}
+          refreshControl={
+            <RefreshControl
+              refreshing={segar}
+              onRefresh={segarkan}
+              tintColor={warna.biru}
+              colors={[warna.biru]}
+            />
+          }
+        >
           {donasi.map((d) => {
             const st = STATUS[d.status];
             const { katalog, panti } = d.request;
@@ -128,21 +149,4 @@ const s = StyleSheet.create({
   info: { flex: 1, minWidth: 0, gap: 1 },
   kaki: { marginTop: 3 },
   kanan: { alignItems: 'flex-end', gap: 6 },
-  tengah: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.xl,
-  },
-  ikonKosong: {
-    width: 56,
-    height: 56,
-    borderRadius: radius.pill,
-    backgroundColor: warna.skyTint,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rata: { textAlign: 'center' },
-  subKosong: { maxWidth: 260, marginTop: -spacing.sm },
 });

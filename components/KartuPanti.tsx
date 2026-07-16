@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Kartu, Badge, Chip, ProgressBar, FotoPlaceholder } from './ui';
 import { warna, spacing, teks } from '../constants/theme';
 import { formatAngka, labelProgress, rasio } from '../lib/format';
-import { kebutuhanSorotan, type PantiDenganRequest } from '../lib/queries';
+import { kebutuhanSorotan, requestAktif, type PantiDenganRequest } from '../lib/queries';
 
 type Props = {
   panti: PantiDenganRequest;
@@ -12,6 +12,8 @@ type Props = {
 export function KartuPanti({ panti, onPress }: Props) {
   const sorotan = kebutuhanSorotan(panti);
   const terkirim = sorotan?.status === 'diterima';
+  // Kartu menonjolkan satu kebutuhan; sisanya cukup disebut jumlahnya.
+  const lainnya = Math.max(0, requestAktif(panti).length - (terkirim ? 0 : 1));
 
   return (
     <Kartu onPress={onPress} rapat>
@@ -57,6 +59,11 @@ export function KartuPanti({ panti, onPress }: Props) {
             nilai={rasio(sorotan.jumlah_terpenuhi, sorotan.jumlah_diminta)}
             selesai={terkirim}
           />
+          {lainnya > 0 && (
+            <Text style={[teks.mikro, s.lainnya]}>
+              +{lainnya} kebutuhan lain menunggu donatur
+            </Text>
+          )}
         </View>
       )}
     </Kartu>
@@ -77,4 +84,5 @@ const s = StyleSheet.create({
     marginBottom: 6,
     gap: spacing.sm,
   },
+  lainnya: { marginTop: 8 },
 });

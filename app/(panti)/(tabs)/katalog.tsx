@@ -1,10 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
 import { KartuProduk } from '../../../components/KartuProduk';
 import { SheetAturJumlah } from '../../../components/SheetAturJumlah';
-import { Chip, Tombol } from '../../../components/ui';
+import { Chip, Skeleton, StatusLayar } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
 import { formatRupiah } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
@@ -114,13 +115,35 @@ export default function KatalogPanti() {
       </View>
 
       {muat ? (
-        <View style={s.tengah}>
-          <ActivityIndicator color={warna.biru} />
+        <View style={s.isi}>
+          <View style={s.grid}>
+            {[0, 1, 2, 3].map((i) => (
+              <View key={i} style={[s.sel, s.selSkeleton]}>
+                <Skeleton tinggi={96} bulat={0} />
+                <View style={s.skeletonBadan}>
+                  <Skeleton lebar="80%" tinggi={13} />
+                  <Skeleton lebar="50%" tinggi={11} />
+                </View>
+              </View>
+            ))}
+          </View>
         </View>
       ) : galat ? (
-        <View style={s.tengah}>
-          <Text style={[teks.body, s.rata]}>{galat}</Text>
-          <Tombol label="Coba lagi" varian="sekunder" penuh={false} onPress={ambil} />
+        <StatusLayar
+          ikon="wifi-off"
+          judul="Gagal memuat katalog"
+          pesan={galat}
+          aksiLabel="Coba lagi"
+          onAksi={ambil}
+        />
+      ) : !tampil.length ? (
+        <View style={s.kosong}>
+          <View style={s.kosongIkon}>
+            <Feather name="package" size={24} color={warna.biru} />
+          </View>
+          <Text style={[teks.caption, s.rata, s.kosongTeks]}>
+            Belum ada barang di kategori ini. Katalog dikurasi bertahap — coba kategori lain.
+          </Text>
         </View>
       ) : (
         <ScrollView contentContainerStyle={s.isi}>
@@ -131,11 +154,6 @@ export default function KatalogPanti() {
               </View>
             ))}
           </View>
-          {!tampil.length && (
-            <Text style={[teks.caption, s.rata]}>
-              Belum ada barang di kategori ini.
-            </Text>
-          )}
         </ScrollView>
       )}
 
@@ -172,12 +190,29 @@ const s = StyleSheet.create({
   isi: { padding: spacing.lg, paddingBottom: 40 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   sel: { width: '47.5%', flexGrow: 1 },
-  tengah: {
+  selSkeleton: {
+    backgroundColor: warna.putih,
+    borderWidth: 1,
+    borderColor: warna.border,
+    borderRadius: radius.kartu,
+    overflow: 'hidden',
+  },
+  skeletonBadan: { padding: spacing.md, gap: 8 },
+  kosong: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.md,
     padding: spacing.xl,
   },
+  kosongIkon: {
+    width: 52,
+    height: 52,
+    borderRadius: radius.pill,
+    backgroundColor: warna.skyTint,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  kosongTeks: { maxWidth: 260 },
   rata: { textAlign: 'center' },
 });

@@ -1,10 +1,19 @@
 import { useCallback, useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, RefreshControl, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { KartuPlafon } from '../../../components/KartuPlafon';
-import { Badge, Chip, Kartu, ProgressBar, Tombol, FotoPlaceholder } from '../../../components/ui';
+import {
+  Badge,
+  Chip,
+  Kartu,
+  ProgressBar,
+  FotoPlaceholder,
+  Skeleton,
+  SkeletonKartuProgress,
+  StatusLayar,
+} from '../../../components/ui';
 import { warna, spacing, radius, teks, bayangan, font } from '../../../constants/theme';
 import { formatJumlah, labelProgress, rasio } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
@@ -24,6 +33,7 @@ export default function DashboardPanti() {
   const [panti, setPanti] = useState<PantiDenganRequest | null>(null);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
+  const [segar, setSegar] = useState(false);
 
   const ambil = useCallback(async () => {
     if (!akun.pantiId) {
@@ -47,20 +57,39 @@ export default function DashboardPanti() {
     }, [ambil])
   );
 
+  const segarkan = useCallback(async () => {
+    setSegar(true);
+    await ambil();
+    setSegar(false);
+  }, [ambil]);
+
   if (muat) {
     return (
-      <View style={s.tengah}>
-        <ActivityIndicator color={warna.biru} />
-      </View>
+      <SafeAreaView style={s.layar} edges={['top']}>
+        <View style={s.header}>
+          <Skeleton lebar={140} tinggi={12} />
+          <Skeleton lebar={200} tinggi={20} style={s.headerSkeleton} />
+        </View>
+        <View style={s.isi}>
+          <Skeleton tinggi={190} bulat={12} />
+          <View style={s.daftarSkeleton}>
+            <SkeletonKartuProgress />
+            <SkeletonKartuProgress />
+          </View>
+        </View>
+      </SafeAreaView>
     );
   }
 
   if (galat || !panti) {
     return (
-      <View style={s.tengah}>
-        <Text style={[teks.body, s.rata]}>{galat ?? 'Panti tidak ditemukan.'}</Text>
-        <Tombol label="Coba lagi" varian="sekunder" penuh={false} onPress={ambil} />
-      </View>
+      <StatusLayar
+        ikon="wifi-off"
+        judul="Gagal memuat dashboard"
+        pesan={galat ?? 'Panti tidak ditemukan.'}
+        aksiLabel="Coba lagi"
+        onAksi={ambil}
+      />
     );
   }
 
@@ -78,7 +107,17 @@ export default function DashboardPanti() {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={s.isi}>
+      <ScrollView
+        contentContainerStyle={s.isi}
+        refreshControl={
+          <RefreshControl
+            refreshing={segar}
+            onRefresh={segarkan}
+            tintColor={warna.biru}
+            colors={[warna.biru]}
+          />
+        }
+      >
         <KartuPlafon panti={panti} />
 
         <View style={s.tajukDaftar}>
@@ -122,9 +161,12 @@ export default function DashboardPanti() {
             );
           })}
           {!daftar.length && (
-            <Text style={[teks.caption, s.rata]}>
-              Belum ada kebutuhan diajukan. Mulai dari katalog.
-            </Text>
+            <Kartu isian style={s.kosong}>
+              <Feather name="clipboard" size={22} color={warna.biru} />
+              <Text style={[teks.caption, s.rata]}>
+                Belum ada kebutuhan diajukan. Mulai dari katalog — plafonmu masih tersedia.
+              </Text>
+            </Kartu>
           )}
         </View>
       </ScrollView>
@@ -151,6 +193,9 @@ const s = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   judul: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: 2 },
+  headerSkeleton: { marginTop: 8 },
+  daftarSkeleton: { gap: 10, marginTop: 20 },
+  kosong: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xl },
   isi: { padding: spacing.lg, paddingBottom: 110 },
   tajukDaftar: {
     flexDirection: 'row',
@@ -179,13 +224,5 @@ const s = StyleSheet.create({
   },
   fabDitekan: { opacity: 0.9 },
   fabTeks: { fontFamily: font.medium, fontSize: 15, color: warna.putih },
-  tengah: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.xl,
-    backgroundColor: warna.pageBg,
-  },
   rata: { textAlign: 'center' },
 });

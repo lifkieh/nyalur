@@ -5,7 +5,7 @@ import {
   TextInput,
   ScrollView,
   Pressable,
-  ActivityIndicator,
+  RefreshControl,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,7 +13,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { KartuPanti } from '../../../components/KartuPanti';
 import { SheetSwitchAkun } from '../../../components/SheetSwitchAkun';
-import { Chip, Tombol } from '../../../components/ui';
+import { Chip, Skeleton, SkeletonKartuProgress, StatusLayar } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
 import { getDaftarPanti, requestAktif, type Kategori, type PantiDenganRequest } from '../../../lib/queries';
 
@@ -33,6 +33,7 @@ export default function Etalase() {
   const [panti, setPanti] = useState<PantiDenganRequest[]>([]);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
+  const [segar, setSegar] = useState(false);
   const [cari, setCari] = useState('');
   const [filter, setFilter] = useState<Filter>('terdekat');
 
@@ -53,6 +54,12 @@ export default function Etalase() {
       ambil();
     }, [ambil])
   );
+
+  const segarkan = useCallback(async () => {
+    setSegar(true);
+    await ambil();
+    setSegar(false);
+  }, [ambil]);
 
   const tampil = useMemo(() => {
     const kata = cari.trim().toLowerCase();
@@ -121,16 +128,43 @@ export default function Etalase() {
       </View>
 
       {muat ? (
-        <View style={s.tengah}>
-          <ActivityIndicator color={warna.biru} />
+        <View style={s.isi}>
+          <Skeleton lebar={190} tinggi={13} />
+          <SkeletonKartuProgress />
+          <SkeletonKartuProgress />
+          <SkeletonKartuProgress />
         </View>
       ) : galat ? (
-        <View style={s.tengah}>
-          <Text style={[teks.body, s.pesan]}>{galat}</Text>
-          <Tombol label="Coba lagi" varian="sekunder" penuh={false} onPress={ambil} />
-        </View>
+        <StatusLayar
+          ikon="wifi-off"
+          judul="Gagal memuat etalase"
+          pesan={galat}
+          aksiLabel="Coba lagi"
+          onAksi={ambil}
+        />
+      ) : !tampil.length ? (
+        <StatusLayar
+          ikon="search"
+          judul="Tidak ada panti yang cocok"
+          pesan="Coba ubah kata kunci atau pilih filter lain."
+          aksiLabel="Hapus pencarian"
+          onAksi={() => {
+            setCari('');
+            setFilter('terdekat');
+          }}
+        />
       ) : (
-        <ScrollView contentContainerStyle={s.isi}>
+        <ScrollView
+          contentContainerStyle={s.isi}
+          refreshControl={
+            <RefreshControl
+              refreshing={segar}
+              onRefresh={segarkan}
+              tintColor={warna.biru}
+              colors={[warna.biru]}
+            />
+          }
+        >
           <Text style={teks.caption}>
             {tampil.length} panti terverifikasi di sekitarmu
           </Text>
@@ -141,11 +175,6 @@ export default function Etalase() {
               onPress={() => router.push(`/panti/${p.id}`)}
             />
           ))}
-          {!tampil.length && (
-            <Text style={[teks.caption, s.pesan]}>
-              Tidak ada panti yang cocok. Coba ubah kata kunci atau filter.
-            </Text>
-          )}
         </ScrollView>
       )}
 
@@ -197,6 +226,4 @@ const s = StyleSheet.create({
   },
   filter: { gap: spacing.sm, marginTop: spacing.md },
   isi: { padding: spacing.lg, gap: 14, paddingBottom: spacing.xl * 2 },
-  tengah: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, padding: spacing.xl },
-  pesan: { textAlign: 'center' },
 });

@@ -4,9 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { KartuPlafon } from '../../../components/KartuPlafon';
-import { Badge, Chip, Kartu, Tombol, FotoPlaceholder } from '../../../components/ui';
+import { Badge, Chip, Kartu, ProgressBar, Tombol, FotoPlaceholder } from '../../../components/ui';
 import { warna, spacing, radius, teks, bayangan } from '../../../constants/theme';
-import { formatJumlah } from '../../../lib/format';
+import { formatJumlah, labelProgress, rasio } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
 import { getPantiById, type PantiDenganRequest, type StatusRequest } from '../../../lib/queries';
 
@@ -91,18 +91,33 @@ export default function DashboardPanti() {
             const st = STATUS[r.status];
             return (
               <Kartu key={r.id} style={s.baris}>
-                <FotoPlaceholder url={r.katalog.foto_url} label={r.katalog.nama} ukuran={42} bulat={9} />
-                <View style={s.barisInfo}>
-                  <Text style={teks.bodyMedium} numberOfLines={1}>
-                    {r.katalog.nama} · {formatJumlah(r.jumlah_diminta, r.katalog.satuan)}
-                  </Text>
-                  <Text style={teks.mikro}>Batch {r.batch_kirim}</Text>
+                <View style={s.barisAtas}>
+                  <FotoPlaceholder
+                    url={r.katalog.foto_url}
+                    label={r.katalog.nama}
+                    ukuran={42}
+                    bulat={9}
+                  />
+                  <View style={s.barisInfo}>
+                    <Text style={teks.bodyMedium} numberOfLines={1}>
+                      {r.katalog.nama} · {formatJumlah(r.jumlah_diminta, r.katalog.satuan)}
+                    </Text>
+                    <Text style={teks.mikro}>Batch {r.batch_kirim}</Text>
+                  </View>
+                  {st.chip ? (
+                    <Chip label={st.label} varian={st.chip} />
+                  ) : (
+                    <Badge label={st.label} varian="terkirim" />
+                  )}
                 </View>
-                {st.chip ? (
-                  <Chip label={st.label} varian={st.chip} />
-                ) : (
-                  <Badge label={st.label} varian="terkirim" />
-                )}
+
+                <ProgressBar
+                  nilai={rasio(r.jumlah_terpenuhi, r.jumlah_diminta)}
+                  label={labelProgress(r.jumlah_terpenuhi, r.jumlah_diminta, r.katalog.satuan)}
+                  keterangan={`${Math.round(rasio(r.jumlah_terpenuhi, r.jumlah_diminta) * 100)}%`}
+                  selesai={r.status === 'diterima'}
+                  style={s.progress}
+                />
               </Kartu>
             );
           })}
@@ -145,8 +160,10 @@ const s = StyleSheet.create({
     marginBottom: spacing.md,
   },
   daftar: { gap: 10 },
-  baris: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: 14 },
+  baris: { paddingVertical: 14 },
+  barisAtas: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   barisInfo: { flex: 1, minWidth: 0 },
+  progress: { marginTop: spacing.md },
   fab: {
     position: 'absolute',
     right: 18,

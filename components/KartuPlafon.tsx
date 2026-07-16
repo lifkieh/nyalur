@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Animated, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useIsiProgress } from './ui';
 import { warna, spacing, radius, font } from '../constants/theme';
 import { formatRupiah, formatBulanTahun } from '../lib/format';
 import { PLAFON_PER_ANAK, sisaPlafon, type Panti } from '../lib/queries';
@@ -9,6 +10,7 @@ export function KartuPlafon({ panti }: { panti: Panti }) {
   const rasioTerpakai = panti.plafon_bulanan
     ? Math.min(1, panti.plafon_terpakai / panti.plafon_bulanan)
     : 0;
+  const lebarTerpakai = useIsiProgress(rasioTerpakai);
 
   return (
     <View style={s.kartu}>
@@ -25,7 +27,7 @@ export function KartuPlafon({ panti }: { panti: Panti }) {
       </View>
 
       <View style={s.track}>
-        <View style={[s.isi, { width: `${rasioTerpakai * 100}%` }]} />
+        <Animated.View style={[s.isi, { width: lebarTerpakai }]} />
       </View>
 
       <View style={s.kaki}>

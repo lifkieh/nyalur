@@ -7,3 +7,4 @@ web-build/
 *.log
 .DS_Store
 fable-audit-prompt.md
+fable-improve-prompt.md

@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Animated, StyleSheet } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { warna, radius, teks } from '../../constants/theme';
+import { useIsiProgress } from './animasi';
 
 type Props = {
   /** 0..1 */
@@ -15,7 +16,7 @@ type Props = {
 };
 
 export function ProgressBar({ nilai, label, keterangan, selesai, style }: Props) {
-  const persen: `${number}%` = `${Math.min(100, Math.max(0, (nilai || 0) * 100))}%`;
+  const lebar = useIsiProgress(nilai);
 
   return (
     <View style={style}>
@@ -26,10 +27,10 @@ export function ProgressBar({ nilai, label, keterangan, selesai, style }: Props)
         </View>
       )}
       <View style={s.track}>
-        <View
+        <Animated.View
           style={[
             s.isi,
-            { width: persen, backgroundColor: selesai ? warna.hijau : warna.biru },
+            { width: lebar, backgroundColor: selesai ? warna.hijau : warna.biru },
           ]}
         />
       </View>

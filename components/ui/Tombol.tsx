@@ -80,6 +80,6 @@ const s = StyleSheet.create({
   primer: { backgroundColor: warna.biru },
   sekunder: { backgroundColor: warna.putih, borderColor: warna.biru },
   netral: { backgroundColor: warna.putih, borderColor: warna.border },
-  ditekan: { opacity: 0.85 },
+  ditekan: { opacity: 0.85, transform: [{ scale: 0.98 }] },
   mati: { opacity: 0.45 },
 });

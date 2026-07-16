@@ -235,9 +235,18 @@ export async function buatDonasi(args: {
 
   if (galatInsert) throw new Error(`Gagal mencatat donasi: ${galatInsert.message}`);
 
+  // Saat kebutuhan penuh, status request ikut jadi 'diterima' — serah terima
+  // memang instan di demo (mock kurir), jadi kartu etalase & dashboard panti
+  // langsung memakai warna hijau, bukan "Menunggu donatur" di angka 100%.
+  const terpenuhiBaru = awal.jumlah_terpenuhi + jumlah;
+  const penuh = terpenuhiBaru >= awal.jumlah_diminta;
+
   const { error: galatUpdate } = await supabase
     .from('request')
-    .update({ jumlah_terpenuhi: awal.jumlah_terpenuhi + jumlah })
+    .update({
+      jumlah_terpenuhi: terpenuhiBaru,
+      ...(penuh ? { status: 'diterima' } : {}),
+    })
     .eq('id', requestId);
 
   if (galatUpdate) throw new Error(`Donasi tercatat, gagal memperbarui progress: ${galatUpdate.message}`);

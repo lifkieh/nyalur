@@ -13,7 +13,7 @@ import { Feather } from '@expo/vector-icons';
 import { Tombol, FotoPlaceholder } from './ui';
 import { warna, spacing, radius, teks } from '../constants/theme';
 import { formatRupiah } from '../lib/format';
-import type { Katalog } from '../lib/queries';
+import { GalatPlafon, type Katalog } from '../lib/queries';
 
 const MAKS_QTY = 999;
 
@@ -67,7 +67,15 @@ export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) 
     try {
       await onAjukan(qty);
     } catch (e) {
-      setGalat(e instanceof Error ? e.message : String(e));
+      // Penolakan plafon dijelaskan lengkap — ini guardrail yang sengaja
+      // dipamerkan, bukan error biasa.
+      if (e instanceof GalatPlafon) {
+        setGalat(
+          `Sistem menolak pengajuan ini: nilai kebutuhan ${formatRupiah(e.nilai)} melebihi sisa plafon bulan ini (${formatRupiah(e.sisa)}). Kurangi jumlahnya atau ajukan bulan depan.`
+        );
+      } else {
+        setGalat(e instanceof Error ? e.message : String(e));
+      }
       setKirim(false);
     }
   };

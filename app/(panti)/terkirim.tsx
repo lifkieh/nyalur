@@ -1,7 +1,7 @@
-import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Pressable, ScrollView, Animated, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Tombol } from '../../components/ui';
+import { Tombol, useMuncul, useMunculPegas } from '../../components/ui';
 import { warna, spacing, radius, teks, font } from '../../constants/theme';
 import { formatJumlah, formatRupiah } from '../../lib/format';
 import { useSession } from '../../lib/session';
@@ -23,6 +23,10 @@ export default function RequestTerkirim() {
   const porsi = formatJumlah(Number(jumlah) || 0, satuan ?? '');
   const jadwal = batch ?? 'Jumat';
 
+  const ikonMasuk = useMunculPegas(80);
+  const isiMasuk = useMuncul(220);
+  const aksiMasuk = useMuncul(340);
+
   const indeksDonatur = daftarAkun.findIndex((a) => a.peran === 'donatur');
   const donatur = indeksDonatur >= 0 ? daftarAkun[indeksDonatur] : null;
   const inisial = (donatur?.nama ?? '')
@@ -41,34 +45,36 @@ export default function RequestTerkirim() {
   return (
     <ScrollView style={s.layar} contentContainerStyle={s.isi}>
       <View style={s.tengah}>
-        <View style={s.ikon}>
+        <Animated.View style={[s.ikon, ikonMasuk]}>
           <Feather name="check-circle" size={42} color={warna.biru} />
-        </View>
+        </Animated.View>
 
-        <Text style={[teks.display, s.rata, s.judul]}>Kebutuhan diajukan</Text>
-        <Text style={[teks.body, s.rata, s.sub]}>
-          Kebutuhan ini sudah tayang di etalase donatur. Kamu akan dikabari saat ada yang
-          menyalurkan.
-        </Text>
-
-        <View style={s.ringkas}>
-          <Text style={teks.mikro}>Ringkasan</Text>
-          <Text style={[teks.subjudul, s.ringkasJudul]}>
-            {barang} · {porsi}
+        <Animated.View style={[s.blok, isiMasuk]}>
+          <Text style={[teks.display, s.rata, s.judul]}>Kebutuhan diajukan</Text>
+          <Text style={[teks.body, s.rata, s.sub]}>
+            Kebutuhan ini sudah tayang di etalase donatur. Kamu akan dikabari saat ada yang
+            menyalurkan.
           </Text>
 
-          <View style={s.ringkasBaris}>
-            <Text style={teks.caption}>Estimasi biaya</Text>
-            <Text style={[teks.caption, s.nilai]}>{formatRupiah(Number(total) || 0)}</Text>
+          <View style={s.ringkas}>
+            <Text style={teks.mikro}>Ringkasan</Text>
+            <Text style={[teks.subjudul, s.ringkasJudul]}>
+              {barang} · {porsi}
+            </Text>
+
+            <View style={s.ringkasBaris}>
+              <Text style={teks.caption}>Estimasi biaya</Text>
+              <Text style={[teks.caption, s.nilai]}>{formatRupiah(Number(total) || 0)}</Text>
+            </View>
+            <View style={[s.ringkasBaris, s.tanpaGaris]}>
+              <Text style={teks.caption}>Batch pengiriman</Text>
+              <Text style={[teks.caption, s.nilai]}>{jadwal}</Text>
+            </View>
           </View>
-          <View style={[s.ringkasBaris, s.tanpaGaris]}>
-            <Text style={teks.caption}>Batch pengiriman</Text>
-            <Text style={[teks.caption, s.nilai]}>{jadwal}</Text>
-          </View>
-        </View>
+        </Animated.View>
       </View>
 
-      <View style={s.aksi}>
+      <Animated.View style={[s.aksi, aksiMasuk]}>
         <Tombol
           label="Kembali ke dashboard"
           varian="sekunder"
@@ -93,7 +99,7 @@ export default function RequestTerkirim() {
             </Pressable>
           </View>
         )}
-      </View>
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -112,6 +118,7 @@ const s = StyleSheet.create({
     marginBottom: 20,
   },
   rata: { textAlign: 'center' },
+  blok: { alignSelf: 'stretch', alignItems: 'center' },
   judul: { fontSize: 24 },
   sub: { color: warna.muted, marginTop: spacing.sm, maxWidth: 290, lineHeight: 23 },
   ringkas: {

@@ -1,8 +1,15 @@
 import { useCallback, useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Kartu, Tombol, FotoPlaceholder } from '../../../components/ui';
+import {
+  Kartu,
+  FotoPlaceholder,
+  BarKembali,
+  Skeleton,
+  SkeletonBaris,
+  StatusLayar,
+} from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
 import { formatJumlah, formatRupiah, formatTanggalJam } from '../../../lib/format';
 import {
@@ -43,18 +50,26 @@ export default function LacakDonasi() {
 
   if (muat) {
     return (
-      <View style={s.tengah}>
-        <ActivityIndicator color={warna.biru} />
+      <View style={s.layar}>
+        <BarKembali judul="Lacak donasi" onKembali={kembali} />
+        <View style={s.isi}>
+          <SkeletonBaris />
+          <Skeleton tinggi={230} bulat={12} style={s.jarakSkeleton} />
+          <Skeleton tinggi={160} bulat={12} style={s.jarakSkeleton} />
+        </View>
       </View>
     );
   }
 
   if (galat || !donasi) {
     return (
-      <View style={s.tengah}>
-        <Text style={[teks.body, s.rata]}>{galat ?? 'Donasi tidak ditemukan.'}</Text>
-        <Tombol label="Kembali ke etalase" varian="sekunder" penuh={false} onPress={kembali} />
-      </View>
+      <StatusLayar
+        ikon="wifi-off"
+        judul="Gagal memuat donasi"
+        pesan={galat ?? 'Donasi tidak ditemukan.'}
+        aksiLabel="Kembali ke etalase"
+        onAksi={kembali}
+      />
     );
   }
 
@@ -92,12 +107,7 @@ export default function LacakDonasi() {
 
   return (
     <View style={s.layar}>
-      <View style={s.bar}>
-        <Pressable onPress={kembali} style={s.tombolKembali} hitSlop={8}>
-          <Feather name="chevron-left" size={20} color={warna.ink} />
-        </Pressable>
-        <Text style={teks.subjudul}>Lacak donasi</Text>
-      </View>
+      <BarKembali judul="Lacak donasi" onKembali={kembali} />
 
       <ScrollView contentContainerStyle={s.isi}>
         <Kartu style={s.ringkas}>
@@ -116,8 +126,10 @@ export default function LacakDonasi() {
           <Text style={[teks.caption, s.tajuk]}>Status barang</Text>
 
           {langkah.map((l, i) => {
-            const selesai = i < kini;
-            const aktif = i === kini;
+            // Langkah terakhir tidak pernah "sedang berjalan" — begitu barang
+            // diterima, seluruh perjalanan selesai dan berhak warna hijau.
+            const selesai = i < kini || (i === kini && l.kunci === 'diterima');
+            const aktif = i === kini && !selesai;
             const akhir = i === langkah.length - 1;
 
             const warnaBulat = selesai ? warna.hijau : aktif ? warna.biru : warna.putih;
@@ -198,14 +210,21 @@ export default function LacakDonasi() {
           </Text>
         </View>
 
+        {/* Gerbang menuju momen klimaks — kartu hijau, satu-satunya di layar ini. */}
         {!!bukti && (
-          <Tombol
-            label="Lihat bukti serah terima"
-            varian="primer"
-            ukuran="besar"
-            style={s.cta}
+          <Pressable
             onPress={() => router.push(`/bukti/${donasi.id}`)}
-          />
+            style={({ pressed }) => [s.buktiCta, pressed && s.buktiCtaDitekan]}
+          >
+            <View style={s.buktiIkon}>
+              <Feather name="shield" size={18} color={warna.hijau} />
+            </View>
+            <View style={s.buktiInfo}>
+              <Text style={[teks.bodyMedium, s.buktiJudul]}>Lihat bukti serah terima</Text>
+              <Text style={teks.mono}>{bukti.kode_bukti}</Text>
+            </View>
+            <Feather name="chevron-right" size={18} color={warna.hijau} />
+          </Pressable>
         )}
       </ScrollView>
     </View>
@@ -214,28 +233,8 @@ export default function LacakDonasi() {
 
 const s = StyleSheet.create({
   layar: { flex: 1, backgroundColor: warna.pageBg },
-  bar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: warna.putih,
-    borderBottomWidth: 1,
-    borderBottomColor: warna.border,
-    paddingTop: 52,
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  tombolKembali: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.pill,
-    backgroundColor: warna.pageBg,
-    borderWidth: 1,
-    borderColor: warna.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   isi: { padding: spacing.lg, paddingBottom: 40 },
+  jarakSkeleton: { marginTop: spacing.lg },
   ringkas: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.lg },
   ringkasInfo: { flex: 1, minWidth: 0 },
   ringkasSub: { marginTop: 2 },
@@ -269,14 +268,24 @@ const s = StyleSheet.create({
   catatan: { flexDirection: 'row', gap: spacing.sm, marginTop: 14 },
   catatanIkon: { marginTop: 1 },
   catatanTeks: { flex: 1, lineHeight: 18 },
-  cta: { marginTop: spacing.xl },
-  tengah: {
-    flex: 1,
+  buktiCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: warna.hijauTint,
+    borderRadius: radius.kartu,
+    padding: spacing.md,
+    marginTop: spacing.xl,
+  },
+  buktiCtaDitekan: { opacity: 0.85 },
+  buktiIkon: {
+    width: 38,
+    height: 38,
+    borderRadius: radius.tombol,
+    backgroundColor: warna.putih,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.xl,
-    backgroundColor: warna.pageBg,
   },
-  rata: { textAlign: 'center' },
+  buktiInfo: { flex: 1, minWidth: 0, gap: 1 },
+  buktiJudul: { color: warna.hijau },
 });

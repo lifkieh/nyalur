@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, Animated, ActivityIndicator, StyleSheet } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Tombol } from '../../components/ui';
+import { Tombol, useMuncul, useMunculPegas } from '../../components/ui';
 import { warna, spacing, radius, teks, font } from '../../constants/theme';
 import { formatRupiah } from '../../lib/format';
 import { useSession } from '../../lib/session';
@@ -14,6 +14,11 @@ export default function Verified() {
   const { akun } = useSession();
   const [panti, setPanti] = useState<PantiDenganRequest | null>(null);
   const [muat, setMuat] = useState(true);
+
+  // "Verifikasi instan" tetap perlu terasa seperti momen — perisai masuk
+  // dengan pegas, kartu plafon menyusul.
+  const ikonMasuk = useMunculPegas(80);
+  const isiMasuk = useMuncul(220);
 
   const ambil = useCallback(async () => {
     if (!akun.pantiId) {
@@ -46,27 +51,29 @@ export default function Verified() {
   return (
     <View style={s.layar}>
       <View style={s.tengah}>
-        <View style={s.ikon}>
+        <Animated.View style={[s.ikon, ikonMasuk]}>
           <Feather name="shield" size={46} color={warna.biru} />
-        </View>
+        </Animated.View>
 
-        <Text style={[teks.display, s.rata, s.judul]}>Panti terverifikasi</Text>
-        <Text style={[teks.body, s.rata, s.sub]}>
-          Legalitas {panti?.nama ?? akun.nama} sudah dicek dan lolos verifikasi Nyalur.
-        </Text>
+        <Animated.View style={[s.blok, isiMasuk]}>
+          <Text style={[teks.display, s.rata, s.judul]}>Panti terverifikasi</Text>
+          <Text style={[teks.body, s.rata, s.sub]}>
+            Legalitas {panti?.nama ?? akun.nama} sudah dicek dan lolos verifikasi Nyalur.
+          </Text>
 
-        {!!panti && (
-          <View style={s.kartu}>
-            <Text style={teks.caption}>Plafon kebutuhan bulanan</Text>
-            <Text style={s.plafon}>{formatRupiah(panti.plafon_bulanan)}</Text>
-            <View style={s.rumus}>
-              <Feather name="info" size={15} color={warna.biru} />
-              <Text style={[teks.caption, s.rumusTeks]}>
-                {panti.jumlah_anak} anak × {formatRupiah(PLAFON_PER_ANAK)} / anak / bulan
-              </Text>
+          {!!panti && (
+            <View style={s.kartu}>
+              <Text style={teks.caption}>Plafon kebutuhan bulanan</Text>
+              <Text style={s.plafon}>{formatRupiah(panti.plafon_bulanan)}</Text>
+              <View style={s.rumus}>
+                <Feather name="info" size={15} color={warna.biru} />
+                <Text style={[teks.caption, s.rumusTeks]}>
+                  {panti.jumlah_anak} anak × {formatRupiah(PLAFON_PER_ANAK)} / anak / bulan
+                </Text>
+              </View>
             </View>
-          </View>
-        )}
+          )}
+        </Animated.View>
       </View>
 
       <View style={s.aksi}>
@@ -95,6 +102,7 @@ const s = StyleSheet.create({
     marginBottom: 22,
   },
   rata: { textAlign: 'center' },
+  blok: { alignSelf: 'stretch', alignItems: 'center' },
   judul: { fontSize: 26 },
   sub: { color: warna.muted, marginTop: spacing.sm, maxWidth: 280, lineHeight: 23 },
   kartu: {

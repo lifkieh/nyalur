@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { View, Text, TextInput, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Kartu, Tombol } from '../../components/ui';
+import { Kartu, Tombol, BarKembali } from '../../components/ui';
 import { warna, spacing, radius, teks, font } from '../../constants/theme';
 import { useSession } from '../../lib/session';
 import { getPantiById } from '../../lib/queries';
@@ -48,12 +48,7 @@ export default function DaftarPanti() {
 
   return (
     <View style={s.layar}>
-      <View style={s.bar}>
-        <Pressable onPress={kembali} style={s.tombolKembali} hitSlop={8}>
-          <Feather name="chevron-left" size={20} color={warna.ink} />
-        </Pressable>
-        <Text style={teks.subjudul}>Daftar panti</Text>
-      </View>
+      <BarKembali judul="Daftar panti" onKembali={kembali} />
 
       <ScrollView contentContainerStyle={s.isi} keyboardShouldPersistTaps="handled">
         <View style={s.grup}>
@@ -140,27 +135,6 @@ export default function DaftarPanti() {
 
 const s = StyleSheet.create({
   layar: { flex: 1, backgroundColor: warna.pageBg },
-  bar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: warna.putih,
-    borderBottomWidth: 1,
-    borderBottomColor: warna.border,
-    paddingTop: 52,
-    paddingBottom: 14,
-    paddingHorizontal: spacing.lg,
-  },
-  tombolKembali: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.pill,
-    backgroundColor: warna.pageBg,
-    borderWidth: 1,
-    borderColor: warna.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   isi: { padding: spacing.lg, paddingBottom: 40 },
   grup: { gap: spacing.md },
   label: { marginBottom: 6 },

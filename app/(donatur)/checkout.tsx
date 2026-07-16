@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Animated, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Tombol } from '../../components/ui';
+import { Tombol, useMuncul, useMunculPegas } from '../../components/ui';
 import { warna, spacing, radius, teks } from '../../constants/theme';
 import { formatJumlah, formatRupiah } from '../../lib/format';
 
@@ -21,35 +21,40 @@ export default function DonasiBerhasil() {
     }>();
 
   const porsi = formatJumlah(Number(jumlah) || 0, satuan ?? '');
+  const ikonMasuk = useMunculPegas(80);
+  const teksMasuk = useMuncul(220);
+  const aksiMasuk = useMuncul(340);
 
   return (
     <View style={s.layar}>
       <View style={s.tengah}>
-        <View style={s.ikon}>
+        <Animated.View style={[s.ikon, ikonMasuk]}>
           <Feather name="check-circle" size={48} color={warna.hijau} />
-        </View>
+        </Animated.View>
 
-        <Text style={teks.display}>Nyalur berhasil</Text>
+        <Animated.View style={[s.blokTeks, teksMasuk]}>
+          <Text style={teks.display}>Nyalur berhasil</Text>
 
-        <Text style={[teks.subjudul, s.pesan]}>
-          {porsi} {barang?.toLowerCase()} kamu akan dikirim ke{' '}
-          <Text style={s.tebal}>{panti}</Text> hari <Text style={s.tebal}>{batch}</Text>.
-        </Text>
-
-        <View style={s.batch}>
-          <Feather name="calendar" size={15} color={warna.biru} />
-          <Text style={[teks.caption, s.batchTeks]}>Batch pengiriman {batch}</Text>
-        </View>
-
-        {!!Number(total) && (
-          <Text style={[teks.mikro, s.struk]}>
-            Dibayar {formatRupiah(Number(total))}
-            {metode ? ` via ${metode}` : ''}
+          <Text style={[teks.subjudul, s.pesan]}>
+            {porsi} {barang?.toLowerCase()} kamu akan dikirim ke{' '}
+            <Text style={s.tebal}>{panti}</Text> hari <Text style={s.tebal}>{batch}</Text>.
           </Text>
-        )}
+
+          <View style={s.batch}>
+            <Feather name="calendar" size={15} color={warna.biru} />
+            <Text style={[teks.caption, s.batchTeks]}>Batch pengiriman {batch}</Text>
+          </View>
+
+          {!!Number(total) && (
+            <Text style={[teks.mikro, s.struk]}>
+              Dibayar {formatRupiah(Number(total))}
+              {metode ? ` via ${metode}` : ''}
+            </Text>
+          )}
+        </Animated.View>
       </View>
 
-      <View style={s.aksi}>
+      <Animated.View style={[s.aksi, aksiMasuk]}>
         <Tombol
           label="Lacak donasi"
           varian="primer"
@@ -62,7 +67,7 @@ export default function DonasiBerhasil() {
           ukuran="besar"
           onPress={() => router.replace('/etalase')}
         />
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -79,6 +84,7 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 22,
   },
+  blokTeks: { alignItems: 'center' },
   pesan: {
     color: warna.muted,
     textAlign: 'center',

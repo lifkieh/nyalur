@@ -3,14 +3,21 @@ import {
   View,
   Text,
   ScrollView,
-  Pressable,
-  ActivityIndicator,
+  Animated,
   Share,
   StyleSheet,
 } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Tombol, FotoPlaceholder } from '../../../components/ui';
+import {
+  Tombol,
+  FotoPlaceholder,
+  BarKembali,
+  Skeleton,
+  StatusLayar,
+  useMuncul,
+  useMunculPegas,
+} from '../../../components/ui';
 import { warna, spacing, radius, teks, bayangan, font } from '../../../constants/theme';
 import {
   formatJumlah,
@@ -25,6 +32,11 @@ export default function BuktiSerahTerima() {
   const [donasi, setDonasi] = useState<DonasiLengkap | null>(null);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
+
+  // Momen pamungkas demo — sertifikat naik pelan, pil "Diterima" mengunci dengan pegas.
+  const sertifikatMasuk = useMuncul(60);
+  const pilMasuk = useMunculPegas(320);
+  const aksiMasuk = useMuncul(420);
 
   const ambil = useCallback(async () => {
     if (!id) return;
@@ -49,8 +61,12 @@ export default function BuktiSerahTerima() {
 
   if (muat) {
     return (
-      <View style={s.tengah}>
-        <ActivityIndicator color={warna.biru} />
+      <View style={s.layar}>
+        <BarKembali judul="Bukti serah terima" onKembali={kembali} />
+        <View style={s.isi}>
+          <Skeleton tinggi={300} bulat={12} />
+          <Skeleton tinggi={120} bulat={12} style={s.jarakSkeleton} />
+        </View>
       </View>
     );
   }
@@ -59,12 +75,13 @@ export default function BuktiSerahTerima() {
 
   if (galat || !donasi || !bukti) {
     return (
-      <View style={s.tengah}>
-        <Text style={[teks.body, s.rata]}>
-          {galat ?? 'Bukti serah terima belum tersedia untuk donasi ini.'}
-        </Text>
-        <Tombol label="Kembali" varian="sekunder" penuh={false} onPress={kembali} />
-      </View>
+      <StatusLayar
+        ikon="file-text"
+        judul="Bukti belum tersedia"
+        pesan={galat ?? 'Bukti serah terima belum tersedia untuk donasi ini.'}
+        aksiLabel="Kembali"
+        onAksi={kembali}
+      />
     );
   }
 
@@ -82,15 +99,10 @@ export default function BuktiSerahTerima() {
 
   return (
     <View style={s.layar}>
-      <View style={s.bar}>
-        <Pressable onPress={kembali} style={s.tombolKembali} hitSlop={8}>
-          <Feather name="chevron-left" size={20} color={warna.ink} />
-        </Pressable>
-        <Text style={teks.subjudul}>Bukti serah terima</Text>
-      </View>
+      <BarKembali judul="Bukti serah terima" onKembali={kembali} />
 
       <ScrollView contentContainerStyle={s.isi}>
-        <View style={s.sertifikat}>
+        <Animated.View style={[s.sertifikat, sertifikatMasuk]}>
           <View>
             <FotoPlaceholder
               url={bukti.foto_url}
@@ -105,10 +117,10 @@ export default function BuktiSerahTerima() {
           </View>
 
           <View style={s.pilBaris}>
-            <View style={s.pil}>
+            <Animated.View style={[s.pil, pilMasuk]}>
               <Feather name="check" size={18} color={warna.putih} />
               <Text style={s.pilTeks}>Diterima</Text>
-            </View>
+            </Animated.View>
           </View>
 
           <View style={s.badan}>
@@ -145,9 +157,9 @@ export default function BuktiSerahTerima() {
               </View>
             </View>
           </View>
-        </View>
+        </Animated.View>
 
-        <View style={s.aksi}>
+        <Animated.View style={[s.aksi, aksiMasuk]}>
           <Tombol
             label="Bagikan"
             varian="sekunder"
@@ -156,7 +168,7 @@ export default function BuktiSerahTerima() {
             ikon={<Feather name="share-2" size={17} color={warna.biru} />}
           />
           <Tombol label="Nyalur lagi" varian="primer" onPress={keEtalase} style={s.tombolAksi} />
-        </View>
+        </Animated.View>
       </ScrollView>
     </View>
   );
@@ -164,28 +176,8 @@ export default function BuktiSerahTerima() {
 
 const s = StyleSheet.create({
   layar: { flex: 1, backgroundColor: warna.pageBg },
-  bar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: warna.putih,
-    borderBottomWidth: 1,
-    borderBottomColor: warna.border,
-    paddingTop: 52,
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  tombolKembali: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.pill,
-    backgroundColor: warna.pageBg,
-    borderWidth: 1,
-    borderColor: warna.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   isi: { padding: spacing.lg, paddingBottom: 40 },
+  jarakSkeleton: { marginTop: spacing.lg },
 
   sertifikat: {
     backgroundColor: warna.putih,
@@ -273,13 +265,4 @@ const s = StyleSheet.create({
 
   aksi: { flexDirection: 'row', gap: 10, marginTop: spacing.lg },
   tombolAksi: { flex: 1 },
-
-  tengah: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.xl,
-    backgroundColor: warna.pageBg,
-  },
 });

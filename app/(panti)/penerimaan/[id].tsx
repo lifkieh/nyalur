@@ -1,8 +1,18 @@
 import { useCallback, useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Badge, Chip, Kartu, ProgressBar, Tombol, FotoPlaceholder } from '../../../components/ui';
+import {
+  Badge,
+  Chip,
+  Kartu,
+  ProgressBar,
+  FotoPlaceholder,
+  BarKembali,
+  Skeleton,
+  SkeletonBaris,
+  StatusLayar,
+} from '../../../components/ui';
 import { warna, spacing, radius, teks, font } from '../../../constants/theme';
 import {
   formatJumlah,
@@ -63,18 +73,29 @@ export default function DetailPenerimaan() {
 
   if (muat) {
     return (
-      <View style={s.tengah}>
-        <ActivityIndicator color={warna.biru} />
+      <View style={s.layar}>
+        <BarKembali judul="Detail penerimaan" onKembali={kembali} />
+        <View style={s.isi}>
+          <Skeleton tinggi={150} bulat={12} />
+          <Skeleton tinggi={72} bulat={12} style={s.jarakSkeleton} />
+          <View style={s.daftarSkeleton}>
+            <SkeletonBaris />
+            <SkeletonBaris />
+          </View>
+        </View>
       </View>
     );
   }
 
   if (galat || !data) {
     return (
-      <View style={s.tengah}>
-        <Text style={[teks.body, s.rata]}>{galat ?? 'Kebutuhan tidak ditemukan.'}</Text>
-        <Tombol label="Kembali" varian="sekunder" penuh={false} onPress={kembali} />
-      </View>
+      <StatusLayar
+        ikon="wifi-off"
+        judul="Gagal memuat kebutuhan"
+        pesan={galat ?? 'Kebutuhan tidak ditemukan.'}
+        aksiLabel="Kembali"
+        onAksi={kembali}
+      />
     );
   }
 
@@ -84,12 +105,7 @@ export default function DetailPenerimaan() {
 
   return (
     <View style={s.layar}>
-      <View style={s.bar}>
-        <Pressable onPress={kembali} style={s.tombolKembali} hitSlop={8}>
-          <Feather name="chevron-left" size={20} color={warna.ink} />
-        </Pressable>
-        <Text style={teks.subjudul}>Detail penerimaan</Text>
-      </View>
+      <BarKembali judul="Detail penerimaan" onKembali={kembali} />
 
       <ScrollView contentContainerStyle={s.isi}>
         <Kartu>
@@ -218,28 +234,9 @@ function KartuDonasi({
 
 const s = StyleSheet.create({
   layar: { flex: 1, backgroundColor: warna.pageBg },
-  bar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: warna.putih,
-    borderBottomWidth: 1,
-    borderBottomColor: warna.border,
-    paddingTop: 52,
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  tombolKembali: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.pill,
-    backgroundColor: warna.pageBg,
-    borderWidth: 1,
-    borderColor: warna.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   isi: { padding: spacing.lg, paddingBottom: 40 },
+  jarakSkeleton: { marginTop: spacing.md },
+  daftarSkeleton: { gap: 10, marginTop: spacing.xl },
   atas: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   info: { flex: 1, minWidth: 0 },
   harga: { marginTop: 2 },
@@ -303,14 +300,4 @@ const s = StyleSheet.create({
   },
   buktiJudul: { fontFamily: font.medium, color: warna.hijau },
   ditekan: { opacity: 0.85 },
-
-  tengah: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.xl,
-    backgroundColor: warna.pageBg,
-  },
-  rata: { textAlign: 'center' },
 });

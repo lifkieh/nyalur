@@ -1,8 +1,16 @@
 import { useCallback, useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { Kartu, Tombol, FotoPlaceholder } from '../../components/ui';
+import {
+  Kartu,
+  Tombol,
+  FotoPlaceholder,
+  BarKembali,
+  SkeletonBaris,
+  Skeleton,
+  StatusLayar,
+} from '../../components/ui';
 import { warna, spacing, radius, teks, font } from '../../constants/theme';
 import { formatJumlah, formatRupiah, sisa } from '../../lib/format';
 import { useSession } from '../../lib/session';
@@ -70,18 +78,26 @@ export default function Pembayaran() {
 
   if (muat) {
     return (
-      <View style={s.tengah}>
-        <ActivityIndicator color={warna.biru} />
+      <View style={s.layar}>
+        <BarKembali judul="Pembayaran" onKembali={kembali} />
+        <View style={s.isi}>
+          <SkeletonBaris />
+          <Skeleton tinggi={130} bulat={12} style={s.jarakSkeleton} />
+          <Skeleton tinggi={200} bulat={12} style={s.jarakSkeleton} />
+        </View>
       </View>
     );
   }
 
   if (galat || !data || !jumlah) {
     return (
-      <View style={s.tengah}>
-        <Text style={[teks.body, s.rata]}>{galat ?? 'Pesanan tidak ditemukan.'}</Text>
-        <Tombol label="Kembali" varian="sekunder" penuh={false} onPress={kembali} />
-      </View>
+      <StatusLayar
+        ikon="wifi-off"
+        judul="Gagal memuat pesanan"
+        pesan={galat ?? 'Pesanan tidak ditemukan.'}
+        aksiLabel="Kembali"
+        onAksi={kembali}
+      />
     );
   }
 
@@ -129,12 +145,7 @@ export default function Pembayaran() {
 
   return (
     <View style={s.layar}>
-      <View style={s.bar}>
-        <Pressable onPress={kembali} disabled={kirim} style={s.tombolKembali} hitSlop={8}>
-          <Feather name="chevron-left" size={20} color={warna.ink} />
-        </Pressable>
-        <Text style={teks.subjudul}>Pembayaran</Text>
-      </View>
+      <BarKembali judul="Pembayaran" onKembali={kembali} disabled={kirim} />
 
       <ScrollView contentContainerStyle={s.isi}>
         <Text style={[teks.label, s.tajuk]}>Pesananmu</Text>
@@ -253,28 +264,8 @@ export default function Pembayaran() {
 
 const s = StyleSheet.create({
   layar: { flex: 1, backgroundColor: warna.pageBg },
-  bar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: warna.putih,
-    borderBottomWidth: 1,
-    borderBottomColor: warna.border,
-    paddingTop: 52,
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  tombolKembali: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.pill,
-    backgroundColor: warna.pageBg,
-    borderWidth: 1,
-    borderColor: warna.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   isi: { padding: spacing.lg, paddingBottom: spacing.xl },
+  jarakSkeleton: { marginTop: spacing.lg },
   tajuk: { marginBottom: spacing.md, marginTop: spacing.sm },
 
   pesanan: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.lg },
@@ -352,14 +343,4 @@ const s = StyleSheet.create({
   },
   kakiTotal: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   kakiAngka: { fontFamily: font.medium, fontSize: 18, letterSpacing: -0.18, color: warna.ink },
-
-  tengah: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.xl,
-    backgroundColor: warna.pageBg,
-  },
-  rata: { textAlign: 'center' },
 });

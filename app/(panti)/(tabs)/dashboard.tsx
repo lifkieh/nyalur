@@ -17,15 +17,8 @@ import {
 import { warna, spacing, radius, teks, bayangan, font } from '../../../constants/theme';
 import { formatJumlah, labelProgress, rasio } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
-import { getPantiById, type PantiDenganRequest, type StatusRequest } from '../../../lib/queries';
-
-// Hijau tetap hanya milik status terkirim — sisanya chip abu / biru muda.
-const STATUS: Record<StatusRequest, { label: string; chip: 'netral' | 'tint' | null }> = {
-  aktif: { label: 'Menunggu donatur', chip: 'netral' },
-  dikemas: { label: 'Dikemas', chip: 'tint' },
-  dikirim: { label: 'Dikirim', chip: 'tint' },
-  diterima: { label: 'Diterima', chip: null },
-};
+import { STATUS_REQUEST } from '../../../lib/status';
+import { getPantiById, type PantiDenganRequest } from '../../../lib/queries';
 
 export default function DashboardPanti() {
   const router = useRouter();
@@ -127,7 +120,7 @@ export default function DashboardPanti() {
 
         <View style={s.daftar}>
           {daftar.map((r) => {
-            const st = STATUS[r.status];
+            const st = STATUS_REQUEST[r.status];
             return (
               <Kartu key={r.id} style={s.baris}>
                 <View style={s.barisAtas}>

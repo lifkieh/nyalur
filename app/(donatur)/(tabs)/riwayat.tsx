@@ -13,14 +13,8 @@ import {
 import { warna, spacing, teks } from '../../../constants/theme';
 import { formatJumlah, formatRupiah, formatTanggal } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
-import { getDonasiByDonatur, type DonasiLengkap, type StatusDonasi } from '../../../lib/queries';
-
-// Hijau hanya untuk yang sudah sampai — sisanya abu.
-const STATUS: Record<StatusDonasi, { label: string; varian: 'netral' | 'terkirim' }> = {
-  dikemas: { label: 'Dikemas', varian: 'netral' },
-  dikirim: { label: 'Dikirim', varian: 'netral' },
-  diterima: { label: 'Diterima', varian: 'terkirim' },
-};
+import { STATUS_DONASI } from '../../../lib/status';
+import { getDonasiByDonatur, type DonasiLengkap } from '../../../lib/queries';
 
 export default function Riwayat() {
   const router = useRouter();
@@ -102,7 +96,7 @@ export default function Riwayat() {
           }
         >
           {donasi.map((d) => {
-            const st = STATUS[d.status];
+            const st = STATUS_DONASI[d.status];
             const { katalog, panti } = d.request;
             return (
               <Kartu key={d.id} onPress={() => router.push(`/lacak/${d.id}`)} style={s.baris}>

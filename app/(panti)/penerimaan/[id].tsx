@@ -21,20 +21,14 @@ import {
   labelProgress,
   rasio,
 } from '../../../lib/format';
+import { STATUS_DONASI } from '../../../lib/status';
 import {
   getRequestDenganDonasi,
   jumlahDonatur,
   type DonasiMasuk,
   type Panti,
   type RequestDenganDonasi,
-  type StatusDonasi,
 } from '../../../lib/queries';
-
-const STATUS: Record<StatusDonasi, { label: string; varian: 'netral' | 'terkirim' }> = {
-  dikemas: { label: 'Dikemas', varian: 'netral' },
-  dikirim: { label: 'Dikirim', varian: 'netral' },
-  diterima: { label: 'Diterima', varian: 'terkirim' },
-};
 
 const inisial = (nama: string) =>
   nama
@@ -171,7 +165,7 @@ function KartuDonasi({
   satuan: string;
   router: ReturnType<typeof useRouter>;
 }) {
-  const st = STATUS[d.status];
+  const st = STATUS_DONASI[d.status];
   const bukti = d.bukti_terima?.[0] ?? null;
 
   return (

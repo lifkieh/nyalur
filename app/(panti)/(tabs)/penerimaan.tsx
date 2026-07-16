@@ -15,19 +15,12 @@ import {
 import { warna, spacing, teks } from '../../../constants/theme';
 import { labelProgress, rasio } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
+import { STATUS_REQUEST } from '../../../lib/status';
 import {
   getPenerimaanPanti,
   jumlahDonatur,
   type RequestDenganDonasi,
-  type StatusRequest,
 } from '../../../lib/queries';
-
-const STATUS: Record<StatusRequest, { label: string; chip: 'netral' | 'tint' | null }> = {
-  aktif: { label: 'Menunggu donatur', chip: 'netral' },
-  dikemas: { label: 'Dikemas', chip: 'tint' },
-  dikirim: { label: 'Dikirim', chip: 'tint' },
-  diterima: { label: 'Diterima', chip: null },
-};
 
 export default function Penerimaan() {
   const router = useRouter();
@@ -113,7 +106,7 @@ export default function Penerimaan() {
           }
         >
           {daftar.map((r) => {
-            const st = STATUS[r.status];
+            const st = STATUS_REQUEST[r.status];
             const nDonatur = jumlahDonatur(r);
             return (
               <Kartu key={r.id} onPress={() => router.push(`/penerimaan/${r.id}`)}>

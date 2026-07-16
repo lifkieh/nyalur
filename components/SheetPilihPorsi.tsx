@@ -153,7 +153,7 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
               onPress={() => setAman(1)}
               style={s.chipCepat}
             />
-            {maks >= 3 && (
+            {maks > 3 && (
               <Chip
                 label={`3 ${katalog.satuan}`}
                 varian={qty === 3 ? 'tint' : 'pasif'}

@@ -13,6 +13,17 @@ export const warna = {
   muted: '#64748B',
   scrim: 'rgba(11,46,111,0.45)',
   placeholder: '#94A3B8',
+
+  // di atas kartu navy — kontras rendah, tetap terbaca
+  navyTeks: '#AFC6EE',
+  navyGaris: 'rgba(255,255,255,0.15)',
+  navyTrack: 'rgba(255,255,255,0.18)',
+  navyBorder: 'rgba(255,255,255,0.25)',
+
+  // penolakan guardrail (plafon terlampaui). Merah cuma untuk sistem menolak,
+  // sama disiplinnya dengan hijau yang cuma untuk terkirim.
+  bahaya: '#DC2626',
+  bahayaTint: 'rgba(220,38,38,0.10)',
 } as const;
 
 export const radius = {
@@ -59,5 +70,12 @@ export const bayangan = {
     shadowRadius: 14,
     shadowOffset: { width: 0, height: 4 },
     elevation: 4,
+  },
+  biru: {
+    shadowColor: warna.biru,
+    shadowOpacity: 0.35,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
   },
 } as const;

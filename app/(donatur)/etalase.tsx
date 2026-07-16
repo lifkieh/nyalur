@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   ScrollView,
+  Pressable,
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
@@ -13,6 +14,7 @@ import { Feather } from '@expo/vector-icons';
 import { KartuPanti } from '../../components/KartuPanti';
 import { Chip, Tombol } from '../../components/ui';
 import { warna, spacing, radius, teks } from '../../constants/theme';
+import { useSession } from '../../lib/session';
 import { getDaftarPanti, requestAktif, type Kategori, type PantiDenganRequest } from '../../lib/queries';
 
 type Filter = 'terdekat' | Kategori;
@@ -26,6 +28,7 @@ const FILTER: { nilai: Filter; label: string }[] = [
 
 export default function Etalase() {
   const router = useRouter();
+  const { daftarAkun, switchAkun } = useSession();
   const [panti, setPanti] = useState<PantiDenganRequest[]>([]);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
@@ -49,6 +52,14 @@ export default function Etalase() {
       ambil();
     }, [ambil])
   );
+
+  // Sementara sampai C1 (sheet switch akun) ada: avatar = pindah ke POV panti.
+  const kePanti = () => {
+    const i = daftarAkun.findIndex((a) => a.peran === 'panti');
+    if (i < 0) return;
+    switchAkun(i);
+    router.replace('/dashboard');
+  };
 
   const tampil = useMemo(() => {
     const kata = cari.trim().toLowerCase();
@@ -79,9 +90,13 @@ export default function Etalase() {
               <Text style={teks.caption}>Tangerang Selatan</Text>
             </View>
           </View>
-          <View style={s.avatar}>
+          <Pressable
+            onPress={kePanti}
+            style={({ pressed }) => [s.avatar, pressed && s.avatarDitekan]}
+            hitSlop={8}
+          >
             <Feather name="user" size={20} color={warna.biru} />
-          </View>
+          </Pressable>
         </View>
 
         <View style={s.cari}>
@@ -169,6 +184,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  avatarDitekan: { opacity: 0.7 },
   cari: {
     flexDirection: 'row',
     alignItems: 'center',

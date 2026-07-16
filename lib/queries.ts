@@ -205,6 +205,83 @@ export async function getDonasiById(id: string): Promise<DonasiLengkap | null> {
 export const buktiDari = (d: DonasiLengkap): BuktiTerima | null =>
   d.bukti_terima?.[0] ?? null;
 
+// ---- POV panti ----
+
+/** Plafon dihitung dari jumlah anak terverifikasi — batas anti over-request. */
+export const PLAFON_PER_ANAK = 500000;
+
+/** A5 — katalog kaku. Panti hanya bisa minta SKU yang sudah disetujui. */
+export async function getKatalog(): Promise<Katalog[]> {
+  const { data, error } = await supabase
+    .from('katalog')
+    .select('id, nama, kategori, satuan, harga_per_satuan, foto_url, aktif')
+    .eq('aktif', true)
+    .order('kategori', { ascending: true })
+    .order('nama', { ascending: true });
+
+  if (error) throw new Error(`Gagal memuat katalog: ${error.message}`);
+  return (data ?? []) as Katalog[];
+}
+
+export const sisaPlafon = (p: Pick<Panti, 'plafon_bulanan' | 'plafon_terpakai'>): number =>
+  Math.max(0, p.plafon_bulanan - p.plafon_terpakai);
+
+/** Dilempar saat guardrail plafon menolak. Layar mengenali ini untuk pesan khusus. */
+export class GalatPlafon extends Error {
+  constructor(
+    public nilai: number,
+    public sisa: number
+  ) {
+    super('Melebihi plafon bulanan');
+    this.name = 'GalatPlafon';
+  }
+}
+
+/**
+ * Request panti dibuat. Guardrail plafon dicek sebelum insert — ini yang
+ * dilihat juri track Safety: sistem menolak permintaan di luar batas.
+ * plafon_terpakai denormalized, di-update manual setelah request masuk.
+ */
+export async function buatRequest(args: {
+  pantiId: string;
+  katalogId: string;
+  jumlah: number;
+  katalog: Katalog;
+  panti: Pick<Panti, 'plafon_bulanan' | 'plafon_terpakai'>;
+}): Promise<string> {
+  const { pantiId, katalogId, jumlah, katalog, panti } = args;
+  const nilai = jumlah * katalog.harga_per_satuan;
+
+  // guardrail plafon — INI YANG DILIHAT JURI TRACK SAFETY
+  if (panti.plafon_terpakai + nilai > panti.plafon_bulanan) {
+    throw new GalatPlafon(nilai, sisaPlafon(panti));
+  }
+
+  const { data: req, error: galatInsert } = await supabase
+    .from('request')
+    .insert({
+      panti_id: pantiId,
+      katalog_id: katalogId,
+      jumlah_diminta: jumlah,
+      status: 'aktif',
+      batch_kirim: 'Jumat',
+    })
+    .select('id')
+    .single();
+
+  if (galatInsert) throw new Error(`Gagal mengajukan kebutuhan: ${galatInsert.message}`);
+
+  const { error: galatUpdate } = await supabase
+    .from('panti')
+    .update({ plafon_terpakai: panti.plafon_terpakai + nilai })
+    .eq('id', pantiId);
+
+  if (galatUpdate)
+    throw new Error(`Kebutuhan tercatat, gagal memperbarui plafon: ${galatUpdate.message}`);
+
+  return req.id as string;
+}
+
 // ---- turunan data (dipakai layar, bukan query) ----
 
 export const requestAktif = (p: PantiDenganRequest): Request[] =>

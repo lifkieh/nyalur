@@ -50,6 +50,12 @@ export function formatJam(input: string | Date): string {
   return `${dua(d.getHours())}.${dua(d.getMinutes())} WIB`;
 }
 
+/** -> "Juli 2026" (WIB) */
+export function formatBulanTahun(input: string | Date = new Date()): string {
+  const d = keWib(input);
+  return `${BULAN[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 /** -> "Jumat, 18 Juli 2026 · 14.32 WIB" */
 export function formatTanggalJam(input: string | Date): string {
   return `${formatTanggal(input)} · ${formatJam(input)}`;

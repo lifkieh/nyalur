@@ -247,17 +247,25 @@ export async function buatDonasi(args: {
   return donasi.id as string;
 }
 
+const KOLOM_KATALOG = 'id, nama, kategori, satuan, harga_per_satuan, foto_url, aktif';
+
+const KOLOM_BUKTI =
+  'id, donasi_id, kode_bukti, foto_url, penerima_nama, penerima_jabatan, lokasi_lat, lokasi_lng, diterima_at';
+
+const KOLOM_DONASI =
+  'id, donatur_id, donatur_nama, jumlah, harga_barang, ongkir, platform_fee, total, status, created_at';
+
+const PILIH_DONASI_LENGKAP = `${KOLOM_DONASI},
+   request:request_id ( id, batch_kirim, status,
+     katalog:katalog_id ( ${KOLOM_KATALOG} ),
+     panti:panti_id ( ${KOLOM_PANTI} ) ),
+   bukti_terima ( ${KOLOM_BUKTI} )`;
+
 /** B6 + B7 — satu donasi lengkap dengan barang, panti, dan buktinya. */
 export async function getDonasiById(id: string): Promise<DonasiLengkap | null> {
   const { data, error } = await supabase
     .from('donasi')
-    .select(
-      `id, donatur_id, donatur_nama, jumlah, harga_barang, ongkir, platform_fee, total, status, created_at,
-       request:request_id ( id, batch_kirim, status,
-         katalog:katalog_id ( id, nama, kategori, satuan, harga_per_satuan, foto_url, aktif ),
-         panti:panti_id ( ${KOLOM_PANTI} ) ),
-       bukti_terima ( id, donasi_id, kode_bukti, foto_url, penerima_nama, penerima_jabatan, lokasi_lat, lokasi_lng, diterima_at )`
-    )
+    .select(PILIH_DONASI_LENGKAP)
     .eq('id', id)
     .maybeSingle();
 
@@ -265,8 +273,102 @@ export async function getDonasiById(id: string): Promise<DonasiLengkap | null> {
   return (data as unknown as DonasiLengkap) ?? null;
 }
 
+/** Riwayat donatur — donasi milik satu donatur, terbaru dulu. */
+export async function getDonasiByDonatur(donaturId: string): Promise<DonasiLengkap[]> {
+  const { data, error } = await supabase
+    .from('donasi')
+    .select(PILIH_DONASI_LENGKAP)
+    .eq('donatur_id', donaturId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(`Gagal memuat riwayat donasi: ${error.message}`);
+  return (data ?? []) as unknown as DonasiLengkap[];
+}
+
 export const buktiDari = (d: DonasiLengkap): BuktiTerima | null =>
   d.bukti_terima?.[0] ?? null;
+
+// ---- penerimaan panti ----
+
+export type DonasiMasuk = {
+  id: string;
+  donatur_id: string;
+  donatur_nama: string;
+  jumlah: number;
+  harga_barang: number;
+  ongkir: number;
+  platform_fee: number;
+  total: number;
+  status: StatusDonasi;
+  created_at: string;
+  bukti_terima: BuktiTerima[];
+};
+
+export type RequestDenganDonasi = {
+  id: string;
+  panti_id: string;
+  katalog_id: string;
+  jumlah_diminta: number;
+  jumlah_terpenuhi: number;
+  status: StatusRequest;
+  batch_kirim: string;
+  created_at: string;
+  katalog: Katalog;
+  donasi: DonasiMasuk[];
+};
+
+const PILIH_REQUEST_DONASI = `id, panti_id, katalog_id, jumlah_diminta, jumlah_terpenuhi, status, batch_kirim, created_at,
+   katalog:katalog_id ( ${KOLOM_KATALOG} ),
+   donasi ( ${KOLOM_DONASI}, bukti_terima ( ${KOLOM_BUKTI} ) )`;
+
+/**
+ * Riwayat panti — dikelompokkan per request, bukan per donasi. Pengurus panti
+ * berpikir dalam satuan kebutuhan: minta 10 kg, lacak 10 kg. Donasi yang
+ * mengisinya jadi rincian di dalamnya — satu kebutuhan dipenuhi banyak orang.
+ * Request tanpa donasi tidak ditampilkan: belum ada yang diterima.
+ */
+export async function getPenerimaanPanti(pantiId: string): Promise<RequestDenganDonasi[]> {
+  const { data, error } = await supabase
+    .from('request')
+    .select(PILIH_REQUEST_DONASI)
+    .eq('panti_id', pantiId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(`Gagal memuat penerimaan: ${error.message}`);
+
+  return ((data ?? []) as unknown as RequestDenganDonasi[])
+    .filter((r) => (r.donasi ?? []).length > 0)
+    .map((r) => ({
+      ...r,
+      donasi: [...r.donasi].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)),
+    }));
+}
+
+/** Detail satu kebutuhan + semua donasi yang mengisinya. */
+export async function getRequestDenganDonasi(
+  requestId: string
+): Promise<(RequestDenganDonasi & { panti: Panti }) | null> {
+  const { data, error } = await supabase
+    .from('request')
+    .select(`${PILIH_REQUEST_DONASI}, panti:panti_id ( ${KOLOM_PANTI} )`)
+    .eq('id', requestId)
+    .maybeSingle();
+
+  if (error) throw new Error(`Gagal memuat kebutuhan: ${error.message}`);
+  if (!data) return null;
+
+  const r = data as unknown as RequestDenganDonasi & { panti: Panti };
+  return {
+    ...r,
+    donasi: [...(r.donasi ?? [])].sort(
+      (a, b) => +new Date(b.created_at) - +new Date(a.created_at)
+    ),
+  };
+}
+
+/** Berapa orang berbeda yang mengisi kebutuhan ini. */
+export const jumlahDonatur = (r: RequestDenganDonasi): number =>
+  new Set((r.donasi ?? []).map((d) => d.donatur_id)).size;
 
 // ---- POV panti ----
 

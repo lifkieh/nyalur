@@ -4,7 +4,7 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Kartu, Tombol, FotoPlaceholder } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
-import { formatJumlah, formatTanggalJam } from '../../../lib/format';
+import { formatJumlah, formatRupiah, formatTanggalJam } from '../../../lib/format';
 import {
   buktiDari,
   getDonasiById,
@@ -164,6 +164,33 @@ export default function LacakDonasi() {
           })}
         </Kartu>
 
+        <Kartu style={s.rincian}>
+          <Text style={teks.caption}>Rincian transaksi</Text>
+          <View style={s.barisRincian}>
+            <Text style={[teks.kecil, s.labelRedup]}>
+              Harga barang ({formatJumlah(donasi.jumlah, request.katalog.satuan)})
+            </Text>
+            <Text style={teks.kecil}>{formatRupiah(donasi.harga_barang)}</Text>
+          </View>
+          <View style={s.barisRincian}>
+            <Text style={[teks.kecil, s.labelRedup]}>Ongkir (dibagi batch)</Text>
+            <Text style={teks.kecil}>{formatRupiah(donasi.ongkir)}</Text>
+          </View>
+          <View style={s.barisRincian}>
+            <Text style={[teks.kecil, s.labelRedup]}>Biaya platform</Text>
+            <Text style={teks.kecil}>{formatRupiah(donasi.platform_fee)}</Text>
+          </View>
+          <View style={s.pisah} />
+          <View style={s.barisRincian}>
+            <Text style={teks.bodyMedium}>Total</Text>
+            <Text style={teks.bodyMedium}>{formatRupiah(donasi.total)}</Text>
+          </View>
+          <View style={s.barisRincian}>
+            <Text style={[teks.mikro, s.labelRedup]}>Disalurkan</Text>
+            <Text style={teks.mikro}>{formatTanggalJam(donasi.created_at)}</Text>
+          </View>
+        </Kartu>
+
         <View style={s.catatan}>
           <Feather name="info" size={15} color={warna.biru} style={s.catatanIkon} />
           <Text style={[teks.mikro, s.catatanTeks]}>
@@ -214,6 +241,10 @@ const s = StyleSheet.create({
   ringkasSub: { marginTop: 2 },
   kartuTimeline: { paddingVertical: 20, paddingHorizontal: 18 },
   tajuk: { marginBottom: 18 },
+  rincian: { marginTop: spacing.lg, paddingVertical: 16, paddingHorizontal: 18, gap: 10 },
+  barisRincian: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm },
+  labelRedup: { color: warna.muted },
+  pisah: { height: 1, backgroundColor: warna.border },
   langkah: { flexDirection: 'row', gap: 14 },
   rel: { alignItems: 'center' },
   bulat: {

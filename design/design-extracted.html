@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="64a1e9df-bf93-45d1-bc6c-ccc4bf5c61c5"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style>/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("944cd626-b29d-4845-9f90-aa2128b8fba2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("c76c52e4-83a6-47ac-b200-54eefc140d16") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4ebcbb33-234a-450f-b4b8-5c632f3dab47") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("5d8cd66c-c191-47db-903f-5e7ffdf3bcb7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("944cd626-b29d-4845-9f90-aa2128b8fba2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("c76c52e4-83a6-47ac-b200-54eefc140d16") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("4ebcbb33-234a-450f-b4b8-5c632f3dab47") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("5d8cd66c-c191-47db-903f-5e7ffdf3bcb7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#EEF1F5;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0F172A;-webkit-font-smoothing:antialiased}
+  a{color:#1B5FE3;text-decoration:none}
+  a:hover{color:#0B2E6F}
+  .nyscroll::-webkit-scrollbar{width:0;height:0}
+  @keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  @keyframes scrimIn{from{opacity:0}to{opacity:1}}
+</style>
+</helmet>
+
+<div style="padding:48px 56px 80px;display:flex;flex-direction:column;gap:44px;align-items:flex-start">
+
+  <!-- INTRO / NOTES -->
+  <div style="max-width:860px;background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;padding:32px 36px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      <div style="width:34px;height:34px;border-radius:9px;background:#1B5FE3;display:flex;align-items:center;justify-content:center;color:#fff">
+        <svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10m0 0l-3.5-3.5M12 13l3.5-3.5"></path><path d="M4 15v4a1 1 0 001 1h14a1 1 0 001-1v-4"></path></svg>
+      </div>
+      <span style="font-size:20px;font-weight:500;letter-spacing:-.01em">Nyalur — Fase 1</span>
+    </div>
+    <p style="margin:0 0 8px;font-size:15px;line-height:1.6;color:#0F172A">Alur donatur yang bisa di-tap: <strong style="font-weight:500">Etalase → Detail panti → Pilih porsi → Bukti terima</strong>, plus design system sheet. Tap kartu panti, tombol Nyalur, dan stepper — semuanya hidup.</p>
+    <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#64748B;max-width:640px">Angle safety: badge <strong style="font-weight:500;color:#0F172A">Terverifikasi</strong> dan layar <strong style="font-weight:500;color:#0F172A">Bukti terima</strong> dibuat terasa kredibel — ID bukti, timestamp presisi, penerima bertanda tangan, lokasi GPS terverifikasi. Bukan dekoratif.</p>
+    <div style="border-top:1px solid #E2E8F0;padding-top:18px;display:flex;flex-direction:column;gap:10px">
+      <span style="font-size:12px;font-weight:500;color:#64748B;text-transform:uppercase;letter-spacing:.06em">Usulan perubahan alur</span>
+      <div style="font-size:14px;line-height:1.55;color:#334155;display:flex;flex-direction:column;gap:8px">
+        <span>· <strong style="font-weight:500">Gabung B4 + B5</strong> — checkout dan sukses jadi satu momen. Di grocery, konfirmasi pembayaran langsung memicu layar sukses; layar checkout terpisah menambah friksi tanpa nilai untuk demo.</span>
+        <span>· <strong style="font-weight:500">B3 → langsung ke bukti/lacak untuk demo</strong> — untuk pitch 30 jam, potong checkout dari jalur demo utama supaya klimaks (B7) cepat tercapai. Checkout tetap ada di Fase 3.</span>
+        <span>· <strong style="font-weight:500">Chip "Batch Jumat" di B1 &amp; B2</strong> — jadikan jadwal batching elemen kepercayaan yang konsisten, bukan hanya catatan di B3. Transparansi ongkir = poin safety.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESIGN SYSTEM SHEET -->
+  <div style="width:920px;max-width:100%;background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;padding:36px 40px">
+    <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px">
+      <span style="font-size:22px;font-weight:500;letter-spacing:-.01em">Design system</span>
+      <span style="font-size:13px;color:#64748B">Plus Jakarta Sans · 400 / 500 · putih dominan, biru hemat</span>
+    </div>
+    <div style="height:1px;background:#E2E8F0;margin:24px 0"></div>
+
+    <!-- Colors -->
+    <span style="font-size:12px;font-weight:500;color:#64748B;text-transform:uppercase;letter-spacing:.06em">Warna</span>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px">
+      <div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden"><div style="height:56px;background:#1B5FE3"></div><div style="padding:10px 12px"><div style="font-size:13px;font-weight:500">Nyalur Blue</div><div style="font-size:12px;color:#64748B">#1B5FE3 · CTA, brand, progress</div></div></div>
+      <div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden"><div style="height:56px;background:#0B2E6F"></div><div style="padding:10px 12px"><div style="font-size:13px;font-weight:500">Deep Navy</div><div style="font-size:12px;color:#64748B">#0B2E6F · heading tegas</div></div></div>
+      <div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden"><div style="height:56px;background:#EAF2FE"></div><div style="padding:10px 12px"><div style="font-size:13px;font-weight:500">Sky Tint</div><div style="font-size:12px;color:#64748B">#EAF2FE · chip, icon bg</div></div></div>
+      <div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden"><div style="height:56px;background:#00B37E"></div><div style="padding:10px 12px"><div style="font-size:13px;font-weight:500">Terkirim Green</div><div style="font-size:12px;color:#64748B">#00B37E · sukses saja</div></div></div>
+      <div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden"><div style="height:56px;background:#F8FAFC;border-bottom:1px solid #E2E8F0"></div><div style="padding:10px 12px"><div style="font-size:13px;font-weight:500">Page BG</div><div style="font-size:12px;color:#64748B">#F8FAFC · background halaman</div></div></div>
+      <div style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden"><div style="height:56px;background:#0F172A"></div><div style="padding:10px 12px"><div style="font-size:13px;font-weight:500">Ink / Muted</div><div style="font-size:12px;color:#64748B">#0F172A · #64748B</div></div></div>
+    </div>
+
+    <!-- Type -->
+    <div style="height:1px;background:#E2E8F0;margin:28px 0"></div>
+    <span style="font-size:12px;font-weight:500;color:#64748B;text-transform:uppercase;letter-spacing:.06em">Tipografi</span>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-size:12px;color:#64748B">Display 28/500</span><span style="font-size:28px;font-weight:500;letter-spacing:-.02em">Bantuan yang nyalur</span></div>
+      <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-size:12px;color:#64748B">Title 20/500</span><span style="font-size:20px;font-weight:500;letter-spacing:-.01em">Panti Harapan Bunda</span></div>
+      <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-size:12px;color:#64748B">Body 15/400</span><span style="font-size:15px;font-weight:400">Beras premium, satuan kg</span></div>
+      <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-size:12px;color:#64748B">Caption 13/400</span><span style="font-size:13px;font-weight:400;color:#64748B">Diterima 14.32 WIB · 2.4 km</span></div>
+    </div>
+
+    <!-- Components -->
+    <div style="height:1px;background:#E2E8F0;margin:28px 0"></div>
+    <span style="font-size:12px;font-weight:500;color:#64748B;text-transform:uppercase;letter-spacing:.06em">Komponen</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <button style="border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:15px;font-weight:500;padding:14px;border-radius:8px;cursor:pointer">Nyalur 1 kg</button>
+        <button style="background:#fff;color:#1B5FE3;font-family:inherit;font-size:15px;font-weight:500;padding:13px;border-radius:8px;border:1px solid #1B5FE3;cursor:pointer">Bagikan</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="font-size:13px;padding:7px 12px;border-radius:8px;background:#EAF2FE;color:#1B5FE3">Pangan</span>
+          <span style="font-size:13px;padding:7px 12px;border-radius:8px;border:1px solid #E2E8F0;color:#64748B">Kebersihan</span>
+          <span style="font-size:13px;padding:7px 12px;border-radius:8px;background:#F8FAFC;color:#64748B">Sisa 3 kg</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:5px 9px;border-radius:6px;background:#EAF2FE;color:#1B5FE3"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>Terverifikasi</span>
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:5px 9px;border-radius:6px;background:rgba(0,179,126,.10);color:#00B37E"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Diterima</span>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748B;margin-bottom:6px"><span>Progress</span><span>7 dari 10 kg</span></div>
+          <div style="height:8px;border-radius:99px;background:#EAF2FE;overflow:hidden"><div style="width:70%;height:100%;background:#1B5FE3;border-radius:99px"></div></div>
+        </div>
+        <div style="border:1px solid #E2E8F0;border-radius:8px;padding:11px 12px;font-size:14px;color:#64748B">Cari panti atau barang</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN NAV -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button sc-camel-on-click="{{ goB1 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">B1 · Etalase</button>
+    <button sc-camel-on-click="{{ goB2 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">B2 · Detail panti</button>
+    <button sc-camel-on-click="{{ goB3 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">B3 · Pilih porsi</button>
+    <button sc-camel-on-click="{{ goB7 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">B7 · Bukti terima</button>
+    <span style="width:1px;background:#CBD5E1;margin:2px 6px"></span>
+    <button sc-camel-on-click="{{ goA1 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">A1 · Onboarding</button>
+    <button sc-camel-on-click="{{ goA2 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">A2 · Daftar</button>
+    <button sc-camel-on-click="{{ goA3 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">A3 · Verified</button>
+    <button sc-camel-on-click="{{ goA4 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">A4 · Dashboard</button>
+    <button sc-camel-on-click="{{ goA5 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">A5 · Katalog</button>
+    <span style="width:1px;background:#CBD5E1;margin:2px 6px"></span>
+    <button sc-camel-on-click="{{ goB4 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">B4 · Checkout</button>
+    <button sc-camel-on-click="{{ goB6 }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">B6 · Lacak</button>
+    <button sc-camel-on-click="{{ openSwitcher }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:8px;border:1px solid #1B5FE3;background:#EAF2FE;color:#1B5FE3;cursor:pointer">C1 · Switch akun</button>
+  </div>
+
+  <!-- PHONE -->
+  <div style="width:390px;height:844px;background:#F8FAFC;border-radius:44px;border:8px solid #0F172A;box-shadow:0 20px 60px rgba(15,23,42,.18);overflow:hidden;position:relative;flex:none">
+
+    <!-- status bar -->
+    <div style="position:absolute;top:0;left:0;right:0;height:44px;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:500;color:{{ statusColor }};pointer-events:none">
+      <span>9.41</span>
+      <span style="display:flex;align-items:center;gap:6px">
+        <svg width="17" height="12" sc-camel-view-box="0 0 17 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"></rect><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"></rect><rect x="9" y="2" width="3" height="10" rx="1"></rect><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".4"></rect></svg>
+        <svg width="22" height="12" sc-camel-view-box="0 0 22 12" fill="none"><rect x="1" y="1.5" width="17" height="9" rx="2.5" stroke="currentColor" opacity=".5"></rect><rect x="3" y="3.5" width="12" height="5" rx="1" fill="currentColor"></rect><rect x="19.5" y="4" width="1.5" height="4" rx="1" fill="currentColor" opacity=".5"></rect></svg>
+      </span>
+    </div>
+
+    <!-- ============ B1 ETALASE ============ -->
+    <sc-if value="{{ isB1 }}" hint-placeholder-val="{{ true }}">
+    <div class="nyscroll" style="position:absolute;inset:0;overflow-y:auto;display:flex;flex-direction:column">
+      <div style="padding:52px 20px 12px;background:#fff;border-bottom:1px solid #E2E8F0">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div>
+            <div style="font-size:22px;font-weight:500;letter-spacing:-.01em">Etalase</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:#64748B;margin-top:2px">
+              <svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+              Tangerang Selatan
+            </div>
+          </div>
+          <div style="width:40px;height:40px;border-radius:99px;background:#EAF2FE;display:flex;align-items:center;justify-content:center;color:#1B5FE3">
+            <svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;border:1px solid #E2E8F0;border-radius:8px;padding:11px 12px;background:#F8FAFC">
+          <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
+          <span style="font-size:14px;color:#64748B">Cari panti atau barang</span>
+        </div>
+        <div style="display:flex;gap:8px;overflow-x:auto;margin-top:12px;padding-bottom:2px" class="nyscroll">
+          <span style="flex:none;font-size:13px;padding:7px 13px;border-radius:8px;background:#1B5FE3;color:#fff">Terdekat</span>
+          <span style="flex:none;font-size:13px;padding:7px 13px;border-radius:8px;border:1px solid #E2E8F0;color:#64748B;background:#fff">Pangan</span>
+          <span style="flex:none;font-size:13px;padding:7px 13px;border-radius:8px;border:1px solid #E2E8F0;color:#64748B;background:#fff">Kebersihan</span>
+          <span style="flex:none;font-size:13px;padding:7px 13px;border-radius:8px;border:1px solid #E2E8F0;color:#64748B;background:#fff">Sekolah</span>
+        </div>
+      </div>
+
+      <div style="padding:16px 16px 96px;display:flex;flex-direction:column;gap:14px">
+        <div style="font-size:13px;color:#64748B">5 panti terverifikasi di sekitarmu</div>
+
+        <!-- card: Harapan Bunda (tappable) -->
+        <div sc-camel-on-click="{{ goB2 }}" style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;cursor:pointer">
+          <div style="display:flex;gap:12px;padding:16px">
+            <div style="width:64px;height:64px;border-radius:10px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 6px,#F8FAFC 6px,#F8FAFC 12px);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:ui-monospace,monospace;color:#94A3B8;text-align:center;line-height:1.3">foto<br>panti</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-size:16px;font-weight:500">Panti Harapan Bunda</span>
+                <svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>
+              </div>
+              <div style="font-size:13px;color:#64748B;margin-top:3px">25 anak · 2.4 km · batch Jumat</div>
+            </div>
+          </div>
+          <div style="padding:0 16px 16px">
+            <div style="border-top:1px solid #E2E8F0;padding-top:12px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+                <span style="font-size:14px">Beras premium</span>
+                <span style="font-size:12px;color:#64748B">7 dari 10 kg</span>
+              </div>
+              <div style="height:8px;border-radius:99px;background:#EAF2FE;overflow:hidden"><div style="width:70%;height:100%;background:#1B5FE3"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- card: Kasih Ibu -->
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">
+          <div style="display:flex;gap:12px;padding:16px">
+            <div style="width:64px;height:64px;border-radius:10px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 6px,#F8FAFC 6px,#F8FAFC 12px);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:ui-monospace,monospace;color:#94A3B8;text-align:center;line-height:1.3">foto<br>panti</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px"><span style="font-size:16px;font-weight:500">Panti Kasih Ibu</span><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></div>
+              <div style="font-size:13px;color:#64748B;margin-top:3px">18 anak · 4.1 km · batch Jumat</div>
+            </div>
+          </div>
+          <div style="padding:0 16px 16px"><div style="border-top:1px solid #E2E8F0;padding-top:12px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-size:14px">Susu UHT</span><span style="font-size:12px;color:#64748B">2 dari 20 kotak</span></div><div style="height:8px;border-radius:99px;background:#EAF2FE;overflow:hidden"><div style="width:10%;height:100%;background:#1B5FE3"></div></div></div></div>
+        </div>
+
+        <!-- card: Al-Falah -->
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">
+          <div style="display:flex;gap:12px;padding:16px">
+            <div style="width:64px;height:64px;border-radius:10px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 6px,#F8FAFC 6px,#F8FAFC 12px);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:ui-monospace,monospace;color:#94A3B8;text-align:center;line-height:1.3">foto<br>panti</div>
+            <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px"><span style="font-size:16px;font-weight:500">Rumah Yatim Al-Falah</span><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></div><div style="font-size:13px;color:#64748B;margin-top:3px">32 anak · 5.8 km · batch Jumat</div></div>
+          </div>
+          <div style="padding:0 16px 16px"><div style="border-top:1px solid #E2E8F0;padding-top:12px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-size:14px">Minyak goreng</span><span style="font-size:12px;color:#64748B">9 dari 10 L</span></div><div style="height:8px;border-radius:99px;background:#EAF2FE;overflow:hidden"><div style="width:90%;height:100%;background:#1B5FE3"></div></div></div></div>
+        </div>
+
+        <!-- card: Bina Sejahtera -->
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">
+          <div style="display:flex;gap:12px;padding:16px">
+            <div style="width:64px;height:64px;border-radius:10px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 6px,#F8FAFC 6px,#F8FAFC 12px);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:ui-monospace,monospace;color:#94A3B8;text-align:center;line-height:1.3">foto<br>panti</div>
+            <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px"><span style="font-size:16px;font-weight:500">Panti Bina Sejahtera</span><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></div><div style="font-size:13px;color:#64748B;margin-top:3px">21 anak · 7.2 km · batch Jumat</div></div>
+          </div>
+          <div style="padding:0 16px 16px"><div style="border-top:1px solid #E2E8F0;padding-top:12px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-size:14px">Telur ayam</span><span style="font-size:12px;color:#64748B">6 dari 15 kg</span></div><div style="height:8px;border-radius:99px;background:#EAF2FE;overflow:hidden"><div style="width:40%;height:100%;background:#1B5FE3"></div></div></div></div>
+        </div>
+
+        <!-- card: Anugerah (fulfilled) -->
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;opacity:.85">
+          <div style="display:flex;gap:12px;padding:16px">
+            <div style="width:64px;height:64px;border-radius:10px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 6px,#F8FAFC 6px,#F8FAFC 12px);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:ui-monospace,monospace;color:#94A3B8;text-align:center;line-height:1.3">foto<br>panti</div>
+            <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px"><span style="font-size:16px;font-weight:500">Panti Anugerah</span><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></div><div style="font-size:13px;color:#64748B;margin-top:3px">28 anak · 8.5 km</div></div>
+          </div>
+          <div style="padding:0 16px 16px"><div style="border-top:1px solid #E2E8F0;padding-top:12px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-size:14px">Beras premium</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#00B37E"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Terkirim</span></div><div style="height:8px;border-radius:99px;background:rgba(0,179,126,.15);overflow:hidden"><div style="width:100%;height:100%;background:#00B37E"></div></div></div></div>
+        </div>
+      </div>
+
+      <!-- bottom nav -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:78px;background:#fff;border-top:1px solid #E2E8F0;display:flex;padding:10px 0 20px">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#1B5FE3"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"></path></svg><span style="font-size:11px;font-weight:500">Etalase</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#64748B"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg><span style="font-size:11px">Riwayat</span></div>
+        <div sc-camel-on-click="{{ openSwitcher }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#64748B;cursor:pointer"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg><span style="font-size:11px">Profil</span></div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ B2 DETAIL PANTI ============ -->
+    <sc-if value="{{ isB2 }}" hint-placeholder-val="{{ false }}">
+    <div class="nyscroll" style="position:absolute;inset:0;overflow-y:auto;background:#F8FAFC">
+      <div style="position:relative;height:220px;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 10px,#F8FAFC 10px,#F8FAFC 20px);display:flex;align-items:center;justify-content:center;font-size:11px;font-family:ui-monospace,monospace;color:#94A3B8">foto panti (hero)
+        <button sc-camel-on-click="{{ goB1 }}" style="position:absolute;top:52px;left:16px;width:38px;height:38px;border-radius:99px;background:#fff;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#0F172A"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      </div>
+      <div style="background:#fff;border-bottom:1px solid #E2E8F0;padding:18px 20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:21px;font-weight:500;letter-spacing:-.01em">Panti Harapan Bunda</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 8px;border-radius:6px;background:#EAF2FE;color:#1B5FE3"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>Terverifikasi</span>
+        </div>
+        <div style="font-size:14px;color:#64748B;line-height:1.6">25 anak · Tangerang Selatan · 2.4 km</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:#1B5FE3;background:#EAF2FE;padding:8px 12px;border-radius:8px">
+          <svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+          Pengiriman berikutnya: batch Jumat, 18 Juli
+        </div>
+      </div>
+
+      <!-- tabs -->
+      <div style="background:#fff;padding:0 20px;display:flex;gap:24px;border-bottom:1px solid #E2E8F0">
+        <div style="padding:14px 0;font-size:14px;font-weight:500;color:#1B5FE3;border-bottom:2px solid #1B5FE3;margin-bottom:-1px">Kebutuhan aktif</div>
+        <div style="padding:14px 0;font-size:14px;color:#64748B">Riwayat penerimaan</div>
+      </div>
+
+      <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px">
+        <!-- need: beras (tappable Nyalur) -->
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:16px">
+          <div style="display:flex;gap:12px">
+            <div style="width:56px;height:56px;border-radius:10px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px);display:flex;align-items:center;justify-content:center;font-size:8px;font-family:ui-monospace,monospace;color:#94A3B8">beras</div>
+            <div style="flex:1">
+              <div style="font-size:16px;font-weight:500">Beras premium</div>
+              <div style="font-size:13px;color:#64748B;margin-top:2px">Rp 13.000 / kg</div>
+            </div>
+          </div>
+          <div style="margin-top:14px"><div style="display:flex;justify-content:space-between;font-size:12px;color:#64748B;margin-bottom:6px"><span>7 dari 10 kg</span><span>70%</span></div><div style="height:8px;border-radius:99px;background:#EAF2FE;overflow:hidden"><div style="width:70%;height:100%;background:#1B5FE3"></div></div></div>
+          <div style="display:flex;gap:8px;margin:14px 0">
+            <span style="font-size:12px;padding:6px 11px;border-radius:8px;background:#F8FAFC;border:1px solid #E2E8F0;color:#64748B">Sisa 3 kg</span>
+            <span style="font-size:12px;padding:6px 11px;border-radius:8px;background:#F8FAFC;border:1px solid #E2E8F0;color:#64748B">Kirim Jumat</span>
+          </div>
+          <button sc-camel-on-click="{{ goB3 }}" style="width:100%;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:15px;font-weight:500;padding:13px;border-radius:8px;cursor:pointer">Nyalur</button>
+        </div>
+
+        <!-- need: minyak -->
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:16px">
+          <div style="display:flex;gap:12px"><div style="width:56px;height:56px;border-radius:10px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px);display:flex;align-items:center;justify-content:center;font-size:8px;font-family:ui-monospace,monospace;color:#94A3B8">minyak</div><div style="flex:1"><div style="font-size:16px;font-weight:500">Minyak goreng 2L</div><div style="font-size:13px;color:#64748B;margin-top:2px">Rp 34.000 / botol</div></div></div>
+          <div style="margin-top:14px"><div style="display:flex;justify-content:space-between;font-size:12px;color:#64748B;margin-bottom:6px"><span>4 dari 8 botol</span><span>50%</span></div><div style="height:8px;border-radius:99px;background:#EAF2FE;overflow:hidden"><div style="width:50%;height:100%;background:#1B5FE3"></div></div></div>
+          <div style="display:flex;gap:8px;margin:14px 0"><span style="font-size:12px;padding:6px 11px;border-radius:8px;background:#F8FAFC;border:1px solid #E2E8F0;color:#64748B">Sisa 4 botol</span><span style="font-size:12px;padding:6px 11px;border-radius:8px;background:#F8FAFC;border:1px solid #E2E8F0;color:#64748B">Kirim Jumat</span></div>
+          <button sc-camel-on-click="{{ goB3 }}" style="width:100%;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:15px;font-weight:500;padding:13px;border-radius:8px;cursor:pointer">Nyalur</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ B3 PILIH PORSI (sheet) ============ -->
+    <sc-if value="{{ isB3 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(11,46,111,.45);animation:scrimIn .2s ease" sc-camel-on-click="{{ goB2 }}"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;animation:sheetUp .28s cubic-bezier(.2,.8,.2,1);max-height:92%;overflow-y:auto" class="nyscroll">
+      <div style="display:flex;justify-content:center;padding:10px 0 4px"><div style="width:38px;height:4px;border-radius:99px;background:#E2E8F0"></div></div>
+      <div style="padding:8px 20px 24px">
+        <div style="display:flex;gap:14px;align-items:center;margin-bottom:18px">
+          <div style="width:60px;height:60px;border-radius:12px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px);display:flex;align-items:center;justify-content:center;font-size:8px;font-family:ui-monospace,monospace;color:#94A3B8">beras</div>
+          <div>
+            <div style="font-size:18px;font-weight:500">Beras premium</div>
+            <div style="font-size:13px;color:#64748B;margin-top:2px">Panti Harapan Bunda · Rp 13.000 / kg</div>
+          </div>
+        </div>
+
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:14px;margin-bottom:18px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748B;margin-bottom:6px"><span>Progress saat ini</span><span>{{ progLabel }}</span></div>
+          <div style="height:8px;border-radius:99px;background:#EAF2FE;overflow:hidden"><div style="width:{{ progPct }};height:100%;background:#1B5FE3;transition:width .25s ease"></div></div>
+        </div>
+
+        <div style="font-size:14px;font-weight:500;margin-bottom:10px">Pilih porsi</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;border:1px solid #E2E8F0;border-radius:12px;padding:12px 16px;margin-bottom:12px">
+          <button sc-camel-on-click="{{ dec }}" style="width:40px;height:40px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+          <div style="text-align:center"><div style="font-size:26px;font-weight:500">{{ qty }} kg</div></div>
+          <button sc-camel-on-click="{{ inc }}" style="width:40px;height:40px;border-radius:8px;border:1px solid #1B5FE3;background:#EAF2FE;color:#1B5FE3;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:20px">
+          <button sc-camel-on-click="{{ set1 }}" style="flex:1;font-family:inherit;font-size:13px;padding:9px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">1 kg</button>
+          <button sc-camel-on-click="{{ set3 }}" style="flex:1;font-family:inherit;font-size:13px;padding:9px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;cursor:pointer">3 kg</button>
+          <button sc-camel-on-click="{{ setAll }}" style="flex:1;font-family:inherit;font-size:13px;padding:9px;border-radius:8px;border:1px solid #1B5FE3;background:#EAF2FE;color:#1B5FE3;cursor:pointer">Penuhi semua (3 kg)</button>
+        </div>
+
+        <div style="border:1px solid #E2E8F0;border-radius:12px;padding:14px 16px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#64748B">Harga barang ({{ qty }} kg)</span><span>{{ barangStr }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#64748B">Ongkir (dibagi batch)</span><span>Rp 3.000</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#64748B">Biaya platform</span><span>Rp 1.000</span></div>
+          <div style="height:1px;background:#E2E8F0"></div>
+          <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:500"><span>Total</span><span>{{ totalStr }}</span></div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#64748B;line-height:1.5;margin-bottom:18px">
+          <svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+          Ongkir dibagi rata dengan donatur lain di batch pengiriman Jumat. Semakin ramai, makin murah.
+        </div>
+
+        <button sc-camel-on-click="{{ goB7 }}" style="width:100%;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:16px;font-weight:500;padding:15px;border-radius:8px;cursor:pointer">{{ ctaStr }}</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ B7 BUKTI TERIMA (climax) ============ -->
+    <sc-if value="{{ isB7 }}" hint-placeholder-val="{{ false }}">
+    <div class="nyscroll" style="position:absolute;inset:0;overflow-y:auto;background:#F8FAFC">
+      <!-- top bar -->
+      <div style="position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #E2E8F0;padding:52px 16px 12px;display:flex;align-items:center;gap:12px">
+        <button sc-camel-on-click="{{ goB1 }}" style="width:38px;height:38px;border-radius:99px;background:#F8FAFC;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#0F172A"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <span style="font-size:16px;font-weight:500">Bukti serah terima</span>
+      </div>
+
+      <div style="padding:16px 16px 40px">
+        <!-- certificate -->
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden">
+          <!-- hero photo -->
+          <div style="position:relative;height:300px;background:repeating-linear-gradient(135deg,#E8EFF9,#E8EFF9 11px,#F1F6FD 11px,#F1F6FD 22px);display:flex;align-items:center;justify-content:center;font-size:11px;font-family:ui-monospace,monospace;color:#94A3B8">
+            foto serah terima (kurir)
+            <div style="position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:5px;background:rgba(15,23,42,.6);color:#fff;font-size:11px;padding:5px 9px;border-radius:6px">
+              <svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+              Lokasi GPS terverifikasi
+            </div>
+          </div>
+
+          <!-- diterima badge -->
+          <div style="padding:20px 20px 0;display:flex;justify-content:center;margin-top:-24px;position:relative">
+            <div style="display:inline-flex;align-items:center;gap:8px;background:#00B37E;color:#fff;font-size:15px;font-weight:500;padding:10px 20px;border-radius:99px;box-shadow:0 4px 14px rgba(0,179,126,.35)">
+              <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+              Diterima
+            </div>
+          </div>
+
+          <div style="padding:16px 22px 24px;text-align:center">
+            <div style="font-size:13px;color:#64748B;margin-top:8px">Diterima 14.32 WIB · Jumat, 18 Juli 2026</div>
+            <div style="font-size:22px;font-weight:500;letter-spacing:-.01em;margin-top:10px">Beras premium 1 kg dari kamu</div>
+            <div style="font-size:14px;color:#64748B;margin-top:4px">telah sampai di Panti Harapan Bunda</div>
+
+            <div style="border-top:1px dashed #E2E8F0;margin:20px 0"></div>
+
+            <!-- receiver -->
+            <div style="display:flex;align-items:center;gap:12px;text-align:left;background:#F8FAFC;border-radius:12px;padding:14px">
+              <div style="width:44px;height:44px;border-radius:99px;flex:none;background:#EAF2FE;display:flex;align-items:center;justify-content:center;color:#1B5FE3"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></div>
+              <div style="flex:1">
+                <div style="font-size:12px;color:#64748B">Diterima &amp; ditandatangani oleh</div>
+                <div style="font-size:15px;font-weight:500">Ibu Siti Rohmah</div>
+                <div style="font-size:12px;color:#64748B">Pengurus, Panti Harapan Bunda</div>
+              </div>
+            </div>
+
+            <!-- verification strip -->
+            <div style="display:flex;align-items:center;gap:10px;text-align:left;border:1px solid #E2E8F0;border-radius:12px;padding:14px;margin-top:12px">
+              <div style="width:34px;height:34px;border-radius:8px;flex:none;background:#EAF2FE;display:flex;align-items:center;justify-content:center;color:#1B5FE3"><svg width="19" height="19" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg></div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:500">Diverifikasi oleh Nyalur</div>
+                <div style="font-size:12px;color:#64748B;font-family:ui-monospace,monospace">ID bukti: NYL-7F3A-2210</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- actions -->
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button style="flex:1;background:#fff;color:#1B5FE3;font-family:inherit;font-size:15px;font-weight:500;padding:14px;border-radius:8px;border:1px solid #1B5FE3;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+            <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path></svg>
+            Bagikan
+          </button>
+          <button sc-camel-on-click="{{ goB1 }}" style="flex:1;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:15px;font-weight:500;padding:14px;border-radius:8px;cursor:pointer">Nyalur lagi</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ A1 ONBOARDING ============ -->
+    <sc-if value="{{ isA1 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;padding:0 28px">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+        <div style="width:64px;height:64px;border-radius:18px;background:#1B5FE3;display:flex;align-items:center;justify-content:center;color:#fff;margin-bottom:22px">
+          <svg width="36" height="36" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10m0 0l-3.5-3.5M12 13l3.5-3.5"></path><path d="M4 15v4a1 1 0 001 1h14a1 1 0 001-1v-4"></path></svg>
+        </div>
+        <div style="font-size:30px;font-weight:500;letter-spacing:-.02em">Nyalur</div>
+        <div style="font-size:16px;color:#64748B;margin-top:8px">Bantuan yang nyalur langsung.</div>
+      </div>
+      <div style="padding-bottom:44px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:13px;color:#64748B;text-align:center;margin-bottom:4px">Masuk sebagai</div>
+        <button sc-camel-on-click="{{ goB1 }}" style="width:100%;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:16px;font-weight:500;padding:16px;border-radius:8px;cursor:pointer">Saya donatur</button>
+        <button sc-camel-on-click="{{ goA2 }}" style="width:100%;background:#fff;color:#1B5FE3;font-family:inherit;font-size:16px;font-weight:500;padding:15px;border-radius:8px;border:1px solid #1B5FE3;cursor:pointer">Saya pengurus panti</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ A2 DAFTAR PANTI ============ -->
+    <sc-if value="{{ isA2 }}" hint-placeholder-val="{{ false }}">
+    <div class="nyscroll" style="position:absolute;inset:0;overflow-y:auto;background:#F8FAFC">
+      <div style="background:#fff;border-bottom:1px solid #E2E8F0;padding:52px 16px 14px;display:flex;align-items:center;gap:12px">
+        <button sc-camel-on-click="{{ goA1 }}" style="width:38px;height:38px;border-radius:99px;background:#F8FAFC;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#0F172A"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <span style="font-size:18px;font-weight:500">Daftar panti</span>
+      </div>
+      <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div style="font-size:13px;color:#64748B;margin-bottom:6px">Nama panti</div>
+            <div style="border:1px solid #E2E8F0;border-radius:8px;padding:12px;background:#fff;font-size:15px">Panti Harapan Bunda</div>
+          </div>
+          <div>
+            <div style="font-size:13px;color:#64748B;margin-bottom:6px">Alamat</div>
+            <div style="border:1px solid #E2E8F0;border-radius:8px;padding:12px;background:#fff;font-size:15px">Jl. Merpati No. 12, Tangerang Selatan</div>
+          </div>
+          <div>
+            <div style="font-size:13px;color:#64748B;margin-bottom:6px">Jumlah penghuni</div>
+            <div style="border:1px solid #E2E8F0;border-radius:8px;padding:12px;background:#fff;font-size:15px">25 anak</div>
+          </div>
+        </div>
+
+        <div style="font-size:13px;color:#64748B;margin-top:4px">Dokumen legalitas</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:14px">
+            <div style="width:40px;height:40px;border-radius:8px;flex:none;background:#EAF2FE;display:flex;align-items:center;justify-content:center;color:#1B5FE3"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"></path><path d="M14 3H6a1 1 0 00-1 1v16a1 1 0 001 1h12a1 1 0 001-1V8z"></path></svg></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:500">Akta yayasan</div><div style="font-size:12px;color:#64748B">akta-yayasan.pdf</div></div>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#00B37E"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Terunggah</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:14px">
+            <div style="width:40px;height:40px;border-radius:8px;flex:none;background:#EAF2FE;display:flex;align-items:center;justify-content:center;color:#1B5FE3"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"></path><path d="M14 3H6a1 1 0 00-1 1v16a1 1 0 001 1h12a1 1 0 001-1V8z"></path></svg></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:500">NIB</div><div style="font-size:12px;color:#64748B">nib-2024.pdf</div></div>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#00B37E"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Terunggah</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px dashed #CBD5E1;border-radius:12px;padding:14px">
+            <div style="width:40px;height:40px;border-radius:8px;flex:none;background:#F8FAFC;display:flex;align-items:center;justify-content:center;color:#64748B"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0l-4 4m4-4l4 4"></path><path d="M4 20h16"></path></svg></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:500">SK Kemensos</div><div style="font-size:12px;color:#64748B">Belum diunggah</div></div>
+            <span style="font-size:13px;color:#1B5FE3;font-weight:500">Unggah</span>
+          </div>
+        </div>
+
+        <button sc-camel-on-click="{{ goA3 }}" style="width:100%;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:16px;font-weight:500;padding:15px;border-radius:8px;cursor:pointer;margin-top:6px">Ajukan verifikasi</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ A3 VERIFIED ============ -->
+    <sc-if value="{{ isA3 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;padding:0 24px">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+        <div style="width:88px;height:88px;border-radius:99px;background:#EAF2FE;display:flex;align-items:center;justify-content:center;color:#1B5FE3;margin-bottom:22px">
+          <svg width="46" height="46" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        </div>
+        <div style="font-size:26px;font-weight:500;letter-spacing:-.01em">Panti terverifikasi</div>
+        <div style="font-size:15px;color:#64748B;margin-top:8px;max-width:280px">Legalitas Panti Harapan Bunda sudah dicek dan lolos verifikasi Nyalur.</div>
+
+        <div style="width:100%;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:18px;margin-top:28px;text-align:left">
+          <div style="font-size:13px;color:#64748B">Plafon kebutuhan bulanan</div>
+          <div style="font-size:28px;font-weight:500;letter-spacing:-.01em;margin-top:4px">{{ plafonStr }}</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#1B5FE3;background:#EAF2FE;padding:8px 12px;border-radius:8px;margin-top:12px">
+            <svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+            25 anak × Rp 500.000 / anak / bulan
+          </div>
+        </div>
+      </div>
+      <div style="padding-bottom:44px">
+        <button sc-camel-on-click="{{ goA4 }}" style="width:100%;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:16px;font-weight:500;padding:16px;border-radius:8px;cursor:pointer">Mulai ajukan kebutuhan</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ A4 DASHBOARD PANTI ============ -->
+    <sc-if value="{{ isA4 }}" hint-placeholder-val="{{ false }}">
+    <div class="nyscroll" style="position:absolute;inset:0;overflow-y:auto;background:#F8FAFC">
+      <div style="background:#fff;border-bottom:1px solid #E2E8F0;padding:52px 20px 16px">
+        <div style="font-size:13px;color:#64748B">Panti Harapan Bunda</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:2px">
+          <span style="font-size:22px;font-weight:500;letter-spacing:-.01em">Dashboard</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:4px 8px;border-radius:6px;background:#EAF2FE;color:#1B5FE3"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>Terverifikasi</span>
+        </div>
+      </div>
+
+      <div style="padding:16px 16px 110px;display:flex;flex-direction:column;gap:16px">
+        <!-- plafon card (credit-limit style) -->
+        <div style="background:#0B2E6F;border-radius:12px;padding:20px;color:#fff">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:13px;color:#AFC6EE">Plafon bulan ini</span>
+            <span style="font-size:11px;color:#AFC6EE;border:1px solid rgba(255,255,255,.25);padding:3px 8px;border-radius:6px">Juli 2026</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-top:10px">
+            <span style="font-size:28px;font-weight:500;letter-spacing:-.01em">{{ sisaStr }}</span>
+            <span style="font-size:13px;color:#AFC6EE">sisa</span>
+          </div>
+          <div style="height:10px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;margin-top:14px"><div style="width:{{ terpakaiPct }};height:100%;background:#1B5FE3;border-radius:99px"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#AFC6EE;margin-top:10px">
+            <span>Terpakai {{ terpakaiStr }}</span>
+            <span>Plafon {{ plafonStr }}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#AFC6EE;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.15)">
+            <svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path></svg>
+            Batas Rp 500.000 / anak / bulan — mencegah penyalahgunaan
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <span style="font-size:15px;font-weight:500">Request aktif</span>
+          <span style="font-size:13px;color:#64748B">4 kebutuhan</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:42px;height:42px;border-radius:9px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px)"></div>
+            <div style="flex:1"><div style="font-size:15px;font-weight:500">Beras premium · 3 kg</div><div style="font-size:12px;color:#64748B">Diajukan hari ini</div></div>
+            <span style="font-size:12px;padding:5px 10px;border-radius:8px;background:#F8FAFC;border:1px solid #E2E8F0;color:#64748B">Menunggu donatur</span>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:42px;height:42px;border-radius:9px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px)"></div>
+            <div style="flex:1"><div style="font-size:15px;font-weight:500">Susu UHT · 10 kotak</div><div style="font-size:12px;color:#64748B">Batch Jumat</div></div>
+            <span style="font-size:12px;padding:5px 10px;border-radius:8px;background:#EAF2FE;color:#1B5FE3">Dikemas</span>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:42px;height:42px;border-radius:9px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px)"></div>
+            <div style="flex:1"><div style="font-size:15px;font-weight:500">Minyak goreng · 4 botol</div><div style="font-size:12px;color:#64748B">Batch Jumat</div></div>
+            <span style="font-size:12px;padding:5px 10px;border-radius:8px;background:#EAF2FE;color:#1B5FE3">Dikirim</span>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <div style="width:42px;height:42px;border-radius:9px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px)"></div>
+            <div style="flex:1"><div style="font-size:15px;font-weight:500">Telur ayam · 5 kg</div><div style="font-size:12px;color:#64748B">Selesai kemarin</div></div>
+            <span style="font-size:12px;padding:5px 10px;border-radius:8px;background:rgba(0,179,126,.10);color:#00B37E">Diterima</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAB -->
+      <button sc-camel-on-click="{{ goA5 }}" style="position:absolute;bottom:94px;right:18px;height:52px;padding:0 20px;border:none;border-radius:99px;background:#1B5FE3;color:#fff;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 6px 18px rgba(27,95,227,.35)">
+        <svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+        Ajukan kebutuhan
+      </button>
+
+      <!-- bottom nav panti -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:78px;background:#fff;border-top:1px solid #E2E8F0;display:flex;padding:10px 0 20px">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#1B5FE3"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg><span style="font-size:11px;font-weight:500">Dashboard</span></div>
+        <div sc-camel-on-click="{{ goA5 }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#64748B;cursor:pointer"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg><span style="font-size:11px">Ajukan</span></div>
+        <div sc-camel-on-click="{{ openSwitcher }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:#64748B;cursor:pointer"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg><span style="font-size:11px">Profil</span></div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ A5 KATALOG ============ -->
+    <sc-if value="{{ isA5 }}" hint-placeholder-val="{{ false }}">
+    <div class="nyscroll" style="position:absolute;inset:0;overflow-y:auto;background:#F8FAFC">
+      <div style="position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #E2E8F0;padding:52px 16px 12px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button sc-camel-on-click="{{ goA4 }}" style="width:38px;height:38px;border-radius:99px;background:#F8FAFC;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#0F172A"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+          <span style="font-size:18px;font-weight:500;flex:1">Katalog</span>
+          <span style="font-size:12px;color:#1B5FE3;background:#EAF2FE;padding:6px 10px;border-radius:8px">Sisa {{ sisaStr }}</span>
+        </div>
+        <div style="display:flex;gap:8px;overflow-x:auto;margin-top:12px;padding-bottom:2px" class="nyscroll">
+          <span style="flex:none;font-size:13px;padding:7px 13px;border-radius:8px;background:#1B5FE3;color:#fff">Pangan</span>
+          <span style="flex:none;font-size:13px;padding:7px 13px;border-radius:8px;border:1px solid #E2E8F0;color:#64748B;background:#fff">Kebersihan</span>
+          <span style="flex:none;font-size:13px;padding:7px 13px;border-radius:8px;border:1px solid #E2E8F0;color:#64748B;background:#fff">Sekolah</span>
+          <span style="flex:none;font-size:13px;padding:7px 13px;border-radius:8px;border:1px solid #E2E8F0;color:#64748B;background:#fff">Kesehatan</span>
+        </div>
+      </div>
+
+      <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <sc-for list="{{ catRows }}" as="item" hint-placeholder-count="6">
+          <div sc-camel-on-click="{{ item.onTap }}" style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;cursor:pointer">
+            <div style="height:96px;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 7px,#F8FAFC 7px,#F8FAFC 14px);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:ui-monospace,monospace;color:#94A3B8">{{ item.img }}</div>
+            <div style="padding:12px">
+              <div style="font-size:14px;font-weight:500;line-height:1.3">{{ item.name }}</div>
+              <div style="font-size:12px;color:#64748B;margin-top:2px">{{ item.unit }}</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+                <span style="font-size:14px;font-weight:500">{{ item.priceStr }}</span>
+                <span style="width:30px;height:30px;border-radius:8px;background:#EAF2FE;color:#1B5FE3;display:flex;align-items:center;justify-content:center"><svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ A6 DETAIL REQUEST (sheet) ============ -->
+    <sc-if value="{{ isA6 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(11,46,111,.45);animation:scrimIn .2s ease" sc-camel-on-click="{{ goA5 }}"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:20px 20px 0 0;animation:sheetUp .28s cubic-bezier(.2,.8,.2,1);max-height:92%;overflow-y:auto" class="nyscroll">
+      <div style="display:flex;justify-content:center;padding:10px 0 4px"><div style="width:38px;height:4px;border-radius:99px;background:#E2E8F0"></div></div>
+      <div style="padding:8px 20px 24px">
+        <div style="display:flex;gap:14px;align-items:center;margin-bottom:18px">
+          <div style="width:60px;height:60px;border-radius:12px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px);display:flex;align-items:center;justify-content:center;font-size:8px;font-family:ui-monospace,monospace;color:#94A3B8">{{ selImg }}</div>
+          <div><div style="font-size:18px;font-weight:500">{{ selName }}</div><div style="font-size:13px;color:#64748B;margin-top:2px">{{ selPriceStr }} / {{ selUnit }}</div></div>
+        </div>
+
+        <div style="font-size:14px;font-weight:500;margin-bottom:10px">Jumlah</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;border:1px solid #E2E8F0;border-radius:12px;padding:12px 16px;margin-bottom:16px">
+          <button sc-camel-on-click="{{ pDec }}" style="width:40px;height:40px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;color:#0F172A;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+          <div style="text-align:center"><div style="font-size:26px;font-weight:500">{{ pQty }}</div><div style="font-size:12px;color:#64748B">× {{ selUnit }}</div></div>
+          <button sc-camel-on-click="{{ pInc }}" style="width:40px;height:40px;border-radius:8px;border:1px solid #1B5FE3;background:#EAF2FE;color:#1B5FE3;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+        </div>
+
+        <div style="border:1px solid #E2E8F0;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:500"><span>Total kebutuhan</span><span>{{ pTotalStr }}</span></div>
+          <div style="height:1px;background:#E2E8F0"></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#64748B">Sisa plafon sekarang</span><span>{{ sisaStr }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#64748B">Sisa plafon setelah ini</span><span style="color:#1B5FE3;font-weight:500">{{ sisaAfterStr }}</span></div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#64748B;line-height:1.5;margin-bottom:18px">
+          <svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+          Kebutuhan tidak boleh melebihi sisa plafon bulan ini.
+        </div>
+
+        <button sc-camel-on-click="{{ goA7 }}" style="width:100%;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:16px;font-weight:500;padding:15px;border-radius:8px;cursor:pointer">Ajukan kebutuhan ini</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ A7 REQUEST TERKIRIM + SWITCH ============ -->
+    <sc-if value="{{ isA7 }}" hint-placeholder-val="{{ false }}">
+    <div class="nyscroll" style="position:absolute;inset:0;overflow-y:auto;background:#fff;display:flex;flex-direction:column;padding:0 24px">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:60px">
+        <div style="width:80px;height:80px;border-radius:99px;background:#EAF2FE;display:flex;align-items:center;justify-content:center;color:#1B5FE3;margin-bottom:20px">
+          <svg width="42" height="42" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>
+        </div>
+        <div style="font-size:24px;font-weight:500;letter-spacing:-.01em">Kebutuhan diajukan</div>
+        <div style="font-size:15px;color:#64748B;margin-top:8px;max-width:290px">Kebutuhan ini sudah tayang di etalase donatur. Kamu akan dikabari saat ada yang menyalurkan.</div>
+
+        <div style="width:100%;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:16px;margin-top:24px;text-align:left">
+          <div style="font-size:12px;color:#64748B">Ringkasan</div>
+          <div style="font-size:16px;font-weight:500;margin-top:4px">{{ reqSummary }}</div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:#64748B;margin-top:12px;padding-top:12px;border-top:1px solid #E2E8F0"><span>Estimasi biaya</span><span style="color:#0F172A">{{ pTotalStr }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:#64748B;margin-top:8px"><span>Batch pengiriman</span><span style="color:#0F172A">Jumat, 18 Juli</span></div>
+        </div>
+      </div>
+
+      <div style="padding:20px 0 40px;display:flex;flex-direction:column;gap:12px">
+        <button sc-camel-on-click="{{ goA4 }}" style="width:100%;background:#fff;color:#1B5FE3;font-family:inherit;font-size:15px;font-weight:500;padding:14px;border-radius:8px;border:1px solid #1B5FE3;cursor:pointer">Kembali ke dashboard</button>
+        <!-- account switch — demo hinge -->
+        <div style="border:1px solid #E2E8F0;border-radius:12px;padding:6px;background:#F8FAFC">
+          <div style="font-size:11px;color:#64748B;padding:8px 10px 6px">Beralih akun untuk demo</div>
+          <button sc-camel-on-click="{{ goB1 }}" style="width:100%;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:12px;cursor:pointer;font-family:inherit;text-align:left">
+            <div style="width:40px;height:40px;border-radius:99px;flex:none;background:#1B5FE3;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500">DA</div>
+            <div style="flex:1"><div style="font-size:15px;font-weight:500;color:#0F172A">Dara Anindya</div><div style="font-size:12px;color:#64748B">Donatur · Tangerang Selatan</div></div>
+            <svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ B4 CHECKOUT ============ -->
+    <sc-if value="{{ isB4 }}" hint-placeholder-val="{{ false }}">
+    <div class="nyscroll" style="position:absolute;inset:0;overflow-y:auto;background:#F8FAFC">
+      <div style="position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #E2E8F0;padding:52px 16px 12px;display:flex;align-items:center;gap:12px">
+        <button sc-camel-on-click="{{ goB2 }}" style="width:38px;height:38px;border-radius:99px;background:#F8FAFC;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#0F172A"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <span style="font-size:18px;font-weight:500">Pembayaran</span>
+      </div>
+
+      <div style="padding:16px 16px 120px;display:flex;flex-direction:column;gap:16px">
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:16px">
+          <div style="font-size:13px;color:#64748B;margin-bottom:12px">Kamu menyalurkan untuk</div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <div style="width:52px;height:52px;border-radius:10px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px);display:flex;align-items:center;justify-content:center;font-size:8px;font-family:ui-monospace,monospace;color:#94A3B8">beras</div>
+            <div style="flex:1"><div style="font-size:15px;font-weight:500">Beras premium · 1 kg</div><div style="font-size:13px;color:#64748B;margin-top:2px">Panti Harapan Bunda · batch Jumat</div></div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#64748B">Harga barang (1 kg)</span><span>Rp 13.000</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#64748B">Ongkir (dibagi batch)</span><span>Rp 3.000</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:#64748B">Biaya platform</span><span>Rp 1.000</span></div>
+          <div style="height:1px;background:#E2E8F0"></div>
+          <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:500"><span>Total</span><span>Rp 17.000</span></div>
+        </div>
+
+        <div style="font-size:14px;font-weight:500;margin-top:4px">Metode pembayaran</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div sc-camel-on-click="{{ payEwallet }}" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid {{ payBorderEwallet }};border-radius:12px;padding:14px;cursor:pointer">
+            <div style="width:36px;height:36px;border-radius:8px;flex:none;background:#EAF2FE;color:#1B5FE3;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"></rect><path d="M16 12h2"></path></svg></div>
+            <span style="flex:1;font-size:15px">E-wallet</span>
+            <sc-if value="{{ payIsEwallet }}" hint-placeholder-val="{{ true }}"><span style="width:20px;height:20px;border-radius:99px;background:#1B5FE3;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></sc-if>
+          </div>
+          <div sc-camel-on-click="{{ payTransfer }}" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid {{ payBorderTransfer }};border-radius:12px;padding:14px;cursor:pointer">
+            <div style="width:36px;height:36px;border-radius:8px;flex:none;background:#EAF2FE;color:#1B5FE3;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"></path></svg></div>
+            <span style="flex:1;font-size:15px">Transfer bank</span>
+            <sc-if value="{{ payIsTransfer }}" hint-placeholder-val="{{ false }}"><span style="width:20px;height:20px;border-radius:99px;background:#1B5FE3;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></sc-if>
+          </div>
+          <div sc-camel-on-click="{{ payKartu }}" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid {{ payBorderKartu }};border-radius:12px;padding:14px;cursor:pointer">
+            <div style="width:36px;height:36px;border-radius:8px;flex:none;background:#EAF2FE;color:#1B5FE3;display:flex;align-items:center;justify-content:center"><svg width="19" height="19" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path></svg></div>
+            <span style="flex:1;font-size:15px">Kartu debit / kredit</span>
+            <sc-if value="{{ payIsKartu }}" hint-placeholder-val="{{ false }}"><span style="width:20px;height:20px;border-radius:99px;background:#1B5FE3;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #E2E8F0;padding:14px 16px 26px;display:flex;align-items:center;gap:14px">
+        <div><div style="font-size:12px;color:#64748B">Total</div><div style="font-size:18px;font-weight:500">Rp 17.000</div></div>
+        <button sc-camel-on-click="{{ goB5 }}" style="flex:1;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:16px;font-weight:500;padding:15px;border-radius:8px;cursor:pointer">Bayar</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ B5 DONASI BERHASIL (merged) ============ -->
+    <sc-if value="{{ isB5 }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;padding:0 24px">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+        <div style="width:92px;height:92px;border-radius:99px;background:rgba(0,179,126,.10);display:flex;align-items:center;justify-content:center;color:#00B37E;margin-bottom:22px">
+          <svg width="48" height="48" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>
+        </div>
+        <div style="font-size:26px;font-weight:500;letter-spacing:-.01em">Nyalur berhasil</div>
+        <div style="font-size:16px;color:#64748B;margin-top:10px;line-height:1.55;max-width:300px">1 kg beras kamu akan dikirim ke <span style="color:#0F172A">Panti Harapan Bunda</span> hari <span style="color:#0F172A">Jumat</span>.</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#1B5FE3;background:#EAF2FE;padding:8px 14px;border-radius:8px;margin-top:20px">
+          <svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+          Batch pengiriman Jumat, 18 Juli 2026
+        </div>
+      </div>
+      <div style="padding-bottom:44px;display:flex;flex-direction:column;gap:12px">
+        <button sc-camel-on-click="{{ goB6 }}" style="width:100%;border:none;background:#1B5FE3;color:#fff;font-family:inherit;font-size:16px;font-weight:500;padding:16px;border-radius:8px;cursor:pointer">Lacak donasi</button>
+        <button sc-camel-on-click="{{ goB1 }}" style="width:100%;background:#fff;color:#1B5FE3;font-family:inherit;font-size:16px;font-weight:500;padding:15px;border-radius:8px;border:1px solid #1B5FE3;cursor:pointer">Kembali ke etalase</button>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ B6 LACAK DONASI ============ -->
+    <sc-if value="{{ isB6 }}" hint-placeholder-val="{{ false }}">
+    <div class="nyscroll" style="position:absolute;inset:0;overflow-y:auto;background:#F8FAFC">
+      <div style="background:#fff;border-bottom:1px solid #E2E8F0;padding:52px 16px 12px;display:flex;align-items:center;gap:12px">
+        <button sc-camel-on-click="{{ goB1 }}" style="width:38px;height:38px;border-radius:99px;background:#F8FAFC;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#0F172A"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <span style="font-size:18px;font-weight:500">Lacak donasi</span>
+      </div>
+
+      <div style="padding:16px 16px 40px">
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:16px;display:flex;gap:12px;align-items:center;margin-bottom:16px">
+          <div style="width:48px;height:48px;border-radius:10px;flex:none;background:repeating-linear-gradient(135deg,#EAF2FE,#EAF2FE 5px,#F8FAFC 5px,#F8FAFC 10px);display:flex;align-items:center;justify-content:center;font-size:8px;font-family:ui-monospace,monospace;color:#94A3B8">beras</div>
+          <div style="flex:1"><div style="font-size:15px;font-weight:500">Beras premium · 1 kg</div><div style="font-size:12px;color:#64748B;margin-top:2px">ke Panti Harapan Bunda</div></div>
+        </div>
+
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:20px 18px">
+          <div style="font-size:13px;color:#64748B;margin-bottom:18px">Status barang</div>
+
+          <!-- step: dikonfirmasi (done) -->
+          <div style="display:flex;gap:14px">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:26px;height:26px;border-radius:99px;background:#00B37E;color:#fff;display:flex;align-items:center;justify-content:center;flex:none"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></div>
+              <div style="width:2px;flex:1;min-height:28px;background:#00B37E"></div>
+            </div>
+            <div style="padding-bottom:20px"><div style="font-size:15px;font-weight:500">Pesanan dikonfirmasi</div><div style="font-size:12px;color:#64748B;margin-top:2px">Rabu, 16 Juli · 10.12 WIB</div></div>
+          </div>
+          <!-- step: dikemas (done) -->
+          <div style="display:flex;gap:14px">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:26px;height:26px;border-radius:99px;background:#00B37E;color:#fff;display:flex;align-items:center;justify-content:center;flex:none"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></div>
+              <div style="width:2px;flex:1;min-height:28px;background:#1B5FE3"></div>
+            </div>
+            <div style="padding-bottom:20px"><div style="font-size:15px;font-weight:500">Dikemas</div><div style="font-size:12px;color:#64748B;margin-top:2px">Kamis, 17 Juli · 15.40 WIB</div></div>
+          </div>
+          <!-- step: dikirim (active) -->
+          <div style="display:flex;gap:14px">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:26px;height:26px;border-radius:99px;background:#1B5FE3;color:#fff;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 0 0 4px #EAF2FE"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="14" height="11" rx="1"></rect><path d="M15 9h4l3 3v5h-7"></path><circle cx="6" cy="18" r="1.6"></circle><circle cx="18" cy="18" r="1.6"></circle></svg></div>
+              <div style="width:2px;flex:1;min-height:28px;background:#E2E8F0"></div>
+            </div>
+            <div style="padding-bottom:20px"><div style="font-size:15px;font-weight:500;color:#1B5FE3">Dikirim</div><div style="font-size:12px;color:#64748B;margin-top:2px">Jumat, 18 Juli · sedang dalam perjalanan</div></div>
+          </div>
+          <!-- step: diterima (pending) -->
+          <div style="display:flex;gap:14px">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div style="width:26px;height:26px;border-radius:99px;background:#fff;border:2px solid #E2E8F0;color:#94A3B8;display:flex;align-items:center;justify-content:center;flex:none"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></div>
+            </div>
+            <div><div style="font-size:15px;font-weight:500;color:#94A3B8">Diterima</div><div style="font-size:12px;color:#94A3B8;margin-top:2px">Menunggu bukti serah terima</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#64748B;line-height:1.5;margin-top:14px">
+          <svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+          Yang dilacak adalah barang fisikmu sampai ke panti — bukan status dana.
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ C1 ACCOUNT SWITCHER ============ -->
+    <sc-if value="{{ isSwitcher }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:rgba(11,46,111,.45);animation:scrimIn .2s ease;z-index:30" sc-camel-on-click="{{ closeSwitcher }}"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;z-index:31;background:#fff;border-radius:20px 20px 0 0;animation:sheetUp .28s cubic-bezier(.2,.8,.2,1)">
+      <div style="display:flex;justify-content:center;padding:10px 0 4px"><div style="width:38px;height:4px;border-radius:99px;background:#E2E8F0"></div></div>
+      <div style="padding:10px 20px 30px">
+        <div style="font-size:18px;font-weight:500;margin-bottom:2px">Ganti akun</div>
+        <div style="font-size:13px;color:#64748B;margin-bottom:16px">Satu HP, dua peran — tap untuk beralih.</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button sc-camel-on-click="{{ switchDonatur }}" style="width:100%;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #1B5FE3;border-radius:12px;padding:14px;cursor:pointer;font-family:inherit;text-align:left">
+            <div style="width:44px;height:44px;border-radius:99px;flex:none;background:#1B5FE3;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500">DA</div>
+            <div style="flex:1"><div style="font-size:15px;font-weight:500;color:#0F172A">Dara Anindya</div><div style="font-size:12px;color:#64748B">Donatur</div></div>
+            <span style="width:22px;height:22px;border-radius:99px;background:#1B5FE3;color:#fff;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
+          </button>
+          <button sc-camel-on-click="{{ switchPanti }}" style="width:100%;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:14px;cursor:pointer;font-family:inherit;text-align:left">
+            <div style="width:44px;height:44px;border-radius:99px;flex:none;background:#0B2E6F;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:500">HB</div>
+            <div style="flex:1"><div style="display:flex;align-items:center;gap:6px"><span style="font-size:15px;font-weight:500;color:#0F172A">Panti Harapan Bunda</span><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="#1B5FE3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></div><div style="font-size:12px;color:#64748B">Pengurus panti</div></div>
+            <svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script="">
+class Component extends DCLogic {
+  state = { screen: 'b1', qty: 1, pQty: 1, selIdx: 0, switcher: false, payMethod: 'ewallet' };
+  fmt(n){ return 'Rp ' + n.toLocaleString('id-ID'); }
+  renderVals(){
+    const s = this.state.screen;
+    const qty = this.state.qty;
+    const perKg = 13000, ongkir = 3000, fee = 1000;
+    const barang = qty * perKg;
+    const total = barang + ongkir + fee;
+    const filled = 7 + qty;
+    const pct = Math.min(100, Math.round(filled / 10 * 100));
+    const set = (screen) => () => this.setState({ screen });
+    const setQ = (q) => () => this.setState({ qty: Math.max(1, Math.min(3, q)) });
+
+    const catalog = [
+      {name:'Beras premium', unit:'5 kg', price:65000, img:'beras'},
+      {name:'Minyak goreng', unit:'2 L', price:34000, img:'minyak'},
+      {name:'Telur ayam', unit:'1 kg', price:28000, img:'telur'},
+      {name:'Susu UHT', unit:'1 L', price:18000, img:'susu'},
+      {name:'Sabun mandi', unit:'per pcs', price:12000, img:'sabun'},
+      {name:'Buku tulis', unit:'10 pcs', price:25000, img:'buku'},
+    ];
+    const catRows = catalog.map((it,i)=>({ ...it, priceStr: this.fmt(it.price), onTap: () => this.setState({ screen:'a6', selIdx:i, pQty:1 }) }));
+    const sel = catalog[this.state.selIdx] || catalog[0];
+    const pQty = this.state.pQty;
+    const pTotal = sel.price * pQty;
+    const plafon = 12500000, terpakai = 4200000, sisa = plafon - terpakai;
+    const sisaAfter = sisa - pTotal;
+
+    return {
+      isB1: s==='b1', isB2: s==='b2', isB3: s==='b3', isB4: s==='b4', isB5: s==='b5', isB6: s==='b6', isB7: s==='b7',
+      isA1: s==='a1', isA2: s==='a2', isA3: s==='a3', isA4: s==='a4', isA5: s==='a5', isA6: s==='a6', isA7: s==='a7',
+      statusColor: s==='b3' || s==='a6' ? '#fff' : '#0F172A',
+      goB1: set('b1'), goB2: set('b2'), goB3: () => this.setState({ screen:'b3', qty:1 }), goB4: set('b4'), goB5: set('b5'), goB6: set('b6'), goB7: set('b7'),
+      isSwitcher: this.state.switcher,
+      openSwitcher: () => this.setState({ switcher: true }),
+      closeSwitcher: () => this.setState({ switcher: false }),
+      switchDonatur: () => this.setState({ switcher: false, screen: 'b1' }),
+      switchPanti: () => this.setState({ switcher: false, screen: 'a4' }),
+      payEwallet: () => this.setState({ payMethod: 'ewallet' }),
+      payTransfer: () => this.setState({ payMethod: 'transfer' }),
+      payKartu: () => this.setState({ payMethod: 'kartu' }),
+      payIsEwallet: this.state.payMethod === 'ewallet',
+      payIsTransfer: this.state.payMethod === 'transfer',
+      payIsKartu: this.state.payMethod === 'kartu',
+      payBorderEwallet: this.state.payMethod === 'ewallet' ? '#1B5FE3' : '#E2E8F0',
+      payBorderTransfer: this.state.payMethod === 'transfer' ? '#1B5FE3' : '#E2E8F0',
+      payBorderKartu: this.state.payMethod === 'kartu' ? '#1B5FE3' : '#E2E8F0',
+      goA1: set('a1'), goA2: set('a2'), goA3: set('a3'), goA4: set('a4'), goA5: set('a5'), goA7: set('a7'),
+      qty,
+      progLabel: filled + ' dari 10 kg',
+      progPct: pct + '%',
+      barangStr: this.fmt(barang),
+      totalStr: this.fmt(total),
+      ctaStr: 'Nyalur ' + qty + ' kg — ' + this.fmt(total),
+      inc: setQ(qty+1), dec: setQ(qty-1),
+      set1: setQ(1), set3: setQ(3), setAll: setQ(3),
+      catRows,
+      selName: sel.name, selUnit: sel.unit, selPriceStr: this.fmt(sel.price), selImg: sel.img,
+      pQty, pTotalStr: this.fmt(pTotal),
+      pInc: () => this.setState(st => ({ pQty: st.pQty + 1 })),
+      pDec: () => this.setState(st => ({ pQty: Math.max(1, st.pQty - 1) })),
+      plafonStr: this.fmt(plafon), terpakaiStr: this.fmt(terpakai), sisaStr: this.fmt(sisa),
+      sisaAfterStr: this.fmt(sisaAfter),
+      terpakaiPct: Math.round(terpakai / plafon * 100) + '%',
+      ajukanStr: 'Ajukan ' + pQty + ' × ' + sel.unit,
+      reqSummary: sel.name + ' · ' + pQty + ' × ' + sel.unit,
+    };
+  }
+}
+</script>
+
+
+</body></html>

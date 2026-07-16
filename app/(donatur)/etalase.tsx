@@ -1,0 +1,191 @@
+import { useCallback, useMemo, useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
+import { KartuPanti } from '../../components/KartuPanti';
+import { Chip, Tombol } from '../../components/ui';
+import { warna, spacing, radius, teks } from '../../constants/theme';
+import { getDaftarPanti, requestAktif, type Kategori, type PantiDenganRequest } from '../../lib/queries';
+
+type Filter = 'terdekat' | Kategori;
+
+const FILTER: { nilai: Filter; label: string }[] = [
+  { nilai: 'terdekat', label: 'Terdekat' },
+  { nilai: 'pangan', label: 'Pangan' },
+  { nilai: 'kebersihan', label: 'Kebersihan' },
+  { nilai: 'sekolah', label: 'Sekolah' },
+];
+
+export default function Etalase() {
+  const router = useRouter();
+  const [panti, setPanti] = useState<PantiDenganRequest[]>([]);
+  const [muat, setMuat] = useState(true);
+  const [galat, setGalat] = useState<string | null>(null);
+  const [cari, setCari] = useState('');
+  const [filter, setFilter] = useState<Filter>('terdekat');
+
+  const ambil = useCallback(async () => {
+    try {
+      setGalat(null);
+      setPanti(await getDaftarPanti());
+    } catch (e) {
+      setGalat(e instanceof Error ? e.message : String(e));
+    } finally {
+      setMuat(false);
+    }
+  }, []);
+
+  // Pengganti realtime: muat ulang tiap layar difokuskan.
+  useFocusEffect(
+    useCallback(() => {
+      ambil();
+    }, [ambil])
+  );
+
+  const tampil = useMemo(() => {
+    const kata = cari.trim().toLowerCase();
+    return panti.filter((p) => {
+      const aktif = requestAktif(p);
+
+      const cocokFilter =
+        filter === 'terdekat' || aktif.some((r) => r.katalog.kategori === filter);
+
+      const cocokCari =
+        !kata ||
+        p.nama.toLowerCase().includes(kata) ||
+        p.kota.toLowerCase().includes(kata) ||
+        aktif.some((r) => r.katalog.nama.toLowerCase().includes(kata));
+
+      return cocokFilter && cocokCari;
+    });
+  }, [panti, cari, filter]);
+
+  return (
+    <SafeAreaView style={s.layar} edges={['top']}>
+      <View style={s.header}>
+        <View style={s.headerAtas}>
+          <View>
+            <Text style={teks.judul}>Etalase</Text>
+            <View style={s.lokasi}>
+              <Feather name="map-pin" size={14} color={warna.muted} />
+              <Text style={teks.caption}>Tangerang Selatan</Text>
+            </View>
+          </View>
+          <View style={s.avatar}>
+            <Feather name="user" size={20} color={warna.biru} />
+          </View>
+        </View>
+
+        <View style={s.cari}>
+          <Feather name="search" size={18} color={warna.muted} />
+          <TextInput
+            value={cari}
+            onChangeText={setCari}
+            placeholder="Cari panti atau barang"
+            placeholderTextColor={warna.muted}
+            style={s.cariInput}
+            returnKeyType="search"
+          />
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={s.filter}
+        >
+          {FILTER.map((f) => (
+            <Chip
+              key={f.nilai}
+              label={f.label}
+              varian={filter === f.nilai ? 'aktif' : 'pasif'}
+              onPress={() => setFilter(f.nilai)}
+            />
+          ))}
+        </ScrollView>
+      </View>
+
+      {muat ? (
+        <View style={s.tengah}>
+          <ActivityIndicator color={warna.biru} />
+        </View>
+      ) : galat ? (
+        <View style={s.tengah}>
+          <Text style={[teks.body, s.pesan]}>{galat}</Text>
+          <Tombol label="Coba lagi" varian="sekunder" penuh={false} onPress={ambil} />
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={s.isi}>
+          <Text style={teks.caption}>
+            {tampil.length} panti terverifikasi di sekitarmu
+          </Text>
+          {tampil.map((p) => (
+            <KartuPanti
+              key={p.id}
+              panti={p}
+              onPress={() => router.push(`/panti/${p.id}`)}
+            />
+          ))}
+          {!tampil.length && (
+            <Text style={[teks.caption, s.pesan]}>
+              Tidak ada panti yang cocok. Coba ubah kata kunci atau filter.
+            </Text>
+          )}
+        </ScrollView>
+      )}
+    </SafeAreaView>
+  );
+}
+
+const s = StyleSheet.create({
+  layar: { flex: 1, backgroundColor: warna.pageBg },
+  header: {
+    backgroundColor: warna.putih,
+    borderBottomWidth: 1,
+    borderBottomColor: warna.border,
+    paddingHorizontal: 20,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
+  },
+  headerAtas: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  lokasi: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.pill,
+    backgroundColor: warna.skyTint,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cari: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderWidth: 1,
+    borderColor: warna.border,
+    borderRadius: radius.tombol,
+    paddingHorizontal: spacing.md,
+    backgroundColor: warna.pageBg,
+  },
+  cariInput: {
+    flex: 1,
+    paddingVertical: 11,
+    ...teks.kecil,
+  },
+  filter: { gap: spacing.sm, marginTop: spacing.md },
+  isi: { padding: spacing.lg, gap: 14, paddingBottom: spacing.xl * 2 },
+  tengah: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, padding: spacing.xl },
+  pesan: { textAlign: 'center' },
+});

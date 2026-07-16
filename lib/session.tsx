@@ -18,7 +18,7 @@ export const AKUN: Akun[] = [
     id: 'u-panti-1',
     nama: 'Panti Harapan Bunda',
     peran: 'panti',
-    pantiId: '<uuid-harapan-bunda>',
+    pantiId: '11e3e8fc-a545-4116-bb18-60d2fc404fbc',
   },
 ];
 

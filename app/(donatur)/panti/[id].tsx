@@ -1,19 +1,29 @@
 import { useCallback, useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { BarisKebutuhan } from '../../../components/BarisKebutuhan';
+import { SheetPilihPorsi } from '../../../components/SheetPilihPorsi';
 import { Badge, Tombol, FotoPlaceholder } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
 import { formatAngka } from '../../../lib/format';
-import { getPantiById, requestAktif, type PantiDenganRequest } from '../../../lib/queries';
+import { useSession } from '../../../lib/session';
+import {
+  buatDonasi,
+  getPantiById,
+  requestAktif,
+  type PantiDenganRequest,
+  type Request,
+} from '../../../lib/queries';
 
 export default function DetailPanti() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { akun } = useSession();
   const [panti, setPanti] = useState<PantiDenganRequest | null>(null);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
+  const [dipilih, setDipilih] = useState<Request | null>(null);
 
   const ambil = useCallback(async () => {
     if (!id) return;
@@ -35,6 +45,28 @@ export default function DetailPanti() {
   );
 
   const kembali = () => (router.canGoBack() ? router.back() : router.replace('/etalase'));
+
+  const nyalur = async (jumlah: number) => {
+    if (!dipilih || !panti) return;
+    const donasiId = await buatDonasi({
+      requestId: dipilih.id,
+      jumlah,
+      katalog: dipilih.katalog,
+      donatur: { id: akun.id, nama: akun.nama },
+    });
+    setDipilih(null);
+    router.push({
+      pathname: '/checkout',
+      params: {
+        donasiId,
+        barang: dipilih.katalog.nama,
+        jumlah: String(jumlah),
+        satuan: dipilih.katalog.satuan,
+        panti: panti.nama,
+        batch: dipilih.batch_kirim,
+      },
+    });
+  };
 
   if (muat) {
     return (
@@ -88,13 +120,7 @@ export default function DetailPanti() {
       <View style={s.daftar}>
         <Text style={teks.label}>Kebutuhan aktif</Text>
         {aktif.map((r) => (
-          <BarisKebutuhan
-            key={r.id}
-            kebutuhan={r}
-            onNyalur={() =>
-              Alert.alert('Pilih porsi', 'Sheet B3 menyusul di tugas berikutnya.')
-            }
-          />
+          <BarisKebutuhan key={r.id} kebutuhan={r} onNyalur={() => setDipilih(r)} />
         ))}
         {!aktif.length && (
           <Text style={[teks.caption, s.pesan]}>
@@ -102,6 +128,13 @@ export default function DetailPanti() {
           </Text>
         )}
       </View>
+
+      <SheetPilihPorsi
+        kebutuhan={dipilih}
+        namaPanti={panti.nama}
+        onTutup={() => setDipilih(null)}
+        onNyalur={nyalur}
+      />
     </ScrollView>
   );
 }

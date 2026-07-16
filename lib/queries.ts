@@ -75,6 +75,79 @@ export async function getPantiById(id: string): Promise<PantiDenganRequest | nul
   return (data as unknown as PantiDenganRequest) ?? null;
 }
 
+// ---- donasi ----
+
+/** Ongkir sudah dibagi rata antar donatur di batch — flat untuk demo. */
+export const ONGKIR = 2000;
+export const PLATFORM_FEE = 2000;
+
+export type RincianBiaya = {
+  hargaBarang: number;
+  ongkir: number;
+  platformFee: number;
+  total: number;
+};
+
+export function hitungBiaya(jumlah: number, hargaPerSatuan: number): RincianBiaya {
+  const hargaBarang = jumlah * hargaPerSatuan;
+  return {
+    hargaBarang,
+    ongkir: ONGKIR,
+    platformFee: PLATFORM_FEE,
+    total: hargaBarang + ONGKIR + PLATFORM_FEE,
+  };
+}
+
+/**
+ * Donasi masuk. Progress request di-update manual — jumlah_terpenuhi memang
+ * denormalized, jadi tidak dihitung ulang dari SUM(donasi) tiap render.
+ * Mengembalikan id donasi untuk layar sukses & lacak.
+ */
+export async function buatDonasi(args: {
+  requestId: string;
+  jumlah: number;
+  katalog: Katalog;
+  donatur: { id: string; nama: string };
+}): Promise<string> {
+  const { requestId, jumlah, katalog, donatur } = args;
+  const biaya = hitungBiaya(jumlah, katalog.harga_per_satuan);
+
+  const { data: donasi, error: galatInsert } = await supabase
+    .from('donasi')
+    .insert({
+      request_id: requestId,
+      donatur_id: donatur.id, // text, bukan uuid — fake auth
+      donatur_nama: donatur.nama,
+      jumlah,
+      harga_barang: biaya.hargaBarang,
+      ongkir: biaya.ongkir,
+      platform_fee: biaya.platformFee,
+      total: biaya.total,
+      status: 'dikemas',
+    })
+    .select('id')
+    .single();
+
+  if (galatInsert) throw new Error(`Gagal mencatat donasi: ${galatInsert.message}`);
+
+  const { data: req, error: galatBaca } = await supabase
+    .from('request')
+    .select('jumlah_terpenuhi')
+    .eq('id', requestId)
+    .single();
+
+  if (galatBaca) throw new Error(`Donasi tercatat, gagal membaca progress: ${galatBaca.message}`);
+
+  const { error: galatUpdate } = await supabase
+    .from('request')
+    .update({ jumlah_terpenuhi: req.jumlah_terpenuhi + jumlah })
+    .eq('id', requestId);
+
+  if (galatUpdate) throw new Error(`Donasi tercatat, gagal memperbarui progress: ${galatUpdate.message}`);
+
+  return donasi.id as string;
+}
+
 // ---- turunan data (dipakai layar, bukan query) ----
 
 export const requestAktif = (p: PantiDenganRequest): Request[] =>

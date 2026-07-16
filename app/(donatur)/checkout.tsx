@@ -1,4 +1,4 @@
-import { View, Text, Alert, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol } from '../../components/ui';
@@ -8,7 +8,7 @@ import { formatJumlah } from '../../lib/format';
 // B4 + B5 digabung: pembayaran mock sudah selesai di sheet B3, ini momen suksesnya.
 export default function DonasiBerhasil() {
   const router = useRouter();
-  const { barang, jumlah, satuan, panti, batch } = useLocalSearchParams<{
+  const { donasiId, barang, jumlah, satuan, panti, batch } = useLocalSearchParams<{
     donasiId: string;
     barang: string;
     jumlah: string;
@@ -44,7 +44,7 @@ export default function DonasiBerhasil() {
           label="Lacak donasi"
           varian="primer"
           ukuran="besar"
-          onPress={() => Alert.alert('Lacak donasi', 'Layar B6 menyusul di tugas berikutnya.')}
+          onPress={() => router.replace(`/lacak/${donasiId}`)}
         />
         <Tombol
           label="Kembali ke etalase"

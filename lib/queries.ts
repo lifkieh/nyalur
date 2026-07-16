@@ -75,6 +75,42 @@ export async function getPantiById(id: string): Promise<PantiDenganRequest | nul
   return (data as unknown as PantiDenganRequest) ?? null;
 }
 
+export type StatusDonasi = 'dikemas' | 'dikirim' | 'diterima';
+
+export type BuktiTerima = {
+  id: string;
+  donasi_id: string;
+  kode_bukti: string;
+  foto_url: string;
+  penerima_nama: string;
+  penerima_jabatan: string;
+  lokasi_lat: number | null;
+  lokasi_lng: number | null;
+  diterima_at: string;
+};
+
+export type DonasiLengkap = {
+  id: string;
+  donatur_id: string;
+  donatur_nama: string;
+  jumlah: number;
+  harga_barang: number;
+  ongkir: number;
+  platform_fee: number;
+  total: number;
+  status: StatusDonasi;
+  created_at: string;
+  request: {
+    id: string;
+    batch_kirim: string;
+    status: StatusRequest;
+    katalog: Katalog;
+    panti: Panti;
+  };
+  /** nested one-to-many — praktiknya 0 atau 1 baris */
+  bukti_terima: BuktiTerima[];
+};
+
 // ---- donasi ----
 
 /** Ongkir sudah dibagi rata antar donatur di batch — flat untuk demo. */
@@ -147,6 +183,27 @@ export async function buatDonasi(args: {
 
   return donasi.id as string;
 }
+
+/** B6 + B7 — satu donasi lengkap dengan barang, panti, dan buktinya. */
+export async function getDonasiById(id: string): Promise<DonasiLengkap | null> {
+  const { data, error } = await supabase
+    .from('donasi')
+    .select(
+      `id, donatur_id, donatur_nama, jumlah, harga_barang, ongkir, platform_fee, total, status, created_at,
+       request:request_id ( id, batch_kirim, status,
+         katalog:katalog_id ( id, nama, kategori, satuan, harga_per_satuan, foto_url, aktif ),
+         panti:panti_id ( ${KOLOM_PANTI} ) ),
+       bukti_terima ( id, donasi_id, kode_bukti, foto_url, penerima_nama, penerima_jabatan, lokasi_lat, lokasi_lng, diterima_at )`
+    )
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error) throw new Error(`Gagal memuat donasi: ${error.message}`);
+  return (data as unknown as DonasiLengkap) ?? null;
+}
+
+export const buktiDari = (d: DonasiLengkap): BuktiTerima | null =>
+  d.bukti_terima?.[0] ?? null;
 
 // ---- turunan data (dipakai layar, bukan query) ----
 

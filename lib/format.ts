@@ -8,6 +8,16 @@ const BULAN = [
 
 const dua = (n: number) => String(n).padStart(2, '0');
 
+/**
+ * Semua waktu ditampilkan dalam WIB apa pun zona waktu HP-nya. Label di layar
+ * bertuliskan "WIB", jadi jamnya tidak boleh ikut berubah kalau HP demo
+ * kebetulan diset ke zona lain.
+ */
+function keWib(input: string | Date): Date {
+  const d = new Date(input);
+  return new Date(d.getTime() + (7 * 60 + d.getTimezoneOffset()) * 60000);
+}
+
 /** 13000 -> "Rp 13.000" */
 export function formatRupiah(nilai: number): string {
   const bulat = Math.round(nilai || 0);
@@ -28,16 +38,27 @@ export function formatJumlah(nilai: number, satuan: string): string {
   return `${formatAngka(nilai)} ${satuan}`;
 }
 
-/** "2026-07-18T14:32:00+07:00" -> "Jumat, 18 Juli 2026" */
+/** "2026-07-18T07:32:00Z" -> "Jumat, 18 Juli 2026" (WIB) */
 export function formatTanggal(input: string | Date): string {
-  const d = new Date(input);
+  const d = keWib(input);
   return `${HARI[d.getDay()]}, ${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 /** -> "14.32 WIB" */
 export function formatJam(input: string | Date): string {
-  const d = new Date(input);
+  const d = keWib(input);
   return `${dua(d.getHours())}.${dua(d.getMinutes())} WIB`;
+}
+
+/** -> "Jumat, 18 Juli 2026 · 14.32 WIB" */
+export function formatTanggalJam(input: string | Date): string {
+  return `${formatTanggal(input)} · ${formatJam(input)}`;
+}
+
+/** -6.3019, 106.6528 -> "-6.3019, 106.6528" */
+export function formatKoordinat(lat: number | null, lng: number | null): string | null {
+  if (lat == null || lng == null) return null;
+  return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
 }
 
 /** -> "Diterima 14.32 WIB · Jumat, 18 Juli 2026" */

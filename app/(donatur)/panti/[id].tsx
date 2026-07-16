@@ -4,12 +4,10 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { BarisKebutuhan } from '../../../components/BarisKebutuhan';
 import { SheetPilihPorsi } from '../../../components/SheetPilihPorsi';
-import { Badge, Tombol, FotoPlaceholder } from '../../../components/ui';
+import { Badge, Kartu, Tombol, FotoPlaceholder } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
-import { formatAngka } from '../../../lib/format';
-import { useSession } from '../../../lib/session';
+import { formatAngka, formatJumlah } from '../../../lib/format';
 import {
-  buatDonasi,
   getPantiById,
   requestAktif,
   type PantiDenganRequest,
@@ -19,7 +17,6 @@ import {
 export default function DetailPanti() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { akun } = useSession();
   const [panti, setPanti] = useState<PantiDenganRequest | null>(null);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
@@ -46,26 +43,15 @@ export default function DetailPanti() {
 
   const kembali = () => (router.canGoBack() ? router.back() : router.replace('/etalase'));
 
+  // Donasi belum tercatat di sini — sheet hanya memilih porsi. Transaksi
+  // terjadi di layar pembayaran (B4) setelah donatur menekan Bayar.
   const nyalur = async (jumlah: number) => {
-    if (!dipilih || !panti) return;
-    const donasiId = await buatDonasi({
-      requestId: dipilih.id,
-      jumlah,
-      katalog: dipilih.katalog,
-      donatur: { id: akun.id, nama: akun.nama },
-      panti: { nama: panti.nama },
-    });
+    if (!dipilih) return;
+    const requestId = dipilih.id;
     setDipilih(null);
     router.push({
-      pathname: '/checkout',
-      params: {
-        donasiId,
-        barang: dipilih.katalog.nama,
-        jumlah: String(jumlah),
-        satuan: dipilih.katalog.satuan,
-        panti: panti.nama,
-        batch: dipilih.batch_kirim,
-      },
+      pathname: '/bayar',
+      params: { requestId, jumlah: String(jumlah) },
     });
   };
 
@@ -87,6 +73,7 @@ export default function DetailPanti() {
   }
 
   const aktif = requestAktif(panti);
+  const tersalurkan = (panti.request ?? []).filter((r) => r.status === 'diterima');
   const batch = aktif[0]?.batch_kirim;
 
   return (
@@ -129,6 +116,28 @@ export default function DetailPanti() {
           </Text>
         )}
       </View>
+
+      {/* Transparansi publik (brief §6): kebutuhan yang sudah terpenuhi tetap
+          terlihat, tidak hilang dari etalase. */}
+      {!!tersalurkan.length && (
+        <View style={s.daftarSelesai}>
+          <Text style={teks.label}>Sudah tersalurkan</Text>
+          {tersalurkan.map((r) => (
+            <Kartu key={r.id} style={s.barisSelesai}>
+              <FotoPlaceholder url={r.katalog.foto_url} label={r.katalog.nama} ukuran={44} />
+              <View style={s.selesaiInfo}>
+                <Text style={teks.bodyMedium} numberOfLines={1}>
+                  {r.katalog.nama}
+                </Text>
+                <Text style={teks.mikro}>
+                  {formatJumlah(r.jumlah_diminta, r.katalog.satuan)} terpenuhi penuh
+                </Text>
+              </View>
+              <Badge label="Terkirim" varian="terkirim" />
+            </Kartu>
+          ))}
+        </View>
+      )}
 
       <SheetPilihPorsi
         kebutuhan={dipilih}
@@ -178,6 +187,9 @@ const s = StyleSheet.create({
   },
   batchTeks: { color: warna.biru },
   daftar: { padding: spacing.lg, gap: 14 },
+  daftarSelesai: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg, gap: 10 },
+  barisSelesai: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: 14 },
+  selesaiInfo: { flex: 1, minWidth: 0, gap: 1 },
   tengah: {
     flex: 1,
     alignItems: 'center',

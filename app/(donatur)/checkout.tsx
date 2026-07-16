@@ -3,19 +3,22 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol } from '../../components/ui';
 import { warna, spacing, radius, teks } from '../../constants/theme';
-import { formatJumlah } from '../../lib/format';
+import { formatJumlah, formatRupiah } from '../../lib/format';
 
-// B4 + B5 digabung: pembayaran mock sudah selesai di sheet B3, ini momen suksesnya.
+// B5 — layar sukses. Pembayaran (B4) selesai di /bayar sebelum sampai sini.
 export default function DonasiBerhasil() {
   const router = useRouter();
-  const { donasiId, barang, jumlah, satuan, panti, batch } = useLocalSearchParams<{
-    donasiId: string;
-    barang: string;
-    jumlah: string;
-    satuan: string;
-    panti: string;
-    batch: string;
-  }>();
+  const { donasiId, barang, jumlah, satuan, panti, batch, total, metode } =
+    useLocalSearchParams<{
+      donasiId: string;
+      barang: string;
+      jumlah: string;
+      satuan: string;
+      panti: string;
+      batch: string;
+      total: string;
+      metode: string;
+    }>();
 
   const porsi = formatJumlah(Number(jumlah) || 0, satuan ?? '');
 
@@ -37,6 +40,13 @@ export default function DonasiBerhasil() {
           <Feather name="calendar" size={15} color={warna.biru} />
           <Text style={[teks.caption, s.batchTeks]}>Batch pengiriman {batch}</Text>
         </View>
+
+        {!!Number(total) && (
+          <Text style={[teks.mikro, s.struk]}>
+            Dibayar {formatRupiah(Number(total))}
+            {metode ? ` via ${metode}` : ''}
+          </Text>
+        )}
       </View>
 
       <View style={s.aksi}>
@@ -88,5 +98,6 @@ const s = StyleSheet.create({
     marginTop: 20,
   },
   batchTeks: { color: warna.biru },
+  struk: { marginTop: spacing.md },
   aksi: { paddingBottom: 44, gap: spacing.md },
 });

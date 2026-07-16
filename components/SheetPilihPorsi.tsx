@@ -211,11 +211,7 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
           {!!galat && <Text style={[teks.mikro, s.galat]}>{galat}</Text>}
 
           <Tombol
-            label={
-              bisaNyalur
-                ? `Nyalur ${formatJumlah(qty, katalog.satuan)} — ${formatRupiah(biaya.total)}`
-                : 'Sudah terpenuhi'
-            }
+            label={bisaNyalur ? `Nyalur ${formatJumlah(qty, katalog.satuan)}` : 'Sudah terpenuhi'}
             varian="primer"
             ukuran="besar"
             loading={kirim}

@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { Feather } from '@expo/vector-icons';
-import { KartuProduk } from '../../components/KartuProduk';
-import { SheetAturJumlah } from '../../components/SheetAturJumlah';
-import { Chip, Tombol } from '../../components/ui';
-import { warna, spacing, radius, teks } from '../../constants/theme';
-import { formatRupiah } from '../../lib/format';
-import { useSession } from '../../lib/session';
+import { KartuProduk } from '../../../components/KartuProduk';
+import { SheetAturJumlah } from '../../../components/SheetAturJumlah';
+import { Chip, Tombol } from '../../../components/ui';
+import { warna, spacing, radius, teks } from '../../../constants/theme';
+import { formatRupiah } from '../../../lib/format';
+import { useSession } from '../../../lib/session';
 import {
   buatRequest,
   getKatalog,
@@ -16,7 +16,7 @@ import {
   type Kategori,
   type Katalog,
   type PantiDenganRequest,
-} from '../../lib/queries';
+} from '../../../lib/queries';
 
 const KATEGORI: { nilai: Kategori; label: string }[] = [
   { nilai: 'pangan', label: 'Pangan' },
@@ -64,8 +64,6 @@ export default function KatalogPanti() {
     [katalog, kategori]
   );
 
-  const kembali = () => (router.canGoBack() ? router.back() : router.replace('/dashboard'));
-
   const ajukan = async (jumlah: number) => {
     if (!dipilih || !panti || !akun.pantiId) return;
     const requestId = await buatRequest({
@@ -92,13 +90,10 @@ export default function KatalogPanti() {
   const sisa = panti ? sisaPlafon(panti) : 0;
 
   return (
-    <View style={s.layar}>
+    <SafeAreaView style={s.layar} edges={['top']}>
       <View style={s.header}>
         <View style={s.headerAtas}>
-          <Pressable onPress={kembali} style={s.tombolKembali} hitSlop={8}>
-            <Feather name="chevron-left" size={20} color={warna.ink} />
-          </Pressable>
-          <Text style={[teks.subjudul, s.judul]}>Katalog</Text>
+          <Text style={[teks.judul, s.judul]}>Katalog</Text>
           {!!panti && (
             <View style={s.chipSisa}>
               <Text style={[teks.mikro, s.chipSisaTeks]}>Sisa {formatRupiah(sisa)}</Text>
@@ -150,7 +145,7 @@ export default function KatalogPanti() {
         onTutup={() => setDipilih(null)}
         onAjukan={ajukan}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -160,21 +155,11 @@ const s = StyleSheet.create({
     backgroundColor: warna.putih,
     borderBottomWidth: 1,
     borderBottomColor: warna.border,
-    paddingTop: 52,
+    paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: 20,
   },
   headerAtas: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  tombolKembali: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.pill,
-    backgroundColor: warna.pageBg,
-    borderWidth: 1,
-    borderColor: warna.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   judul: { flex: 1 },
   chipSisa: {
     backgroundColor: warna.skyTint,

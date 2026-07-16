@@ -11,11 +11,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { KartuPanti } from '../../components/KartuPanti';
-import { Chip, Tombol } from '../../components/ui';
-import { warna, spacing, radius, teks } from '../../constants/theme';
-import { useSession } from '../../lib/session';
-import { getDaftarPanti, requestAktif, type Kategori, type PantiDenganRequest } from '../../lib/queries';
+import { KartuPanti } from '../../../components/KartuPanti';
+import { SheetSwitchAkun } from '../../../components/SheetSwitchAkun';
+import { Chip, Tombol } from '../../../components/ui';
+import { warna, spacing, radius, teks } from '../../../constants/theme';
+import { getDaftarPanti, requestAktif, type Kategori, type PantiDenganRequest } from '../../../lib/queries';
 
 type Filter = 'terdekat' | Kategori;
 
@@ -28,7 +28,7 @@ const FILTER: { nilai: Filter; label: string }[] = [
 
 export default function Etalase() {
   const router = useRouter();
-  const { daftarAkun, switchAkun } = useSession();
+  const [switcher, setSwitcher] = useState(false);
   const [panti, setPanti] = useState<PantiDenganRequest[]>([]);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
@@ -52,14 +52,6 @@ export default function Etalase() {
       ambil();
     }, [ambil])
   );
-
-  // Sementara sampai C1 (sheet switch akun) ada: avatar = pindah ke POV panti.
-  const kePanti = () => {
-    const i = daftarAkun.findIndex((a) => a.peran === 'panti');
-    if (i < 0) return;
-    switchAkun(i);
-    router.replace('/dashboard');
-  };
 
   const tampil = useMemo(() => {
     const kata = cari.trim().toLowerCase();
@@ -91,7 +83,7 @@ export default function Etalase() {
             </View>
           </View>
           <Pressable
-            onPress={kePanti}
+            onPress={() => setSwitcher(true)}
             style={({ pressed }) => [s.avatar, pressed && s.avatarDitekan]}
             hitSlop={8}
           >
@@ -155,6 +147,8 @@ export default function Etalase() {
           )}
         </ScrollView>
       )}
+
+      <SheetSwitchAkun tampil={switcher} onTutup={() => setSwitcher(false)} />
     </SafeAreaView>
   );
 }

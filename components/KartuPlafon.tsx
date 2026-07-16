@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { warna, spacing, radius, teks } from '../constants/theme';
+import { warna, spacing, radius, font } from '../constants/theme';
 import { formatRupiah, formatBulanTahun } from '../lib/format';
 import { PLAFON_PER_ANAK, sisaPlafon, type Panti } from '../lib/queries';
 
@@ -46,8 +46,8 @@ export function KartuPlafon({ panti }: { panti: Panti }) {
 const s = StyleSheet.create({
   kartu: { backgroundColor: warna.navy, borderRadius: radius.kartu, padding: 20 },
   atas: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  labelRedup: { fontFamily: 'PlusJakartaSans_400Regular', fontSize: 13, color: warna.navyTeks },
-  labelRedupKecil: { fontFamily: 'PlusJakartaSans_400Regular', fontSize: 12, color: warna.navyTeks },
+  labelRedup: { fontFamily: font.regular, fontSize: 13, color: warna.navyTeks },
+  labelRedupKecil: { fontFamily: font.regular, fontSize: 12, color: warna.navyTeks },
   chipBulan: {
     borderWidth: 1,
     borderColor: warna.navyBorder,
@@ -55,10 +55,10 @@ const s = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: spacing.sm,
   },
-  chipBulanTeks: { fontFamily: 'PlusJakartaSans_400Regular', fontSize: 11, color: warna.navyTeks },
+  chipBulanTeks: { fontFamily: font.regular, fontSize: 11, color: warna.navyTeks },
   angka: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.sm, marginTop: 10 },
   sisa: {
-    fontFamily: 'PlusJakartaSans_500Medium',
+    fontFamily: font.medium,
     fontSize: 28,
     letterSpacing: -0.28,
     color: warna.putih,

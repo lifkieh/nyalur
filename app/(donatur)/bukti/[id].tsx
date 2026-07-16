@@ -11,7 +11,7 @@ import {
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol, FotoPlaceholder } from '../../../components/ui';
-import { warna, spacing, radius, teks, bayangan } from '../../../constants/theme';
+import { warna, spacing, radius, teks, bayangan, font } from '../../../constants/theme';
 import {
   formatJumlah,
   formatKoordinat,
@@ -201,12 +201,12 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'rgba(15,23,42,0.6)',
+    backgroundColor: warna.fotoScrim,
     paddingVertical: 5,
     paddingHorizontal: 9,
     borderRadius: radius.badge,
   },
-  gpsTeks: { fontFamily: 'PlusJakartaSans_400Regular', fontSize: 11, color: warna.putih },
+  gpsTeks: { fontFamily: font.regular, fontSize: 11, color: warna.putih },
 
   pilBaris: { alignItems: 'center', marginTop: -24, paddingHorizontal: 20 },
   pil: {
@@ -219,7 +219,7 @@ const s = StyleSheet.create({
     borderRadius: radius.pill,
     ...bayangan.hijau,
   },
-  pilTeks: { fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15, color: warna.putih },
+  pilTeks: { fontFamily: font.medium, fontSize: 15, color: warna.putih },
 
   badan: { paddingTop: spacing.lg, paddingHorizontal: 22, paddingBottom: spacing.xl },
   rata: { textAlign: 'center' },
@@ -269,7 +269,7 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   stripInfo: { flex: 1, gap: 1 },
-  stripJudul: { fontFamily: 'PlusJakartaSans_500Medium', color: warna.ink },
+  stripJudul: { fontFamily: font.medium, color: warna.ink },
 
   aksi: { flexDirection: 'row', gap: 10, marginTop: spacing.lg },
   tombolAksi: { flex: 1 },

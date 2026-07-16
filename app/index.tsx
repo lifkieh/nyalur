@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol } from '../components/ui';
-import { warna, spacing, radius, teks } from '../constants/theme';
+import { warna, spacing, teks, font } from '../constants/theme';
 import { useSession } from '../lib/session';
 
 // A1 — pilih peran. Bukan login: tidak ada auth, peran menentukan persona.
@@ -58,7 +58,7 @@ const s = StyleSheet.create({
     marginBottom: 22,
   },
   nama: {
-    fontFamily: 'PlusJakartaSans_500Medium',
+    fontFamily: font.medium,
     fontSize: 30,
     letterSpacing: -0.6,
     color: warna.ink,

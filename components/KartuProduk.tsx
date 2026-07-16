@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Kartu, FotoPlaceholder } from './ui';
-import { warna, spacing, radius, teks } from '../constants/theme';
+import { warna, spacing, radius, teks, font } from '../constants/theme';
 import { formatRupiah } from '../lib/format';
 import type { Katalog } from '../lib/queries';
 
@@ -28,7 +28,7 @@ export function KartuProduk({ item, onPress }: { item: Katalog; onPress?: () => 
 const s = StyleSheet.create({
   kartu: { flex: 1 },
   badan: { padding: spacing.md },
-  nama: { fontFamily: 'PlusJakartaSans_500Medium', lineHeight: 18 },
+  nama: { fontFamily: font.medium, lineHeight: 18 },
   satuan: { marginTop: 2 },
   kaki: {
     flexDirection: 'row',

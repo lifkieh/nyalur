@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { SheetSwitchAkun } from './SheetSwitchAkun';
 import { Badge, Kartu, Tombol } from './ui';
-import { warna, spacing, radius, teks } from '../constants/theme';
+import { warna, spacing, radius, teks, font } from '../constants/theme';
 import { useSession } from '../lib/session';
 
 const LABEL_PERAN = { donatur: 'Donatur', panti: 'Pengurus panti' } as const;
@@ -81,7 +81,7 @@ const s = StyleSheet.create({
   },
   avatarDonatur: { backgroundColor: warna.biru },
   avatarPanti: { backgroundColor: warna.navy },
-  avatarTeks: { fontFamily: 'PlusJakartaSans_500Medium', fontSize: 16, color: warna.putih },
+  avatarTeks: { fontFamily: font.medium, fontSize: 16, color: warna.putih },
   info: { flex: 1, minWidth: 0 },
   catatan: { textAlign: 'center', marginTop: spacing.xs },
 });

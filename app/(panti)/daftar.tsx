@@ -3,7 +3,7 @@ import { View, Text, TextInput, ScrollView, Pressable, StyleSheet } from 'react-
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Kartu, Tombol } from '../../components/ui';
-import { warna, spacing, radius, teks } from '../../constants/theme';
+import { warna, spacing, radius, teks, font } from '../../constants/theme';
 import { useSession } from '../../lib/session';
 import { getPantiById } from '../../lib/queries';
 
@@ -204,9 +204,9 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   berkasInfo: { flex: 1, minWidth: 0 },
-  berkasNama: { fontFamily: 'PlusJakartaSans_500Medium' },
+  berkasNama: { fontFamily: font.medium },
   terunggah: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   terunggahTeks: { color: warna.hijau },
-  unggah: { color: warna.biru, fontFamily: 'PlusJakartaSans_500Medium' },
+  unggah: { color: warna.biru, fontFamily: font.medium },
   cta: { marginTop: spacing.lg },
 });

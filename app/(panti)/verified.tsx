@@ -3,7 +3,7 @@ import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol } from '../../components/ui';
-import { warna, spacing, radius, teks } from '../../constants/theme';
+import { warna, spacing, radius, teks, font } from '../../constants/theme';
 import { formatRupiah } from '../../lib/format';
 import { useSession } from '../../lib/session';
 import { getPantiById, PLAFON_PER_ANAK, type PantiDenganRequest } from '../../lib/queries';
@@ -107,7 +107,7 @@ const s = StyleSheet.create({
     marginTop: 28,
   },
   plafon: {
-    fontFamily: 'PlusJakartaSans_500Medium',
+    fontFamily: font.medium,
     fontSize: 28,
     letterSpacing: -0.28,
     color: warna.ink,

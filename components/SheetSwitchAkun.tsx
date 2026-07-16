@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Modal, View, Text, Pressable, Animated, Easing, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { warna, spacing, radius, teks } from '../constants/theme';
+import { warna, spacing, radius, teks, font } from '../constants/theme';
 import { useSession, type Akun } from '../lib/session';
 
 const inisial = (nama: string) =>
@@ -164,7 +164,7 @@ const s = StyleSheet.create({
   },
   avatarDonatur: { backgroundColor: warna.biru },
   avatarPanti: { backgroundColor: warna.navy },
-  avatarTeks: { fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15, color: warna.putih },
+  avatarTeks: { fontFamily: font.medium, fontSize: 15, color: warna.putih },
   info: { flex: 1, minWidth: 0 },
   namaBaris: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   tandaAktif: {

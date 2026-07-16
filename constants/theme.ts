@@ -12,6 +12,7 @@ export const warna = {
   ink: '#0F172A',
   muted: '#64748B',
   scrim: 'rgba(11,46,111,0.45)',
+  fotoScrim: 'rgba(15,23,42,0.6)', // overlay teks di atas foto
   placeholder: '#94A3B8',
 
   // di atas kartu navy — kontras rendah, tetap terbaca

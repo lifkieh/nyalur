@@ -2,7 +2,7 @@ import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol } from '../../components/ui';
-import { warna, spacing, radius, teks } from '../../constants/theme';
+import { warna, spacing, radius, teks, font } from '../../constants/theme';
 import { formatJumlah, formatRupiah } from '../../lib/format';
 import { useSession } from '../../lib/session';
 
@@ -162,6 +162,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarTeks: { fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15, color: warna.putih },
+  avatarTeks: { fontFamily: font.medium, fontSize: 15, color: warna.putih },
   switchInfo: { flex: 1 },
 });

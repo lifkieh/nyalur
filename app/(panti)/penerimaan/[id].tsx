@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Badge, Chip, Kartu, ProgressBar, Tombol, FotoPlaceholder } from '../../../components/ui';
-import { warna, spacing, radius, teks } from '../../../constants/theme';
+import { warna, spacing, radius, teks, font } from '../../../constants/theme';
 import {
   formatJumlah,
   formatRupiah,
@@ -278,7 +278,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarTeks: { fontFamily: 'PlusJakartaSans_500Medium', fontSize: 14, color: warna.putih },
+  avatarTeks: { fontFamily: font.medium, fontSize: 14, color: warna.putih },
   pisah: { height: 1, backgroundColor: warna.border, marginVertical: spacing.md },
   rincian: { gap: 10 },
   baris: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm },
@@ -301,7 +301,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buktiJudul: { fontFamily: 'PlusJakartaSans_500Medium', color: warna.hijau },
+  buktiJudul: { fontFamily: font.medium, color: warna.hijau },
   ditekan: { opacity: 0.85 },
 
   tengah: {

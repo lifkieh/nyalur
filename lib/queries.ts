@@ -134,6 +134,61 @@ export function hitungBiaya(jumlah: number, hargaPerSatuan: number): RincianBiay
   };
 }
 
+/** Dilempar saat donasi melebihi sisa kebutuhan. */
+export class GalatOverfill extends Error {
+  constructor(public sisa: number) {
+    super('Jumlah melebihi sisa kebutuhan');
+    this.name = 'GalatOverfill';
+  }
+}
+
+const FOTO_BUKTI = 'https://placehold.co/800x600/EAF2FE/1B5FE3?text=Bukti+Serah+Terima';
+
+// MOCK KURIR — Opsi A di brief §10: "kurir upload dari app mitra" belum ada,
+// jadi serah terima dipalsukan tepat setelah donasi supaya alur
+// donasi -> lacak -> bukti bisa ditempuh saat demo. Hapus blok ini begitu
+// layar kurir asli dibangun.
+const PENERIMA_MOCK: Record<string, string> = {
+  'Panti Harapan Bunda': 'Ibu Siti Rohmah',
+  'Panti Kasih Ibu': 'Ibu Nurhayati',
+  'Rumah Yatim Al-Falah': 'Pak Ahmad Fauzi',
+  'Panti Bina Sejahtera': 'Ibu Lestari Wulandari',
+  'Panti Anugerah': 'Ibu Maria Sinaga',
+};
+
+const kodeBukti = () => {
+  const hex = Math.floor(Math.random() * 0xffff)
+    .toString(16)
+    .toUpperCase()
+    .padStart(4, '0');
+  const angka = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+  return `NYL-${hex}-${angka}`;
+};
+
+async function mockSerahTerima(donasiId: string, pantiNama: string) {
+  const { error: galatStatus } = await supabase
+    .from('donasi')
+    .update({ status: 'diterima' })
+    .eq('id', donasiId);
+
+  if (galatStatus)
+    throw new Error(`Donasi tercatat, gagal menandai terkirim: ${galatStatus.message}`);
+
+  const { error: galatBukti } = await supabase.from('bukti_terima').insert({
+    donasi_id: donasiId,
+    kode_bukti: kodeBukti(),
+    foto_url: FOTO_BUKTI,
+    penerima_nama: PENERIMA_MOCK[pantiNama] ?? 'Pengurus panti',
+    penerima_jabatan: `Pengurus, ${pantiNama}`,
+    lokasi_lat: -6.3019,
+    lokasi_lng: 106.6528,
+    diterima_at: new Date().toISOString(),
+  });
+
+  if (galatBukti)
+    throw new Error(`Donasi tercatat, gagal membuat bukti: ${galatBukti.message}`);
+}
+
 /**
  * Donasi masuk. Progress request di-update manual — jumlah_terpenuhi memang
  * denormalized, jadi tidak dihitung ulang dari SUM(donasi) tiap render.
@@ -144,9 +199,23 @@ export async function buatDonasi(args: {
   jumlah: number;
   katalog: Katalog;
   donatur: { id: string; nama: string };
+  panti: { nama: string };
 }): Promise<string> {
-  const { requestId, jumlah, katalog, donatur } = args;
+  const { requestId, jumlah, katalog, donatur, panti } = args;
   const biaya = hitungBiaya(jumlah, katalog.harga_per_satuan);
+
+  // Guard overfill dibaca ulang dari server, bukan dari state layar — state
+  // bisa basi kalau ada donasi lain masuk sejak layar terakhir refetch.
+  const { data: awal, error: galatAwal } = await supabase
+    .from('request')
+    .select('jumlah_diminta, jumlah_terpenuhi')
+    .eq('id', requestId)
+    .single();
+
+  if (galatAwal) throw new Error(`Gagal membaca kebutuhan: ${galatAwal.message}`);
+
+  const sisaKini = Math.max(0, awal.jumlah_diminta - awal.jumlah_terpenuhi);
+  if (jumlah > sisaKini) throw new GalatOverfill(sisaKini);
 
   const { data: donasi, error: galatInsert } = await supabase
     .from('donasi')
@@ -166,20 +235,14 @@ export async function buatDonasi(args: {
 
   if (galatInsert) throw new Error(`Gagal mencatat donasi: ${galatInsert.message}`);
 
-  const { data: req, error: galatBaca } = await supabase
-    .from('request')
-    .select('jumlah_terpenuhi')
-    .eq('id', requestId)
-    .single();
-
-  if (galatBaca) throw new Error(`Donasi tercatat, gagal membaca progress: ${galatBaca.message}`);
-
   const { error: galatUpdate } = await supabase
     .from('request')
-    .update({ jumlah_terpenuhi: req.jumlah_terpenuhi + jumlah })
+    .update({ jumlah_terpenuhi: awal.jumlah_terpenuhi + jumlah })
     .eq('id', requestId);
 
   if (galatUpdate) throw new Error(`Donasi tercatat, gagal memperbarui progress: ${galatUpdate.message}`);
+
+  await mockSerahTerima(donasi.id as string, panti.nama);
 
   return donasi.id as string;
 }

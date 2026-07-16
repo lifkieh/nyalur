@@ -29,6 +29,9 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
   const anim = useRef(new Animated.Value(0)).current;
 
   const kurang = kebutuhan ? sisa(kebutuhan.jumlah_terpenuhi, kebutuhan.jumlah_diminta) : 0;
+  const bisaNyalur = kurang > 0;
+  // Stepper tetap ditahan di 1 supaya tidak pernah menampilkan "0 kg";
+  // yang mencegah overfill adalah CTA yang mati saat sisa habis.
   const maks = Math.max(1, kurang);
 
   useEffect(() => {
@@ -196,13 +199,27 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
             </Text>
           </View>
 
+          {!bisaNyalur && (
+            <View style={s.kotakPenuh}>
+              <Feather name="check-circle" size={16} color={warna.hijau} style={s.catatanIkon} />
+              <Text style={[teks.mikro, s.teksPenuh]}>
+                Kebutuhan ini sudah terpenuhi. Coba kebutuhan lain di panti ini.
+              </Text>
+            </View>
+          )}
+
           {!!galat && <Text style={[teks.mikro, s.galat]}>{galat}</Text>}
 
           <Tombol
-            label={`Nyalur ${formatJumlah(qty, katalog.satuan)} — ${formatRupiah(biaya.total)}`}
+            label={
+              bisaNyalur
+                ? `Nyalur ${formatJumlah(qty, katalog.satuan)} — ${formatRupiah(biaya.total)}`
+                : 'Sudah terpenuhi'
+            }
             varian="primer"
             ukuran="besar"
             loading={kirim}
+            disabled={!bisaNyalur}
             onPress={nyalur}
           />
         </ScrollView>
@@ -285,5 +302,14 @@ const s = StyleSheet.create({
   catatan: { flexDirection: 'row', gap: spacing.sm, marginBottom: 18 },
   catatanIkon: { marginTop: 1 },
   catatanTeks: { flex: 1, lineHeight: 18 },
-  galat: { color: warna.biru, marginBottom: spacing.md },
+  galat: { color: warna.bahaya, marginBottom: spacing.md },
+  kotakPenuh: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    backgroundColor: warna.hijauTint,
+    borderRadius: radius.tombol,
+    padding: spacing.md,
+    marginBottom: 18,
+  },
+  teksPenuh: { flex: 1, color: warna.hijau, lineHeight: 18 },
 });

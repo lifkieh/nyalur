@@ -53,6 +53,7 @@ export default function DetailPanti() {
       jumlah,
       katalog: dipilih.katalog,
       donatur: { id: akun.id, nama: akun.nama },
+      panti: { nama: panti.nama },
     });
     setDipilih(null);
     router.push({

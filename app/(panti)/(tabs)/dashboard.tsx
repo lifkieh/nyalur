@@ -5,7 +5,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { KartuPlafon } from '../../../components/KartuPlafon';
 import { Badge, Chip, Kartu, ProgressBar, Tombol, FotoPlaceholder } from '../../../components/ui';
-import { warna, spacing, radius, teks, bayangan } from '../../../constants/theme';
+import { warna, spacing, radius, teks, bayangan, font } from '../../../constants/theme';
 import { formatJumlah, labelProgress, rasio } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
 import { getPantiById, type PantiDenganRequest, type StatusRequest } from '../../../lib/queries';
@@ -82,7 +82,7 @@ export default function DashboardPanti() {
         <KartuPlafon panti={panti} />
 
         <View style={s.tajukDaftar}>
-          <Text style={teks.bodyMedium}>Request aktif</Text>
+          <Text style={teks.bodyMedium}>Kebutuhan diajukan</Text>
           <Text style={teks.caption}>{daftar.length} kebutuhan</Text>
         </View>
 
@@ -178,7 +178,7 @@ const s = StyleSheet.create({
     ...bayangan.biru,
   },
   fabDitekan: { opacity: 0.9 },
-  fabTeks: { fontFamily: 'PlusJakartaSans_500Medium', fontSize: 15, color: warna.putih },
+  fabTeks: { fontFamily: font.medium, fontSize: 15, color: warna.putih },
   tengah: {
     flex: 1,
     alignItems: 'center',

@@ -24,6 +24,7 @@ const FILTER: { nilai: Filter; label: string }[] = [
   { nilai: 'pangan', label: 'Pangan' },
   { nilai: 'kebersihan', label: 'Kebersihan' },
   { nilai: 'sekolah', label: 'Sekolah' },
+  { nilai: 'kesehatan', label: 'Kesehatan' },
 ];
 
 export default function Etalase() {

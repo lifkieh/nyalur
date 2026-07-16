@@ -20,6 +20,13 @@ export default function TabPanti() {
         }}
       />
       <Tabs.Screen
+        name="penerimaan"
+        options={{
+          title: 'Penerimaan',
+          tabBarIcon: ({ color }) => <Feather name="inbox" size={22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="profil-panti"
         options={{
           title: 'Profil',

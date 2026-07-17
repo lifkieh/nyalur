@@ -40,6 +40,12 @@ export type Panti = {
   plafon_bulanan: number;
   plafon_terpakai: number;
   created_at: string;
+  /** cerita & permasalahan panti, ditulis pengurus di /edit-profil */
+  deskripsi: string | null;
+  /** URI foto sampul — wajah panti di etalase. Dipilih sendiri, bukan galeri[0]. */
+  sampul: string | null;
+  /** URI foto dari HP pengurus (file://), bukan URL — lihat migrations/2026-07-17-profil-panti.sql */
+  galeri: string[];
 };
 
 export type PantiDenganRequest = Panti & { request: Request[] };
@@ -48,7 +54,7 @@ const KOLOM_REQUEST =
   'id, panti_id, katalog_id, jumlah_diminta, jumlah_terpenuhi, status, batch_kirim, created_at, katalog(id, nama, kategori, satuan, harga_per_satuan, foto_url, aktif)';
 
 const KOLOM_PANTI =
-  'id, nama, alamat, kota, jarak_km, jumlah_anak, foto_url, status, plafon_bulanan, plafon_terpakai, created_at';
+  'id, nama, alamat, kota, jarak_km, jumlah_anak, foto_url, status, plafon_bulanan, plafon_terpakai, created_at, deskripsi, sampul, galeri';
 
 /** B1 — etalase. Panti terverifikasi + request-nya, terdekat dulu. */
 export async function getDaftarPanti(): Promise<PantiDenganRequest[]> {
@@ -142,7 +148,11 @@ export class GalatOverfill extends Error {
   }
 }
 
-const FOTO_BUKTI = 'https://placehold.co/800x600/EAF2FE/1B5FE3?text=Bukti+Serah+Terima';
+// Disimpan cuma untuk memenuhi `foto_url text not null` di skema — TIDAK PERNAH
+// digambar. Layar bukti mengambil fotonya dari FOTO_BUKTI di lib/gambar.ts (aset
+// lokal), bukan dari kolom ini. Jangan pakai URL ini untuk apa pun: menariknya
+// saat demo berarti menempelkan layar klimaks ke WiFi venue.
+const FOTO_BUKTI_TERSIMPAN = 'https://placehold.co/800x600/EAF2FE/1B5FE3?text=Bukti+Serah+Terima';
 
 // Donasi demo dicatat mundur dua hari supaya timeline B6 naik: dikemas dua hari
 // lalu, diterima barusan. Tanpa ini dikemas dan diterima jatuh di detik yang
@@ -182,7 +192,7 @@ async function mockSerahTerima(donasiId: string, pantiNama: string) {
   const { error: galatBukti } = await supabase.from('bukti_terima').insert({
     donasi_id: donasiId,
     kode_bukti: kodeBukti(),
-    foto_url: FOTO_BUKTI,
+    foto_url: FOTO_BUKTI_TERSIMPAN,
     penerima_nama: PENERIMA_MOCK[pantiNama] ?? 'Pengurus panti',
     penerima_jabatan: `Pengurus, ${pantiNama}`,
     lokasi_lat: -6.3019,
@@ -406,6 +416,35 @@ export async function getKatalog(): Promise<Katalog[]> {
 export const sisaPlafon = (p: Pick<Panti, 'plafon_bulanan' | 'plafon_terpakai'>): number =>
   Math.max(0, p.plafon_bulanan - p.plafon_terpakai);
 
+/** Batas foto galeri. Bukan aturan bisnis — cuma menjaga grid tetap satu layar. */
+export const MAKS_GALERI = 6;
+
+/**
+ * A8 — pengurus menyunting profil panti. Cuma tiga kolom yang boleh disentuh:
+ * nama, alamat, dan jumlah anak datang dari verifikasi, bukan dari form. Kalau
+ * jumlah_anak bisa disunting di sini, plafon ikut bisa disunting, dan guardrail
+ * plafon berhenti berarti apa-apa.
+ */
+export async function simpanProfilPanti(args: {
+  pantiId: string;
+  deskripsi: string;
+  sampul: string | null;
+  galeri: string[];
+}): Promise<void> {
+  const deskripsi = args.deskripsi.trim();
+
+  const { error } = await supabase
+    .from('panti')
+    .update({
+      deskripsi: deskripsi || null,
+      sampul: args.sampul,
+      galeri: args.galeri.slice(0, MAKS_GALERI),
+    })
+    .eq('id', args.pantiId);
+
+  if (error) throw new Error(`Gagal menyimpan profil: ${error.message}`);
+}
+
 /** Dilempar saat guardrail plafon menolak. Layar mengenali ini untuk pesan khusus. */
 export class GalatPlafon extends Error {
   constructor(
@@ -481,12 +520,17 @@ export function kebutuhanMendesak(p: PantiDenganRequest): Request | null {
 }
 
 /**
- * Berapa orang berbeda yang sudah menyalurkan — angka donatur di banner batch.
- * Dihitung dari baris donasi, bukan ditulis tangan: banner ini menjual
- * transparansi, jadi angkanya harus punya orang di belakangnya.
+ * Donasi yang belum sampai — isi batch berikutnya, milik satu donatur.
+ *
+ * Kartu batch di Beranda memakai ini, bukan agregat lintas panti. Angka global
+ * ("N donatur sudah menyalurkan") tidak pernah menjawab pertanyaan yang muncul
+ * saat melihatnya: ke panti mana? Angka milik sendiri menjawabnya dengan
+ * sendirinya — tiap barisnya menyebut panti tujuannya.
  */
-export async function getJumlahDonatur(): Promise<number> {
-  const { data, error } = await supabase.from('donasi').select('donatur_id');
-  if (error) throw new Error(`Gagal memuat jumlah donatur: ${error.message}`);
-  return new Set((data ?? []).map((d) => d.donatur_id as string)).size;
-}
+export const belumSampai = (d: DonasiLengkap[]): DonasiLengkap[] =>
+  d.filter((x) => x.status !== 'diterima');
+
+/** Total ongkir yang dibayar donatur untuk batch ini — dijumlahkan dari baris
+ *  donasinya, bukan dari konstanta ONGKIR. Yang tampil harus punya asal. */
+export const totalOngkir = (d: DonasiLengkap[]): number =>
+  d.reduce((n, x) => n + x.ongkir, 0);

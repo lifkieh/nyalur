@@ -30,18 +30,32 @@ export const KATALOG = {
   buku:   { id: '89787eb3-6ff5-403f-aa24-3fef087b6a87', nama: 'Buku tulis',    kategori: 'sekolah',    satuan: 'pcs',   harga: 2500 },
 };
 
+// Cerita & permasalahan tiap panti — tab pertama di layar detail (B2).
+//
+// Ditulis pengurus lewat /edit-profil, jadi di seed pun nadanya harus nada
+// pengurus: konkret, angka seadanya, tanpa memelas. Ini yang dibaca donatur
+// sebelum memutuskan percaya, dan satu kalimat melodrama merusak seluruh
+// halaman. Galeri sengaja TIDAK diseed — foto datang dari HP pengurus.
+const DESKRIPSI = {
+  hb: 'Kami berdiri sejak 2011 di gang kecil belakang Pasar Merpati, mengasuh 25 anak usia 4 sampai 17 tahun. Sebagian besar datang setelah orang tuanya meninggal atau tidak lagi sanggup merawat.\n\nPemasukan tetap kami cuma dari 12 donatur bulanan, dan itu habis di listrik, air, serta SPP anak-anak yang sekolah negeri. Yang selalu kurang justru yang paling sederhana: beras dan susu. Dapur kami masak tiga kali sehari untuk 28 orang termasuk pengasuh, jadi 10 kg beras habis dalam dua hari.',
+  ki: 'Panti Kasih Ibu mengasuh 18 anak perempuan di rumah kontrakan dua lantai di Ciputat. Kami kecil, cuma empat pengasuh, dan sengaja tidak menambah anak sebelum yakin bisa merawat yang sudah ada dengan layak.\n\nMasalah terbesar kami tahun ini adalah gizi. Sembilan anak masuk kategori kurang berat badan waktu pemeriksaan Puskesmas bulan Mei. Dokter menyarankan susu tiap hari, dan itu pos yang paling sering kami potong duluan kalau uang menipis.',
+  af: 'Rumah Yatim Al-Falah adalah yang terbesar di antara panti yang kami kenal di Pamulang: 32 anak, 6 pengasuh, satu dapur. Kami juga menjalankan madrasah sore yang terbuka untuk anak sekitar, jadi tiap hari ada sekitar 50 anak di halaman.\n\nDapur adalah titik paling rapuh kami. Sekali masak berarti 38 porsi, dan minyak goreng 10 liter cuma cukup dua minggu. Awal tahun kami sempat dua kali mengganti lauk jadi tahu tempe rebus karena minyak habis sebelum tanggal kiriman.',
+  bs: 'Bina Sejahtera menempati bekas rumah keluarga yang diwakafkan pada 2016. Ada 21 anak di sini, 14 di antaranya masih SD. Kami tidak menerima donasi tunai dari perorangan sejak 2019, semua bantuan kami minta dalam bentuk barang supaya bisa dicatat dan diperlihatkan.\n\nYang paling sering kosong adalah protein. Telur jadi andalan karena murah dan anak-anak mau makan, tapi 15 kg untuk 21 anak habis kira-kira sepuluh hari. Selebihnya kami isi dengan apa yang ada.',
+  an: 'Panti Anugerah mengasuh 28 anak di BSD, dari bayi 8 bulan sampai anak kelas 3 SMA. Kami punya dua kamar bayi dan itu yang membuat kebutuhan kami berbeda dari panti lain di sekitar sini.\n\nKebersihan jadi pengeluaran yang tidak bisa ditawar: sabun, deterjen, popok. Dengan 28 anak di satu rumah, satu anak sakit kulit berarti seminggu kemudian lima anak ikut. Sabun mandi 20 pcs terdengar banyak, di kami habis kurang dari sebulan.',
+};
+
 // id Harapan Bunda DIPATOK — lib/session.tsx:21 menyimpannya hardcoded.
 export const PANTI = {
   hb: { id: '11e3e8fc-a545-4116-bb18-60d2fc404fbc', nama: 'Panti Harapan Bunda',  alamat: 'Jl. Merpati No. 12',      kota: 'Tangerang Selatan', jarak: 2.4, anak: 25, plafon: 12500000, terpakai: 4200000,
-        penerima: 'Ibu Siti Rohmah',        lat: -6.2886, lng: 106.7100, jam: '10:15' },
+        penerima: 'Ibu Siti Rohmah',        lat: -6.2886, lng: 106.7100, jam: '10:15', deskripsi: DESKRIPSI.hb },
   ki: { id: '4c74301a-5cd1-49cd-a1a6-75cc4862f5a6', nama: 'Panti Kasih Ibu',      alamat: 'Jl. Kenanga No. 8',       kota: 'Ciputat',           jarak: 4.1, anak: 18, plafon: 9000000,  terpakai: 1100000,
-        penerima: 'Ibu Nurhayati',          lat: -6.3103, lng: 106.7519, jam: '11:30' },
+        penerima: 'Ibu Nurhayati',          lat: -6.3103, lng: 106.7519, jam: '11:30', deskripsi: DESKRIPSI.ki },
   af: { id: 'd3a2ba3a-fc9f-480d-89c6-a9e724e83529', nama: 'Rumah Yatim Al-Falah', alamat: 'Jl. Cendana Raya No. 30', kota: 'Pamulang',          jarak: 5.8, anak: 32, plafon: 16000000, terpakai: 9800000,
-        penerima: 'Pak Ahmad Fauzi',        lat: -6.3428, lng: 106.7385, jam: '13:05' },
+        penerima: 'Pak Ahmad Fauzi',        lat: -6.3428, lng: 106.7385, jam: '13:05', deskripsi: DESKRIPSI.af },
   bs: { id: 'e310ddb1-f197-442a-b450-dfd402b35335', nama: 'Panti Bina Sejahtera', alamat: 'Jl. Anggrek No. 5',       kota: 'Serpong',           jarak: 7.2, anak: 21, plafon: 10500000, terpakai: 5400000,
-        penerima: 'Ibu Lestari Wulandari',  lat: -6.3187, lng: 106.6712, jam: '14:00' },
+        penerima: 'Ibu Lestari Wulandari',  lat: -6.3187, lng: 106.6712, jam: '14:00', deskripsi: DESKRIPSI.bs },
   an: { id: '091db2fc-ce2a-4739-8578-266e49cfd6a8', nama: 'Panti Anugerah',       alamat: 'Jl. Melati No. 44',       kota: 'BSD',               jarak: 8.5, anak: 28, plafon: 14000000, terpakai: 7100000,
-        penerima: 'Ibu Maria Sinaga',       lat: -6.3019, lng: 106.6528, jam: '14:32' },
+        penerima: 'Ibu Maria Sinaga',       lat: -6.3019, lng: 106.6528, jam: '14:32', deskripsi: DESKRIPSI.an },
 };
 
 const D = {
@@ -52,32 +66,58 @@ const D = {
   13: 'Nia Safitri',       14: 'Eko Purnomo',     15: 'Dewi Anggraini',
 };
 
-// Semua donasi seed dikirim dalam SATU batch: Jumat 10 Juli 2026. Kurir keliling,
-// tiap panti punya jam kunjungannya sendiri. Donasi dibuat 3-9 Juli, sebelum batch.
+// DUA batch, dan itu yang bikin status donasi bervariasi.
+//
+// Batch 1 — Jumat 10 Juli 2026: sudah berangkat dan sudah sampai. Kurir keliling,
+// tiap panti punya jam kunjungannya sendiri. Donasinya dibuat 3-9 Juli, sebelum
+// batch. Semuanya 'diterima' dan punya bukti.
+//
+// Batch 2 — Jumat 17 Juli 2026: belum sampai. Donasinya dibuat 11-16 Juli, jadi
+// ketinggalan batch 1 dan menunggu yang berikutnya. Statusnya 'dikemas' atau
+// 'dikirim', dan BELUM punya bukti — bukti lahir dari serah terima, bukan dari
+// pembayaran.
+//
+// Tanpa batch 2, tiap donasi di app berstatus 'diterima': filter status jadi
+// tiga keranjang kosong, dan timeline biru "sedang berjalan" di B6 tidak pernah
+// terpanggil sekali pun.
 const BATCH = '2026-07-10';
+const BATCH_2 = '2026-07-17';
 
-// jumlah_terpenuhi TIDAK ditulis tangan — dihitung dari SUM(donasi).
+// jumlah_terpenuhi TIDAK ditulis tangan — dihitung dari SUM(donasi). Ia menghitung
+// SEMUA donasi apa pun statusnya: begitu dibayar, porsi itu sudah terikat ke
+// kebutuhan ini — persis seperti buatDonasi() yang menambah progress saat insert,
+// jauh sebelum barangnya sampai.
+//
+// Bentuk baris donasi: [donaturIdx, jumlah, dibuat, opsi?]
+//   opsi.status → 'diterima' (default) | 'dikemas' | 'dikirim'
+//   opsi.id / opsi.buktiId / opsi.kode → dipatok, cuma untuk donasi hero
 export const REQUESTS = [
   { id: '16694b24-7c62-4587-a53d-499d07de28a4', panti: 'hb', item: 'beras',  diminta: 10, status: 'aktif',
     donasi: [ [2,3,'2026-07-06 09:12'], [3,2,'2026-07-07 14:40'], [1,1,'2026-07-08 08:05'], [4,1,'2026-07-09 19:22'] ] },
   { id: '7b1c4d21-3f8a-4c62-9d15-2a6e8b4f0c93', panti: 'hb', item: 'susu',   diminta: 20, status: 'aktif',
-    donasi: [ [5,2,'2026-07-05 11:30'], [1,2,'2026-07-07 16:18'], [6,1,'2026-07-09 10:44'] ] },
+    donasi: [ [5,2,'2026-07-05 11:30'], [1,2,'2026-07-07 16:18'], [6,1,'2026-07-09 10:44'],
+              [6,2,'2026-07-16 16:45', { status: 'dikemas' }] ] },
   { id: '9d2e6a70-8c14-4b93-a726-5f1d3e9c8b42', panti: 'ki', item: 'susu',   diminta: 20, status: 'aktif',
     donasi: [ [7,2,'2026-07-08 13:05'] ] },
   { id: 'c4f8b3e1-6d29-4a57-8e03-1b7c5a9f2d64', panti: 'ki', item: 'telur',  diminta: 15, status: 'aktif',
-    donasi: [ [8,3,'2026-07-06 07:50'], [9,1,'2026-07-09 15:11'] ] },
+    donasi: [ [8,3,'2026-07-06 07:50'], [9,1,'2026-07-09 15:11'],
+              [1,2,'2026-07-13 09:30', { status: 'dikirim' }] ] },
   { id: '2a5d9c83-7e41-4f60-b8a2-3c6e1d4b7f95', panti: 'af', item: 'minyak', diminta: 10, status: 'aktif',
     donasi: [ [10,3,'2026-07-04 08:30'], [11,2,'2026-07-05 12:00'], [12,2,'2026-07-06 17:45'], [1,1,'2026-07-08 09:25'], [13,1,'2026-07-09 20:10'] ] },
   { id: '8e3b1f47-5a92-4d68-9c74-6f2a8d3e5b01', panti: 'af', item: 'beras',  diminta: 30, status: 'aktif',
-    donasi: [ [14,5,'2026-07-03 10:15'], [15,4,'2026-07-06 14:02'], [2,3,'2026-07-09 08:47'] ] },
+    donasi: [ [14,5,'2026-07-03 10:15'], [15,4,'2026-07-06 14:02'], [2,3,'2026-07-09 08:47'],
+              [2,4,'2026-07-14 08:20', { status: 'dikirim' }] ] },
   { id: '5c7a2e94-1b63-4f85-a039-8d4e6c1b9f27', panti: 'bs', item: 'telur',  diminta: 15, status: 'aktif',
     donasi: [ [6,4,'2026-07-05 09:00'], [7,2,'2026-07-08 11:35'] ] },
   // HERO — sumber bukti terima di brief. Donasi Dara mempertahankan id & kode aslinya.
   { id: '2359742d-0b8b-484b-9a0a-f1dd496e1f49', panti: 'an', item: 'beras',  diminta: 10, status: 'diterima',
     donasi: [ [7,4,'2026-07-03 09:20'], [8,3,'2026-07-05 13:15'], [9,2,'2026-07-07 10:05'],
-              [1,1,'2026-07-08 16:40', 'adcdcfd7-257c-4d3a-9bad-4ac4ebf4f8a9', '59dec3e8-c65a-492e-91b3-a8bd0c91bf23', 'NYL-7F3A-2210'] ] },
+              [1,1,'2026-07-08 16:40', { id: 'adcdcfd7-257c-4d3a-9bad-4ac4ebf4f8a9',
+                                        buktiId: '59dec3e8-c65a-492e-91b3-a8bd0c91bf23',
+                                        kode: 'NYL-7F3A-2210' }] ] },
   { id: 'a1e5d8c2-4f76-4b39-8207-9c3b5e7a1d68', panti: 'an', item: 'sabun',  diminta: 20, status: 'aktif',
-    donasi: [ [4,5,'2026-07-04 11:20'], [11,2,'2026-07-07 08:55'], [14,1,'2026-07-09 17:30'] ] },
+    donasi: [ [4,5,'2026-07-04 11:20'], [11,2,'2026-07-07 08:55'], [14,1,'2026-07-09 17:30'],
+              [1,3,'2026-07-15 19:10', { status: 'dikemas' }] ] },
 ];
 
 const ONGKIR = 2000, FEE = 2000;
@@ -99,7 +139,8 @@ for (const r of REQUESTS) {
   const pan = PANTI[r.panti];
   let terpenuhi = 0;
 
-  for (const [donIdx, jumlah, dibuat, idPaksa, buktiIdPaksa, kodePaksa] of r.donasi) {
+  for (const [donIdx, jumlah, dibuat, opsi = {}] of r.donasi) {
+    const { status = 'diterima', id: idPaksa, buktiId: buktiIdPaksa, kode: kodePaksa } = opsi;
     const hargaBarang = jumlah * kat.harga;
     const donasiId = idPaksa ?? uuid();
     rows.donasi.push({
@@ -112,20 +153,27 @@ for (const r of REQUESTS) {
       ongkir: ONGKIR,
       platform_fee: FEE,
       total: hargaBarang + ONGKIR + FEE,
-      status: 'diterima',
+      status,
       created_at: `${dibuat}:00+07`,
     });
-    rows.bukti.push({
-      id: buktiIdPaksa ?? uuid(),
-      donasi_id: donasiId,
-      kode_bukti: kodePaksa ?? kodeBukti(),
-      foto_url: FOTO,
-      penerima_nama: pan.penerima,
-      penerima_jabatan: `Pengurus, ${pan.nama}`,
-      lokasi_lat: pan.lat,
-      lokasi_lng: pan.lng,
-      diterima_at: `${BATCH} ${pan.jam}:00+07`,
-    });
+
+    // Bukti cuma untuk yang sudah sampai. Donasi batch 2 masih di jalan —
+    // memberinya bukti sama saja mengarang serah terima yang belum terjadi.
+    if (status === 'diterima') {
+      rows.bukti.push({
+        id: buktiIdPaksa ?? uuid(),
+        donasi_id: donasiId,
+        kode_bukti: kodePaksa ?? kodeBukti(),
+        foto_url: FOTO,
+        penerima_nama: pan.penerima,
+        penerima_jabatan: `Pengurus, ${pan.nama}`,
+        lokasi_lat: pan.lat,
+        lokasi_lng: pan.lng,
+        diterima_at: `${BATCH} ${pan.jam}:00+07`,
+      });
+    }
+
+    // Semua status ikut menambah progress — porsi terikat sejak dibayar.
     terpenuhi += jumlah;
   }
 
@@ -147,14 +195,33 @@ for (const req of rows.request) {
   if (sum !== req.jumlah_terpenuhi) galat.push(`${req.id}: terpenuhi ${req.jumlah_terpenuhi} != SUM donasi ${sum}`);
   if (req.jumlah_terpenuhi > req.jumlah_diminta) galat.push(`${req.id}: ${req.jumlah_terpenuhi} > diminta ${req.jumlah_diminta}`);
 }
+const STATUS_SAH = ['dikemas', 'dikirim', 'diterima'];
 for (const d of rows.donasi) {
   const req = rows.request.find((r) => r.id === d.request_id);
   const kat = Object.values(KATALOG).find((k) => k.id === req.katalog_id);
   if (d.harga_barang !== d.jumlah * kat.harga) galat.push(`donasi ${d.id}: harga_barang salah`);
   if (d.total !== d.harga_barang + ONGKIR + FEE) galat.push(`donasi ${d.id}: total salah`);
+  if (!STATUS_SAH.includes(d.status)) galat.push(`donasi ${d.id}: status '${d.status}' tidak dikenal`);
+
   const b = rows.bukti.find((x) => x.donasi_id === d.id);
-  if (!b) galat.push(`donasi ${d.id}: tanpa bukti`);
-  else if (new Date(b.diterima_at) < new Date(d.created_at)) galat.push(`donasi ${d.id}: diterima sebelum dibuat`);
+  const sampai = d.status === 'diterima';
+
+  // Bukti dan status tidak boleh berselisih di dua arah sekaligus: yang sampai
+  // wajib berbukti, yang belum sampai haram punya bukti.
+  if (sampai && !b) galat.push(`donasi ${d.id}: diterima tapi tanpa bukti`);
+  if (!sampai && b) galat.push(`donasi ${d.id}: status '${d.status}' tapi punya bukti`);
+  if (b && new Date(b.diterima_at) < new Date(d.created_at))
+    galat.push(`donasi ${d.id}: diterima sebelum dibuat`);
+
+  // Batch mana yang mengangkutnya ditentukan tanggal, bukan selera. Donasi
+  // sebelum 10 Juli ikut batch 1 (sudah sampai); sesudahnya menunggu batch 2.
+  const sebelumBatch1 = new Date(d.created_at) < new Date(`${BATCH}T00:00:00+07:00`);
+  if (sampai && !sebelumBatch1)
+    galat.push(`donasi ${d.id}: diterima tapi dibuat setelah batch ${BATCH}`);
+  if (!sampai && sebelumBatch1)
+    galat.push(`donasi ${d.id}: dibuat sebelum batch ${BATCH} tapi belum diterima`);
+  if (!sampai && new Date(d.created_at) > new Date(`${BATCH_2}T00:00:00+07:00`))
+    galat.push(`donasi ${d.id}: dibuat setelah batch ${BATCH_2} yang menjemputnya`);
 }
 const kodes = rows.bukti.map((b) => b.kode_bukti);
 if (new Set(kodes).size !== kodes.length) galat.push('kode_bukti kembar');
@@ -169,6 +236,14 @@ if (galat.length) {
 // ---- tulis SQL ----
 const q = (v) => (v === null ? 'null' : typeof v === 'number' ? String(v) : `'${String(v).replace(/'/g, "''")}'`);
 const baris = (o, kolom) => `  (${kolom.map((k) => q(o[k])).join(', ')})`;
+
+// Deskripsi panti punya baris baru di dalamnya. E'' + \n supaya satu panti tetap
+// satu baris di SQL-nya — kalau tidak, insert-nya pecah jadi 40 baris dan diff
+// seed berikutnya tidak terbaca lagi.
+const qMulti = (v) =>
+  v === null || v === undefined
+    ? 'null'
+    : `E'${String(v).replace(/\\/g, '\\\\').replace(/'/g, "''").replace(/\n/g, '\\n')}'`;
 
 const sql = `-- =====================================================================
 -- NYALUR — reset seed demo
@@ -193,9 +268,14 @@ const sql = `-- ================================================================
 -- id panti Harapan Bunda dipatok ke 11e3e8fc-... karena lib/session.tsx:21
 -- menyimpannya hardcoded. Ganti id itu = POV panti mati.
 --
--- Cerita seed: donasi dibuat 3-9 Juli 2026, semuanya terkirim dalam satu batch
--- Jumat 10 Juli. Tiap panti punya jam kunjungan kurir sendiri, jadi bukti satu
--- panti berbagi timestamp — memang satu serah terima.
+-- Cerita seed: DUA batch.
+--   Batch 1 — Jumat 10 Juli 2026, sudah sampai. Donasinya dibuat 3-9 Juli.
+--     Tiap panti punya jam kunjungan kurir sendiri, jadi bukti satu panti
+--     berbagi timestamp — memang satu serah terima.
+--   Batch 2 — Jumat 17 Juli 2026, belum sampai. Donasinya dibuat 11-16 Juli:
+--     ketinggalan batch 1, menunggu yang berikutnya. Status 'dikemas'/'dikirim',
+--     BELUM berbukti. Ini yang mengisi filter status di Riwayat donatur dan
+--     memanggil timeline biru "sedang berjalan" di layar Lacak.
 -- =====================================================================
 
 begin;
@@ -213,8 +293,12 @@ ${Object.values(KATALOG).map((k) => `  (${q(k.id)}, ${q(k.nama)}, ${q(k.kategori
 
 -- ============ PANTI (5) ============
 -- plafon_bulanan = jumlah_anak * 500.000
-insert into panti (id, nama, alamat, kota, jarak_km, jumlah_anak, plafon_bulanan, plafon_terpakai, status) values
-${Object.values(PANTI).map((p) => `  (${q(p.id)}, ${q(p.nama)}, ${q(p.alamat)}, ${q(p.kota)}, ${p.jarak}, ${p.anak}, ${p.plafon}, ${p.terpakai}, 'terverifikasi')`).join(',\n')};
+--
+-- galeri sengaja dikosongkan: foto panti datang dari HP pengurus lewat
+-- /edit-profil, dan URI-nya cuma hidup di HP itu. Menyeed URI palsu = galeri
+-- yang isinya lima kotak gagal muat.
+insert into panti (id, nama, alamat, kota, jarak_km, jumlah_anak, plafon_bulanan, plafon_terpakai, status, deskripsi) values
+${Object.values(PANTI).map((p) => `  (${q(p.id)}, ${q(p.nama)}, ${q(p.alamat)}, ${q(p.kota)}, ${p.jarak}, ${p.anak}, ${p.plafon}, ${p.terpakai}, 'terverifikasi', ${qMulti(p.deskripsi)})`).join(',\n')};
 
 -- ============ REQUEST (${rows.request.length}) ============
 -- jumlah_terpenuhi di bawah SELALU sama dengan SUM(donasi) terkait.
@@ -240,9 +324,16 @@ union all select 'panti',   count(*)::text, '5'  from panti
 union all select 'request', count(*)::text, '${rows.request.length}'  from request
 union all select 'donasi',  count(*)::text, '${rows.donasi.length}' from donasi
 union all select 'bukti',   count(*)::text, '${rows.bukti.length}' from bukti_terima
+union all select 'panti tanpa deskripsi', count(*)::text, '0' from panti where deskripsi is null or deskripsi = ''
 union all select 'lebih dari target', count(*)::text, '0' from request where jumlah_terpenuhi > jumlah_diminta
-union all select 'donasi tanpa bukti', count(*)::text, '0'
-  from donasi d left join bukti_terima b on b.donasi_id = d.id where b.id is null
+union all select 'donasi diterima tanpa bukti', count(*)::text, '0'
+  from donasi d left join bukti_terima b on b.donasi_id = d.id
+  where b.id is null and d.status = 'diterima'
+union all select 'bukti di donasi belum sampai', count(*)::text, '0'
+  from donasi d join bukti_terima b on b.donasi_id = d.id where d.status <> 'diterima'
+union all select 'donasi dikemas', count(*)::text, '${rows.donasi.filter((d) => d.status === 'dikemas').length}' from donasi where status = 'dikemas'
+union all select 'donasi dikirim', count(*)::text, '${rows.donasi.filter((d) => d.status === 'dikirim').length}' from donasi where status = 'dikirim'
+union all select 'donasi diterima', count(*)::text, '${rows.donasi.filter((d) => d.status === 'diterima').length}' from donasi where status = 'diterima'
 union all select 'angka hantu', count(*)::text, '0' from (
   select r.id from request r left join donasi d on d.request_id = r.id
   group by r.id, r.jumlah_terpenuhi

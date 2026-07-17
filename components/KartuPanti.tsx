@@ -72,9 +72,9 @@ export function KartuPanti({ panti, onPress }: Props) {
 
 const s = StyleSheet.create({
   atas: { flexDirection: 'row', gap: spacing.md, padding: spacing.lg },
-  info: { flex: 1, minWidth: 0, gap: 3 },
+  info: { flex: 1, minWidth: 0, gap: 2 },
   judul: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  tanda: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 5 },
+  tanda: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
   bawah: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg },
   pisah: { height: 1, backgroundColor: warna.border, marginBottom: spacing.md },
   barisKebutuhan: {
@@ -84,5 +84,5 @@ const s = StyleSheet.create({
     marginBottom: 6,
     gap: spacing.sm,
   },
-  lainnya: { marginTop: 8 },
+  lainnya: { marginTop: spacing.sm },
 });

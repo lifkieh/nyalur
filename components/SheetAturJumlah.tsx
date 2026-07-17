@@ -95,7 +95,7 @@ export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) 
 
         <ScrollView contentContainerStyle={s.isi}>
           <View style={s.kepala}>
-            <FotoPlaceholder url={item.foto_url} label={item.nama} ukuran={60} bulat={12} />
+            <FotoPlaceholder url={item.foto_url} label={item.nama} ukuran={60} />
             <View style={s.kepalaInfo}>
               <Text style={teks.title} numberOfLines={1}>
                 {item.nama}
@@ -106,7 +106,7 @@ export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) 
             </View>
           </View>
 
-          <Text style={[teks.bodyMedium, s.tajuk]}>Jumlah</Text>
+          <Text style={[teks.label, s.tajuk]}>Jumlah</Text>
 
           <View style={s.stepper}>
             <Pressable
@@ -206,13 +206,13 @@ const s = StyleSheet.create({
     borderTopLeftRadius: radius.sheet,
     borderTopRightRadius: radius.sheet,
   },
-  pegangan: { alignItems: 'center', paddingTop: 10, paddingBottom: 4 },
+  pegangan: { alignItems: 'center', paddingTop: spacing.sm, paddingBottom: spacing.xs },
   peganganGaris: { width: 38, height: 4, borderRadius: radius.pill, backgroundColor: warna.border },
-  isi: { padding: 20, paddingTop: spacing.sm, paddingBottom: 32 },
-  kepala: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 18 },
+  isi: { padding: spacing.lg, paddingTop: spacing.sm, paddingBottom: 32 },
+  kepala: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.lg },
   kepalaInfo: { flex: 1, minWidth: 0 },
   kepalaMeta: { marginTop: 2 },
-  tajuk: { marginBottom: 10 },
+  tajuk: { marginBottom: spacing.sm },
   stepper: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -242,17 +242,16 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: warna.border,
     borderRadius: radius.kartu,
-    paddingVertical: 14,
-    paddingHorizontal: spacing.lg,
+    padding: spacing.lg,
     marginBottom: spacing.lg,
-    gap: 10,
+    gap: spacing.sm,
   },
   baris: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm },
   labelRedup: { color: warna.muted },
   pisah: { height: 1, backgroundColor: warna.border },
   nilaiBiru: { color: warna.biru },
   nilaiBahaya: { color: warna.bahaya },
-  catatan: { flexDirection: 'row', gap: spacing.sm, marginBottom: 18 },
+  catatan: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg },
   catatanTeks: { flex: 1, lineHeight: 18 },
   ikonAtas: { marginTop: 1 },
   kotakBahaya: {
@@ -261,7 +260,7 @@ const s = StyleSheet.create({
     backgroundColor: warna.bahayaTint,
     borderRadius: radius.tombol,
     padding: spacing.md,
-    marginBottom: 18,
+    marginBottom: spacing.lg,
   },
   teksBahaya: { flex: 1, color: warna.bahaya, lineHeight: 18 },
 });

@@ -28,13 +28,13 @@ export function KartuProduk({ item, onPress }: { item: Katalog; onPress?: () => 
 const s = StyleSheet.create({
   kartu: { flex: 1 },
   badan: { padding: spacing.md },
-  nama: { fontFamily: font.medium, lineHeight: 18 },
+  nama: { fontFamily: font.medium },
   satuan: { marginTop: 2 },
   kaki: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginTop: spacing.md,
   },
   tambah: {
     width: 30,

@@ -1,7 +1,7 @@
 import { View, Text, Animated, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useIsiProgress } from './ui';
-import { warna, spacing, radius, font } from '../constants/theme';
+import { warna, spacing, radius, teks } from '../constants/theme';
 import { formatRupiah, formatBulanTahun } from '../lib/format';
 import { PLAFON_PER_ANAK, sisaPlafon, type Panti } from '../lib/queries';
 
@@ -46,10 +46,10 @@ export function KartuPlafon({ panti }: { panti: Panti }) {
 }
 
 const s = StyleSheet.create({
-  kartu: { backgroundColor: warna.navy, borderRadius: radius.kartu, padding: 20 },
+  kartu: { backgroundColor: warna.navy, borderRadius: radius.kartu, padding: spacing.lg },
   atas: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  labelRedup: { fontFamily: font.regular, fontSize: 13, color: warna.navyTeks },
-  labelRedupKecil: { fontFamily: font.regular, fontSize: 12, color: warna.navyTeks },
+  labelRedup: { ...teks.caption, color: warna.navyTeks },
+  labelRedupKecil: { ...teks.mikro, color: warna.navyTeks },
   chipBulan: {
     borderWidth: 1,
     borderColor: warna.navyBorder,
@@ -57,29 +57,24 @@ const s = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: spacing.sm,
   },
-  chipBulanTeks: { fontFamily: font.regular, fontSize: 11, color: warna.navyTeks },
-  angka: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.sm, marginTop: 10 },
-  sisa: {
-    fontFamily: font.medium,
-    fontSize: 28,
-    letterSpacing: -0.28,
-    color: warna.putih,
-  },
+  chipBulanTeks: { ...teks.mikro, color: warna.navyTeks },
+  angka: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.sm, marginTop: spacing.sm },
+  sisa: { ...teks.display, color: warna.putih },
   track: {
     height: 10,
     borderRadius: radius.pill,
     backgroundColor: warna.navyTrack,
     overflow: 'hidden',
-    marginTop: 14,
+    marginTop: spacing.md,
   },
   isi: { height: '100%', borderRadius: radius.pill, backgroundColor: warna.biru },
-  kaki: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+  kaki: { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm },
   catatan: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 7,
-    marginTop: 14,
-    paddingTop: 14,
+    gap: 6,
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
     borderTopColor: warna.navyGaris,
   },

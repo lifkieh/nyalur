@@ -49,6 +49,6 @@ const s = StyleSheet.create({
   atas: { flexDirection: 'row', gap: spacing.md },
   info: { flex: 1, minWidth: 0 },
   harga: { marginTop: 2 },
-  progress: { marginTop: 14 },
-  chips: { flexDirection: 'row', gap: spacing.sm, marginVertical: 14 },
+  progress: { marginTop: spacing.md },
+  chips: { flexDirection: 'row', gap: spacing.sm, marginVertical: spacing.md },
 });

@@ -94,7 +94,7 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
 
         <ScrollView contentContainerStyle={s.isi} keyboardShouldPersistTaps="handled">
           <View style={s.kepala}>
-            <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={60} bulat={12} />
+            <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={60} />
             <View style={s.kepalaInfo}>
               <Text style={teks.title} numberOfLines={1}>
                 {katalog.nama}
@@ -117,7 +117,7 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
             />
           </View>
 
-          <Text style={[teks.bodyMedium, s.tajuk]}>Pilih porsi</Text>
+          <Text style={[teks.label, s.tajuk]}>Pilih porsi</Text>
 
           <View style={s.stepper}>
             <Pressable
@@ -237,15 +237,15 @@ const s = StyleSheet.create({
     borderTopLeftRadius: radius.sheet,
     borderTopRightRadius: radius.sheet,
   },
-  pegangan: { alignItems: 'center', paddingTop: 10, paddingBottom: 4 },
+  pegangan: { alignItems: 'center', paddingTop: spacing.sm, paddingBottom: spacing.xs },
   peganganGaris: {
     width: 38,
     height: 4,
     borderRadius: radius.pill,
     backgroundColor: warna.border,
   },
-  isi: { padding: 20, paddingTop: spacing.sm, paddingBottom: 32, gap: 0 },
-  kepala: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 18 },
+  isi: { padding: spacing.lg, paddingTop: spacing.sm, paddingBottom: 32, gap: 0 },
+  kepala: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.lg },
   kepalaInfo: { flex: 1, minWidth: 0 },
   kepalaMeta: { marginTop: 2 },
   kartuProgress: {
@@ -253,10 +253,10 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: warna.border,
     borderRadius: radius.kartu,
-    padding: 14,
-    marginBottom: 18,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
   },
-  tajuk: { marginBottom: 10 },
+  tajuk: { marginBottom: spacing.sm },
   stepper: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -281,21 +281,20 @@ const s = StyleSheet.create({
   stepTambah: { borderColor: warna.biru, backgroundColor: warna.skyTint },
   stepMati: { opacity: 0.4 },
   ditekan: { opacity: 0.7 },
-  cepat: { flexDirection: 'row', gap: spacing.sm, marginBottom: 20 },
+  cepat: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg },
   chipCepat: { flex: 1, alignItems: 'center' },
   kartuBiaya: {
     borderWidth: 1,
     borderColor: warna.border,
     borderRadius: radius.kartu,
-    paddingVertical: 14,
-    paddingHorizontal: spacing.lg,
+    padding: spacing.lg,
     marginBottom: spacing.md,
-    gap: 10,
+    gap: spacing.sm,
   },
   barisBiaya: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm },
   labelBiaya: { color: warna.muted },
   pisah: { height: 1, backgroundColor: warna.border },
-  catatan: { flexDirection: 'row', gap: spacing.sm, marginBottom: 18 },
+  catatan: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg },
   catatanIkon: { marginTop: 1 },
   catatanTeks: { flex: 1, lineHeight: 18 },
   galat: { color: warna.bahaya, marginBottom: spacing.md },
@@ -305,7 +304,7 @@ const s = StyleSheet.create({
     backgroundColor: warna.hijauTint,
     borderRadius: radius.tombol,
     padding: spacing.md,
-    marginBottom: 18,
+    marginBottom: spacing.lg,
   },
   teksPenuh: { flex: 1, color: warna.hijau, lineHeight: 18 },
 });

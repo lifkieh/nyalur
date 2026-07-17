@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Modal, View, Text, Pressable, Animated, Easing, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { warna, spacing, radius, teks, font } from '../constants/theme';
+import { warna, spacing, radius, teks } from '../constants/theme';
 import { useSession, type Akun } from '../lib/session';
 
 const inisial = (nama: string) =>
@@ -138,11 +138,11 @@ const s = StyleSheet.create({
     borderTopLeftRadius: radius.sheet,
     borderTopRightRadius: radius.sheet,
   },
-  pegangan: { alignItems: 'center', paddingTop: 10, paddingBottom: 4 },
+  pegangan: { alignItems: 'center', paddingTop: spacing.sm, paddingBottom: spacing.xs },
   peganganGaris: { width: 38, height: 4, borderRadius: radius.pill, backgroundColor: warna.border },
-  isi: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 30 },
+  isi: { paddingTop: spacing.sm, paddingHorizontal: spacing.lg, paddingBottom: 32 },
   sub: { marginTop: 2, marginBottom: spacing.lg },
-  daftar: { gap: 10 },
+  daftar: { gap: spacing.md },
   baris: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -151,7 +151,7 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: warna.border,
     borderRadius: radius.kartu,
-    padding: 14,
+    padding: spacing.md,
   },
   barisAktif: { borderColor: warna.biru },
   ditekan: { opacity: 0.85 },
@@ -164,7 +164,7 @@ const s = StyleSheet.create({
   },
   avatarDonatur: { backgroundColor: warna.biru },
   avatarPanti: { backgroundColor: warna.navy },
-  avatarTeks: { fontFamily: font.medium, fontSize: 15, color: warna.putih },
+  avatarTeks: { ...teks.bodyMedium, color: warna.putih },
   info: { flex: 1, minWidth: 0 },
   namaBaris: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   tandaAktif: {

@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { View, Text, ScrollView, Pressable, RefreshControl, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { KartuPlafon } from '../../../components/KartuPlafon';
@@ -8,6 +7,7 @@ import {
   Badge,
   Chip,
   Kartu,
+  LayarTab,
   ProgressBar,
   FotoPlaceholder,
   Skeleton,
@@ -15,13 +15,16 @@ import {
   StatusLayar,
 } from '../../../components/ui';
 import { warna, spacing, radius, teks, bayangan } from '../../../constants/theme';
-import { formatJumlah, labelProgress, rasio } from '../../../lib/format';
+import { fotoKatalog } from '../../../lib/gambar';
+import { formatJumlah, labelProgress, rasio, terjemahHari } from '../../../lib/format';
+import { useBahasa } from '../../../lib/i18n';
 import { useSession } from '../../../lib/session';
 import { STATUS_REQUEST } from '../../../lib/status';
 import { getPantiById, type PantiDenganRequest } from '../../../lib/queries';
 
 export default function DashboardPanti() {
   const router = useRouter();
+  const { t, tn, nb, sb } = useBahasa();
   const { akun } = useSession();
   const [panti, setPanti] = useState<PantiDenganRequest | null>(null);
   const [muat, setMuat] = useState(true);
@@ -30,7 +33,7 @@ export default function DashboardPanti() {
 
   const ambil = useCallback(async () => {
     if (!akun.pantiId) {
-      setGalat('Akun ini tidak terhubung ke panti mana pun.');
+      setGalat(t('dash.takTerhubung'));
       setMuat(false);
       return;
     }
@@ -58,7 +61,7 @@ export default function DashboardPanti() {
 
   if (muat) {
     return (
-      <SafeAreaView style={s.layar} edges={['top']}>
+      <LayarTab>
         <View style={s.header}>
           <Skeleton lebar={140} tinggi={12} />
           <Skeleton lebar={200} tinggi={20} style={s.headerSkeleton} />
@@ -70,7 +73,7 @@ export default function DashboardPanti() {
             <SkeletonKartuProgress />
           </View>
         </View>
-      </SafeAreaView>
+      </LayarTab>
     );
   }
 
@@ -78,9 +81,9 @@ export default function DashboardPanti() {
     return (
       <StatusLayar
         ikon="wifi-off"
-        judul="Gagal memuat dashboard"
-        pesan={galat ?? 'Panti tidak ditemukan.'}
-        aksiLabel="Coba lagi"
+        judul={t('dash.galat')}
+        pesan={galat ?? t('panti.takAda')}
+        aksiLabel={t('umum.cobaLagi')}
         onAksi={ambil}
       />
     );
@@ -91,12 +94,14 @@ export default function DashboardPanti() {
   );
 
   return (
-    <SafeAreaView style={s.layar} edges={['top']}>
+    <LayarTab>
       <View style={s.header}>
-        <Text style={teks.caption}>{panti.nama}</Text>
+        <Text style={teks.judulTab}>{t('dash.judul')}</Text>
         <View style={s.judul}>
-          <Text style={teks.judul}>Dashboard</Text>
-          <Badge label="Terverifikasi" varian="verified" />
+          <Text style={[teks.caption, s.nama]} numberOfLines={1}>
+            {panti.nama}
+          </Text>
+          <Badge label={t('umum.terverifikasi')} varian="verified" />
         </View>
       </View>
 
@@ -114,8 +119,8 @@ export default function DashboardPanti() {
         <KartuPlafon panti={panti} />
 
         <View style={s.tajukDaftar}>
-          <Text style={teks.label}>Kebutuhan diajukan</Text>
-          <Text style={teks.caption}>{daftar.length} kebutuhan</Text>
+          <Text style={teks.label}>{t('dash.diajukan')}</Text>
+          <Text style={teks.caption}>{tn('dash.jumlah', daftar.length)}</Text>
         </View>
 
         <View style={s.daftar}>
@@ -124,23 +129,30 @@ export default function DashboardPanti() {
             return (
               <Kartu key={r.id}>
                 <View style={s.barisAtas}>
-                  <FotoPlaceholder url={r.katalog.foto_url} label={r.katalog.nama} ukuran={44} />
+                  <FotoPlaceholder
+                    sumber={fotoKatalog(r.katalog)}
+                    url={r.katalog.foto_url}
+                    label={nb(r.katalog)}
+                    ukuran={44}
+                  />
                   <View style={s.barisInfo}>
                     <Text style={teks.bodyMedium} numberOfLines={1}>
-                      {r.katalog.nama} · {formatJumlah(r.jumlah_diminta, r.katalog.satuan)}
+                      {nb(r.katalog)} · {formatJumlah(r.jumlah_diminta, sb(r.katalog))}
                     </Text>
-                    <Text style={teks.mikro}>Batch {r.batch_kirim}</Text>
+                    <Text style={teks.mikro}>
+                      {t('umum.batch', { hari: terjemahHari(r.batch_kirim) })}
+                    </Text>
                   </View>
                   {st.chip ? (
-                    <Chip label={st.label} varian={st.chip} />
+                    <Chip label={t(st.kunci)} varian={st.chip} />
                   ) : (
-                    <Badge label={st.label} varian="terkirim" />
+                    <Badge label={t(st.kunci)} varian="terkirim" />
                   )}
                 </View>
 
                 <ProgressBar
                   nilai={rasio(r.jumlah_terpenuhi, r.jumlah_diminta)}
-                  label={labelProgress(r.jumlah_terpenuhi, r.jumlah_diminta, r.katalog.satuan)}
+                  label={labelProgress(r.jumlah_terpenuhi, r.jumlah_diminta, sb(r.katalog))}
                   keterangan={`${Math.round(rasio(r.jumlah_terpenuhi, r.jumlah_diminta) * 100)}%`}
                   selesai={r.status === 'diterima'}
                   style={s.progress}
@@ -151,27 +163,27 @@ export default function DashboardPanti() {
           {!daftar.length && (
             <Kartu isian style={s.kosong}>
               <Feather name="clipboard" size={22} color={warna.biru} />
-              <Text style={[teks.caption, s.rata]}>
-                Belum ada kebutuhan diajukan. Mulai dari katalog — plafonmu masih tersedia.
-              </Text>
+              <Text style={[teks.caption, s.rata]}>{t('dash.kosong')}</Text>
             </Kartu>
           )}
         </View>
       </ScrollView>
 
+      {/* Ikon saja. Labelnya tetap ada lewat accessibilityLabel — tanpa teks,
+          pembaca layar cuma menemukan tombol tanpa nama. */}
       <Pressable
         onPress={() => router.push('/katalog')}
+        accessibilityRole="button"
+        accessibilityLabel={t('dash.fab')}
         style={({ pressed }) => [s.fab, pressed && s.fabDitekan]}
       >
-        <Feather name="plus" size={20} color={warna.putih} />
-        <Text style={s.fabTeks}>Ajukan kebutuhan</Text>
+        <Feather name="plus" size={24} color={warna.putih} />
       </Pressable>
-    </SafeAreaView>
+    </LayarTab>
   );
 }
 
 const s = StyleSheet.create({
-  layar: { flex: 1, backgroundColor: warna.pageBg },
   header: {
     backgroundColor: warna.putih,
     borderBottomWidth: 1,
@@ -180,7 +192,9 @@ const s = StyleSheet.create({
     paddingTop: spacing.sm,
     paddingBottom: spacing.lg,
   },
-  judul: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: 2 },
+  judul: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: 4 },
+  // shrink, bukan flex:1 — badge menempel nama, tidak terlempar ke tepi kanan.
+  nama: { flexShrink: 1 },
   headerSkeleton: { marginTop: spacing.sm },
   daftarSkeleton: { gap: spacing.md, marginTop: spacing.xl },
   kosong: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xl },
@@ -200,16 +214,14 @@ const s = StyleSheet.create({
     position: 'absolute',
     right: spacing.lg,
     bottom: spacing.xl,
-    height: 52,
-    flexDirection: 'row',
+    width: 56,
+    height: 56,
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.xl,
+    justifyContent: 'center',
     borderRadius: radius.pill,
     backgroundColor: warna.biru,
     ...bayangan.biru,
   },
-  fabDitekan: { opacity: 0.9 },
-  fabTeks: { ...teks.bodyMedium, color: warna.putih },
+  fabDitekan: { opacity: 0.9, transform: [{ scale: 0.96 }] },
   rata: { textAlign: 'center' },
 });

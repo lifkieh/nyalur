@@ -14,13 +14,16 @@ import {
   StatusLayar,
 } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
+import { fotoKatalog } from '../../../lib/gambar';
 import {
   formatJumlah,
   formatRupiah,
   formatTanggalJam,
   labelProgress,
   rasio,
+  terjemahHari,
 } from '../../../lib/format';
+import { useBahasa } from '../../../lib/i18n';
 import { STATUS_DONASI } from '../../../lib/status';
 import {
   getRequestDenganDonasi,
@@ -41,6 +44,7 @@ const inisial = (nama: string) =>
 export default function DetailPenerimaan() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t, tn, nb, sb } = useBahasa();
   const [data, setData] = useState<(RequestDenganDonasi & { panti: Panti }) | null>(null);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
@@ -68,7 +72,7 @@ export default function DetailPenerimaan() {
   if (muat) {
     return (
       <View style={s.layar}>
-        <BarKembali judul="Detail penerimaan" onKembali={kembali} />
+        <BarKembali judul={t('terima.detailJudul')} onKembali={kembali} />
         <View style={s.isi}>
           <Skeleton tinggi={150} bulat={12} />
           <Skeleton tinggi={72} bulat={12} style={s.jarakSkeleton} />
@@ -85,9 +89,9 @@ export default function DetailPenerimaan() {
     return (
       <StatusLayar
         ikon="wifi-off"
-        judul="Gagal memuat kebutuhan"
-        pesan={galat ?? 'Kebutuhan tidak ditemukan.'}
-        aksiLabel="Kembali"
+        judul={t('terima.galatKebutuhan')}
+        pesan={galat ?? t('terima.takAda')}
+        aksiLabel={t('umum.kembali')}
         onAksi={kembali}
       />
     );
@@ -99,32 +103,40 @@ export default function DetailPenerimaan() {
 
   return (
     <View style={s.layar}>
-      <BarKembali judul="Detail penerimaan" onKembali={kembali} />
+      <BarKembali judul={t('terima.detailJudul')} onKembali={kembali} />
 
       <ScrollView contentContainerStyle={s.isi}>
         <Kartu>
           <View style={s.atas}>
-            <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={56} />
+            <FotoPlaceholder
+              sumber={fotoKatalog(katalog)}
+              url={katalog.foto_url}
+              label={nb(katalog)}
+              ukuran={56}
+            />
             <View style={s.info}>
               <Text style={teks.subjudul} numberOfLines={1}>
-                {katalog.nama}
+                {nb(katalog)}
               </Text>
               <Text style={[teks.caption, s.harga]}>
-                {formatRupiah(katalog.harga_per_satuan)} / {katalog.satuan}
+                {t('umum.perSatuan', {
+                  rp: formatRupiah(katalog.harga_per_satuan),
+                  satuan: sb(katalog),
+                })}
               </Text>
             </View>
           </View>
 
           <ProgressBar
             nilai={rasio(data.jumlah_terpenuhi, data.jumlah_diminta)}
-            label={labelProgress(data.jumlah_terpenuhi, data.jumlah_diminta, katalog.satuan)}
+            label={labelProgress(data.jumlah_terpenuhi, data.jumlah_diminta, sb(katalog))}
             keterangan={`${Math.round(rasio(data.jumlah_terpenuhi, data.jumlah_diminta) * 100)}%`}
             selesai={data.status === 'diterima'}
             style={s.progress}
           />
 
           <View style={s.chips}>
-            <Chip label={`Batch ${data.batch_kirim}`} varian="pasif" />
+            <Chip label={t('umum.batch', { hari: terjemahHari(data.batch_kirim) })} varian="pasif" />
           </View>
         </Kartu>
 
@@ -136,19 +148,21 @@ export default function DetailPenerimaan() {
           </View>
           <View style={s.sorotInfo}>
             <Text style={[teks.subjudul, s.sorotJudul]}>
-              Terkumpul dari {nDonatur} donatur
+              {tn('terima.terkumpul', nDonatur)}
             </Text>
             <Text style={teks.mikro}>
-              {donasi.length} donasi · {formatJumlah(totalMasuk, katalog.satuan)} tercatat masuk
+              {tn('terima.tercatat', donasi.length, {
+                porsi: formatJumlah(totalMasuk, sb(katalog)),
+              })}
             </Text>
           </View>
         </View>
 
-        <Text style={[teks.label, s.tajuk]}>Donasi yang masuk</Text>
+        <Text style={[teks.label, s.tajuk]}>{t('terima.donasiMasuk')}</Text>
 
         <View style={s.daftar}>
           {donasi.map((d) => (
-            <KartuDonasi key={d.id} donasi={d} satuan={katalog.satuan} router={router} />
+            <KartuDonasi key={d.id} donasi={d} satuan={sb(katalog)} router={router} />
           ))}
         </View>
       </ScrollView>
@@ -165,6 +179,7 @@ function KartuDonasi({
   satuan: string;
   router: ReturnType<typeof useRouter>;
 }) {
+  const { t } = useBahasa();
   const st = STATUS_DONASI[d.status];
   const bukti = d.bukti_terima?.[0] ?? null;
 
@@ -180,7 +195,7 @@ function KartuDonasi({
           </Text>
           <Text style={teks.mikro}>{formatTanggalJam(d.created_at)}</Text>
         </View>
-        <Badge label={st.label} varian={st.varian} />
+        <Badge label={t(st.kunci)} varian={st.varian} />
       </View>
 
       <View style={s.pisah} />
@@ -188,21 +203,21 @@ function KartuDonasi({
       <View style={s.rincian}>
         <View style={s.baris}>
           <Text style={[teks.kecil, s.redup]}>
-            Harga barang ({formatJumlah(d.jumlah, satuan)})
+            {t('biaya.hargaBarang', { porsi: formatJumlah(d.jumlah, satuan) })}
           </Text>
           <Text style={teks.kecil}>{formatRupiah(d.harga_barang)}</Text>
         </View>
         <View style={s.baris}>
-          <Text style={[teks.kecil, s.redup]}>Ongkir (dibagi batch)</Text>
+          <Text style={[teks.kecil, s.redup]}>{t('biaya.ongkir')}</Text>
           <Text style={teks.kecil}>{formatRupiah(d.ongkir)}</Text>
         </View>
         <View style={s.baris}>
-          <Text style={[teks.kecil, s.redup]}>Biaya platform</Text>
+          <Text style={[teks.kecil, s.redup]}>{t('biaya.platform')}</Text>
           <Text style={teks.kecil}>{formatRupiah(d.platform_fee)}</Text>
         </View>
         <View style={s.pisah} />
         <View style={s.baris}>
-          <Text style={teks.bodyMedium}>Total</Text>
+          <Text style={teks.bodyMedium}>{t('biaya.total')}</Text>
           <Text style={teks.bodyMedium}>{formatRupiah(d.total)}</Text>
         </View>
       </View>
@@ -216,7 +231,7 @@ function KartuDonasi({
             <Feather name="shield" size={18} color={warna.hijau} />
           </View>
           <View style={s.info}>
-            <Text style={s.buktiJudul}>Bukti serah terima</Text>
+            <Text style={s.buktiJudul}>{t('bukti.judul')}</Text>
             <Text style={teks.mono}>{bukti.kode_bukti}</Text>
           </View>
           <Feather name="chevron-right" size={18} color={warna.placeholder} />

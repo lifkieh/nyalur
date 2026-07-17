@@ -11,7 +11,9 @@ import {
   StatusLayar,
 } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
-import { formatJumlah, formatRupiah, formatTanggalJam } from '../../../lib/format';
+import { fotoKatalog } from '../../../lib/gambar';
+import { formatJumlah, formatRupiah, formatTanggalJam, terjemahHari } from '../../../lib/format';
+import { useBahasa } from '../../../lib/i18n';
 import {
   buktiDari,
   getDonasiById,
@@ -24,6 +26,7 @@ const URUTAN: StatusDonasi[] = ['dikemas', 'dikirim', 'diterima'];
 export default function LacakDonasi() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t, nb, sb } = useBahasa();
   const [donasi, setDonasi] = useState<DonasiLengkap | null>(null);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
@@ -51,7 +54,7 @@ export default function LacakDonasi() {
   if (muat) {
     return (
       <View style={s.layar}>
-        <BarKembali judul="Lacak donasi" onKembali={kembali} />
+        <BarKembali judul={t('lacak.judul')} onKembali={kembali} />
         <View style={s.isi}>
           <SkeletonBaris />
           <Skeleton tinggi={230} bulat={12} style={s.jarakSkeleton} />
@@ -65,9 +68,9 @@ export default function LacakDonasi() {
     return (
       <StatusLayar
         ikon="wifi-off"
-        judul="Gagal memuat donasi"
-        pesan={galat ?? 'Donasi tidak ditemukan.'}
-        aksiLabel="Kembali ke etalase"
+        judul={t('lacak.galat')}
+        pesan={galat ?? t('lacak.takAda')}
+        aksiLabel={t('umum.kembaliBeranda')}
         onAksi={kembali}
       />
     );
@@ -84,47 +87,52 @@ export default function LacakDonasi() {
   const langkah = [
     {
       kunci: 'dikemas' as const,
-      judul: 'Dikemas',
+      judul: t('status.dikemas'),
       ikon: 'package' as const,
       selesaiTeks: formatTanggalJam(donasi.created_at),
-      nantiTeks: 'Menunggu diproses gudang',
+      nantiTeks: t('lacak.dikemas.nanti'),
     },
     {
       kunci: 'dikirim' as const,
-      judul: 'Dikirim',
+      judul: t('status.dikirim'),
       ikon: 'truck' as const,
-      selesaiTeks: 'Berangkat dari gudang',
-      aktifTeks: 'Sedang dalam perjalanan',
-      nantiTeks: `Menunggu batch ${request.batch_kirim}`,
+      selesaiTeks: t('lacak.dikirim.selesai'),
+      aktifTeks: t('lacak.dikirim.aktif'),
+      nantiTeks: t('lacak.dikirim.nanti', { hari: terjemahHari(request.batch_kirim) }),
     },
     {
       kunci: 'diterima' as const,
-      judul: 'Diterima',
+      judul: t('status.diterima'),
       ikon: 'check' as const,
-      selesaiTeks: bukti ? formatTanggalJam(bukti.diterima_at) : 'Sudah sampai di panti',
-      nantiTeks: 'Menunggu bukti serah terima',
+      selesaiTeks: bukti ? formatTanggalJam(bukti.diterima_at) : t('lacak.diterima.selesai'),
+      nantiTeks: t('lacak.diterima.nanti'),
     },
   ];
 
   return (
     <View style={s.layar}>
-      <BarKembali judul="Lacak donasi" onKembali={kembali} />
+      <BarKembali judul={t('lacak.judul')} onKembali={kembali} />
 
       <ScrollView contentContainerStyle={s.isi}>
         <Kartu style={s.ringkas}>
-          <FotoPlaceholder url={request.katalog.foto_url} label={request.katalog.nama} ukuran={48} />
+          <FotoPlaceholder
+            sumber={fotoKatalog(request.katalog)}
+            url={request.katalog.foto_url}
+            label={nb(request.katalog)}
+            ukuran={48}
+          />
           <View style={s.ringkasInfo}>
             <Text style={teks.bodyMedium} numberOfLines={1}>
-              {request.katalog.nama} · {formatJumlah(donasi.jumlah, request.katalog.satuan)}
+              {nb(request.katalog)} · {formatJumlah(donasi.jumlah, sb(request.katalog))}
             </Text>
             <Text style={[teks.mikro, s.ringkasSub]} numberOfLines={1}>
-              ke {request.panti.nama}
+              {t('umum.kePanti', { panti: request.panti.nama })}
             </Text>
           </View>
         </Kartu>
 
         <Kartu style={s.kartuTimeline}>
-          <Text style={[teks.label, s.tajuk]}>Status barang</Text>
+          <Text style={[teks.label, s.tajuk]}>{t('lacak.statusBarang')}</Text>
 
           {langkah.map((l, i) => {
             // Langkah terakhir tidak pernah "sedang berjalan" — begitu barang
@@ -178,37 +186,37 @@ export default function LacakDonasi() {
         </Kartu>
 
         <Kartu style={s.rincian}>
-          <Text style={[teks.label, s.tajukRincian]}>Rincian transaksi</Text>
+          <Text style={[teks.label, s.tajukRincian]}>{t('lacak.rincian')}</Text>
           <View style={s.barisRincian}>
             <Text style={[teks.kecil, s.labelRedup]}>
-              Harga barang ({formatJumlah(donasi.jumlah, request.katalog.satuan)})
+              {t('biaya.hargaBarang', {
+                porsi: formatJumlah(donasi.jumlah, sb(request.katalog)),
+              })}
             </Text>
             <Text style={teks.kecil}>{formatRupiah(donasi.harga_barang)}</Text>
           </View>
           <View style={s.barisRincian}>
-            <Text style={[teks.kecil, s.labelRedup]}>Ongkir (dibagi batch)</Text>
+            <Text style={[teks.kecil, s.labelRedup]}>{t('biaya.ongkir')}</Text>
             <Text style={teks.kecil}>{formatRupiah(donasi.ongkir)}</Text>
           </View>
           <View style={s.barisRincian}>
-            <Text style={[teks.kecil, s.labelRedup]}>Biaya platform</Text>
+            <Text style={[teks.kecil, s.labelRedup]}>{t('biaya.platform')}</Text>
             <Text style={teks.kecil}>{formatRupiah(donasi.platform_fee)}</Text>
           </View>
           <View style={s.pisah} />
           <View style={s.barisRincian}>
-            <Text style={teks.bodyMedium}>Total</Text>
+            <Text style={teks.bodyMedium}>{t('biaya.total')}</Text>
             <Text style={teks.bodyMedium}>{formatRupiah(donasi.total)}</Text>
           </View>
           <View style={s.barisRincian}>
-            <Text style={[teks.mikro, s.labelRedup]}>Disalurkan</Text>
+            <Text style={[teks.mikro, s.labelRedup]}>{t('lacak.disalurkan')}</Text>
             <Text style={teks.mikro}>{formatTanggalJam(donasi.created_at)}</Text>
           </View>
         </Kartu>
 
         <View style={s.catatan}>
           <Feather name="info" size={15} color={warna.biru} style={s.catatanIkon} />
-          <Text style={[teks.mikro, s.catatanTeks]}>
-            Yang dilacak adalah barang fisikmu sampai ke panti — bukan status dana.
-          </Text>
+          <Text style={[teks.mikro, s.catatanTeks]}>{t('lacak.catatan')}</Text>
         </View>
 
         {/* Gerbang menuju momen klimaks — kartu hijau, satu-satunya di layar ini. */}
@@ -221,7 +229,7 @@ export default function LacakDonasi() {
               <Feather name="shield" size={18} color={warna.hijau} />
             </View>
             <View style={s.buktiInfo}>
-              <Text style={[teks.bodyMedium, s.buktiJudul]}>Lihat bukti serah terima</Text>
+              <Text style={[teks.bodyMedium, s.buktiJudul]}>{t('lacak.lihatBukti')}</Text>
               <Text style={teks.mono}>{bukti.kode_bukti}</Text>
             </View>
             <Feather name="chevron-right" size={18} color={warna.hijau} />

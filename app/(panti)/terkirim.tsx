@@ -3,14 +3,16 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol, useMuncul, useMunculPegas } from '../../components/ui';
 import { warna, spacing, radius, teks } from '../../constants/theme';
-import { formatJumlah, formatRupiah } from '../../lib/format';
+import { formatJumlah, formatRupiah, terjemahHari } from '../../lib/format';
 import { useSession } from '../../lib/session';
+import { useBahasa } from '../../lib/i18n';
 
 // A7 — request terkirim. Kartu switch akun di bawah adalah engsel demo:
 // dari sini juri melihat kebutuhan yang baru diajukan muncul di sisi donatur.
 export default function RequestTerkirim() {
   const router = useRouter();
   const { daftarAkun, switchAkun } = useSession();
+  const { t } = useBahasa();
   const { barang, jumlah, satuan, total, batch } = useLocalSearchParams<{
     requestId: string;
     barang: string;
@@ -21,7 +23,7 @@ export default function RequestTerkirim() {
   }>();
 
   const porsi = formatJumlah(Number(jumlah) || 0, satuan ?? '');
-  const jadwal = batch ?? 'Jumat';
+  const jadwal = terjemahHari(batch ?? 'Jumat');
 
   const ikonMasuk = useMunculPegas(80);
   const isiMasuk = useMuncul(220);
@@ -50,24 +52,21 @@ export default function RequestTerkirim() {
         </Animated.View>
 
         <Animated.View style={[s.blok, isiMasuk]}>
-          <Text style={[teks.display, s.rata]}>Kebutuhan diajukan</Text>
-          <Text style={[teks.body, s.rata, s.sub]}>
-            Kebutuhan ini sudah tayang di etalase donatur. Kamu akan dikabari saat ada yang
-            menyalurkan.
-          </Text>
+          <Text style={[teks.display, s.rata]}>{t('terkirim.judul')}</Text>
+          <Text style={[teks.body, s.rata, s.sub]}>{t('terkirim.pesan')}</Text>
 
           <View style={s.ringkas}>
-            <Text style={teks.mikro}>Ringkasan</Text>
+            <Text style={teks.mikro}>{t('terkirim.ringkasan')}</Text>
             <Text style={[teks.subjudul, s.ringkasJudul]}>
               {barang} · {porsi}
             </Text>
 
             <View style={s.ringkasBaris}>
-              <Text style={teks.caption}>Estimasi biaya</Text>
+              <Text style={teks.caption}>{t('terkirim.estimasi')}</Text>
               <Text style={[teks.caption, s.nilai]}>{formatRupiah(Number(total) || 0)}</Text>
             </View>
             <View style={[s.ringkasBaris, s.tanpaGaris]}>
-              <Text style={teks.caption}>Batch pengiriman</Text>
+              <Text style={teks.caption}>{t('terkirim.batch')}</Text>
               <Text style={[teks.caption, s.nilai]}>{jadwal}</Text>
             </View>
           </View>
@@ -76,14 +75,14 @@ export default function RequestTerkirim() {
 
       <Animated.View style={[s.aksi, aksiMasuk]}>
         <Tombol
-          label="Kembali ke dashboard"
+          label={t('terkirim.keDashboard')}
           varian="sekunder"
           onPress={() => router.replace('/dashboard')}
         />
 
         {!!donatur && (
           <View style={s.switchKotak}>
-            <Text style={[teks.mikro, s.switchLabel]}>Beralih akun untuk demo</Text>
+            <Text style={[teks.mikro, s.switchLabel]}>{t('terkirim.beralih')}</Text>
             <Pressable
               onPress={beralih}
               style={({ pressed }) => [s.switchTombol, pressed && s.ditekan]}
@@ -93,7 +92,7 @@ export default function RequestTerkirim() {
               </View>
               <View style={s.switchInfo}>
                 <Text style={teks.bodyMedium}>{donatur.nama}</Text>
-                <Text style={teks.mikro}>Donatur · Tangerang Selatan</Text>
+                <Text style={teks.mikro}>{t('terkirim.donaturSub')}</Text>
               </View>
               <Feather name="chevron-right" size={20} color={warna.biru} />
             </Pressable>

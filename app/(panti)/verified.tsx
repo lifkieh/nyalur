@@ -6,12 +6,14 @@ import { Tombol, useMuncul, useMunculPegas } from '../../components/ui';
 import { warna, spacing, radius, teks } from '../../constants/theme';
 import { formatRupiah } from '../../lib/format';
 import { useSession } from '../../lib/session';
+import { useBahasa } from '../../lib/i18n';
 import { getPantiById, PLAFON_PER_ANAK, type PantiDenganRequest } from '../../lib/queries';
 
 // A3 — verifikasi instan. Di produksi masuk antrean 2×24 jam.
 export default function Verified() {
   const router = useRouter();
   const { akun } = useSession();
+  const { t } = useBahasa();
   const [panti, setPanti] = useState<PantiDenganRequest | null>(null);
   const [muat, setMuat] = useState(true);
 
@@ -56,19 +58,22 @@ export default function Verified() {
         </Animated.View>
 
         <Animated.View style={[s.blok, isiMasuk]}>
-          <Text style={[teks.display, s.rata]}>Panti terverifikasi</Text>
+          <Text style={[teks.display, s.rata]}>{t('verif.judul')}</Text>
           <Text style={[teks.body, s.rata, s.sub]}>
-            Legalitas {panti?.nama ?? akun.nama} sudah dicek dan lolos verifikasi Nyalur.
+            {t('verif.pesan', { nama: panti?.nama ?? akun.nama })}
           </Text>
 
           {!!panti && (
             <View style={s.kartu}>
-              <Text style={teks.caption}>Plafon kebutuhan bulanan</Text>
+              <Text style={teks.caption}>{t('verif.plafon')}</Text>
               <Text style={s.plafon}>{formatRupiah(panti.plafon_bulanan)}</Text>
               <View style={s.rumus}>
                 <Feather name="info" size={15} color={warna.biru} />
                 <Text style={[teks.caption, s.rumusTeks]}>
-                  {panti.jumlah_anak} anak × {formatRupiah(PLAFON_PER_ANAK)} / anak / bulan
+                  {t('verif.rumus', {
+                    n: panti.jumlah_anak,
+                    rp: formatRupiah(PLAFON_PER_ANAK),
+                  })}
                 </Text>
               </View>
             </View>
@@ -78,7 +83,7 @@ export default function Verified() {
 
       <View style={s.aksi}>
         <Tombol
-          label="Mulai ajukan kebutuhan"
+          label={t('verif.cta')}
           varian="primer"
           ukuran="besar"
           onPress={() => router.replace('/dashboard')}

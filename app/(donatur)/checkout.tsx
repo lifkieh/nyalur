@@ -3,11 +3,13 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol, useMuncul, useMunculPegas } from '../../components/ui';
 import { warna, spacing, radius, teks } from '../../constants/theme';
-import { formatJumlah, formatRupiah } from '../../lib/format';
+import { formatJumlah, formatRupiah, terjemahHari } from '../../lib/format';
+import { useBahasa } from '../../lib/i18n';
 
 // B5 — layar sukses. Pembayaran (B4) selesai di /bayar sebelum sampai sini.
 export default function DonasiBerhasil() {
   const router = useRouter();
+  const { t } = useBahasa();
   const { donasiId, barang, jumlah, satuan, panti, batch, total, metode } =
     useLocalSearchParams<{
       donasiId: string;
@@ -21,6 +23,7 @@ export default function DonasiBerhasil() {
     }>();
 
   const porsi = formatJumlah(Number(jumlah) || 0, satuan ?? '');
+  const hari = terjemahHari(batch ?? '');
   const ikonMasuk = useMunculPegas(80);
   const teksMasuk = useMuncul(220);
   const aksiMasuk = useMuncul(340);
@@ -33,22 +36,25 @@ export default function DonasiBerhasil() {
         </Animated.View>
 
         <Animated.View style={[s.blokTeks, teksMasuk]}>
-          <Text style={teks.display}>Nyalur berhasil</Text>
+          <Text style={teks.display}>{t('sukses.judul')}</Text>
 
           <Text style={[teks.body, s.pesan]}>
-            {porsi} {barang?.toLowerCase()} kamu akan dikirim ke{' '}
-            <Text style={s.tebal}>{panti}</Text> hari <Text style={s.tebal}>{batch}</Text>.
+            {t('sukses.pesan', {
+              porsi,
+              barang: barang?.toLowerCase() ?? '',
+              panti: panti ?? '',
+              hari,
+            })}
           </Text>
 
           <View style={s.batch}>
             <Feather name="calendar" size={15} color={warna.biru} />
-            <Text style={[teks.caption, s.batchTeks]}>Batch pengiriman {batch}</Text>
+            <Text style={[teks.caption, s.batchTeks]}>{t('sukses.batch', { hari })}</Text>
           </View>
 
           {!!Number(total) && (
             <Text style={[teks.mikro, s.struk]}>
-              Dibayar {formatRupiah(Number(total))}
-              {metode ? ` via ${metode}` : ''}
+              {t('sukses.struk', { rp: formatRupiah(Number(total)), metode: metode ?? '' })}
             </Text>
           )}
         </Animated.View>
@@ -56,13 +62,13 @@ export default function DonasiBerhasil() {
 
       <Animated.View style={[s.aksi, aksiMasuk]}>
         <Tombol
-          label="Lacak donasi"
+          label={t('sukses.lacak')}
           varian="primer"
           ukuran="besar"
           onPress={() => router.replace(`/lacak/${donasiId}`)}
         />
         <Tombol
-          label="Kembali ke etalase"
+          label={t('umum.kembaliBeranda')}
           varian="sekunder"
           ukuran="besar"
           onPress={() => router.replace('/etalase')}

@@ -3,9 +3,11 @@ import { Feather } from '@expo/vector-icons';
 import { useIsiProgress } from './ui';
 import { warna, spacing, radius, teks } from '../constants/theme';
 import { formatRupiah, formatBulanTahun } from '../lib/format';
+import { useBahasa } from '../lib/i18n';
 import { PLAFON_PER_ANAK, sisaPlafon, type Panti } from '../lib/queries';
 
 export function KartuPlafon({ panti }: { panti: Panti }) {
+  const { t } = useBahasa();
   const sisa = sisaPlafon(panti);
   const rasioTerpakai = panti.plafon_bulanan
     ? Math.min(1, panti.plafon_terpakai / panti.plafon_bulanan)
@@ -15,7 +17,7 @@ export function KartuPlafon({ panti }: { panti: Panti }) {
   return (
     <View style={s.kartu}>
       <View style={s.atas}>
-        <Text style={s.labelRedup}>Plafon bulan ini</Text>
+        <Text style={s.labelRedup}>{t('plafon.bulanIni')}</Text>
         <View style={s.chipBulan}>
           <Text style={s.chipBulanTeks}>{formatBulanTahun()}</Text>
         </View>
@@ -23,7 +25,7 @@ export function KartuPlafon({ panti }: { panti: Panti }) {
 
       <View style={s.angka}>
         <Text style={s.sisa}>{formatRupiah(sisa)}</Text>
-        <Text style={s.labelRedup}>sisa</Text>
+        <Text style={s.labelRedup}>{t('plafon.sisa')}</Text>
       </View>
 
       <View style={s.track}>
@@ -31,14 +33,18 @@ export function KartuPlafon({ panti }: { panti: Panti }) {
       </View>
 
       <View style={s.kaki}>
-        <Text style={s.labelRedupKecil}>Terpakai {formatRupiah(panti.plafon_terpakai)}</Text>
-        <Text style={s.labelRedupKecil}>Plafon {formatRupiah(panti.plafon_bulanan)}</Text>
+        <Text style={s.labelRedupKecil}>
+          {t('plafon.terpakai', { rp: formatRupiah(panti.plafon_terpakai) })}
+        </Text>
+        <Text style={s.labelRedupKecil}>
+          {t('plafon.total', { rp: formatRupiah(panti.plafon_bulanan) })}
+        </Text>
       </View>
 
       <View style={s.catatan}>
         <Feather name="shield" size={14} color={warna.navyTeks} />
         <Text style={[s.labelRedupKecil, s.catatanTeks]}>
-          Batas {formatRupiah(PLAFON_PER_ANAK)} / anak / bulan — mencegah penyalahgunaan
+          {t('plafon.catatan', { rp: formatRupiah(PLAFON_PER_ANAK) })}
         </Text>
       </View>
     </View>

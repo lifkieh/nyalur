@@ -12,7 +12,16 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { Tombol, Chip, ProgressBar, FotoPlaceholder } from './ui';
 import { warna, spacing, radius, teks } from '../constants/theme';
-import { formatRupiah, formatJumlah, labelProgress, rasio, sisa } from '../lib/format';
+import { fotoKatalog } from '../lib/gambar';
+import {
+  formatRupiah,
+  formatJumlah,
+  labelProgress,
+  rasio,
+  sisa,
+  terjemahHari,
+} from '../lib/format';
+import { useBahasa } from '../lib/i18n';
 import { hitungBiaya, type Request } from '../lib/queries';
 
 type Props = {
@@ -23,6 +32,7 @@ type Props = {
 };
 
 export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Props) {
+  const { t, nb, sb } = useBahasa();
   const [qty, setQty] = useState(1);
   const [kirim, setKirim] = useState(false);
   const [galat, setGalat] = useState<string | null>(null);
@@ -66,6 +76,7 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
   if (!kebutuhan) return null;
 
   const { katalog } = kebutuhan;
+  const satuan = sb(katalog);
   const setAman = (n: number) => setQty(Math.min(maks, Math.max(1, n)));
 
   const nyalur = async () => {
@@ -94,13 +105,19 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
 
         <ScrollView contentContainerStyle={s.isi} keyboardShouldPersistTaps="handled">
           <View style={s.kepala}>
-            <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={60} />
+            <FotoPlaceholder
+              sumber={fotoKatalog(katalog)}
+              url={katalog.foto_url}
+              label={nb(katalog)}
+              ukuran={60}
+            />
             <View style={s.kepalaInfo}>
               <Text style={teks.title} numberOfLines={1}>
-                {katalog.nama}
+                {nb(katalog)}
               </Text>
               <Text style={[teks.caption, s.kepalaMeta]} numberOfLines={2}>
-                {namaPanti} · {formatRupiah(katalog.harga_per_satuan)} / {katalog.satuan}
+                {namaPanti} ·{' '}
+                {t('umum.perSatuan', { rp: formatRupiah(katalog.harga_per_satuan), satuan })}
               </Text>
             </View>
           </View>
@@ -108,16 +125,16 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
           <View style={s.kartuProgress}>
             <ProgressBar
               nilai={rasio(kebutuhan.jumlah_terpenuhi, kebutuhan.jumlah_diminta)}
-              label="Progress saat ini"
+              label={t('porsi.progress')}
               keterangan={labelProgress(
                 kebutuhan.jumlah_terpenuhi,
                 kebutuhan.jumlah_diminta,
-                katalog.satuan
+                satuan
               )}
             />
           </View>
 
-          <Text style={[teks.label, s.tajuk]}>Pilih porsi</Text>
+          <Text style={[teks.label, s.tajuk]}>{t('porsi.pilih')}</Text>
 
           <View style={s.stepper}>
             <Pressable
@@ -129,7 +146,7 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
               <Feather name="minus" size={20} color={warna.ink} />
             </Pressable>
 
-            <Text style={teks.display}>{formatJumlah(qty, katalog.satuan)}</Text>
+            <Text style={teks.display}>{formatJumlah(qty, satuan)}</Text>
 
             <Pressable
               onPress={() => setAman(qty + 1)}
@@ -148,21 +165,21 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
 
           <View style={s.cepat}>
             <Chip
-              label={`1 ${katalog.satuan}`}
+              label={`1 ${satuan}`}
               varian={qty === 1 ? 'tint' : 'pasif'}
               onPress={() => setAman(1)}
               style={s.chipCepat}
             />
             {maks > 3 && (
               <Chip
-                label={`3 ${katalog.satuan}`}
+                label={`3 ${satuan}`}
                 varian={qty === 3 ? 'tint' : 'pasif'}
                 onPress={() => setAman(3)}
                 style={s.chipCepat}
               />
             )}
             <Chip
-              label={`Penuhi semua (${formatJumlah(maks, katalog.satuan)})`}
+              label={t('porsi.penuhiSemua', { porsi: formatJumlah(maks, satuan) })}
               varian={qty === maks ? 'tint' : 'pasif'}
               onPress={() => setAman(maks)}
               style={s.chipCepat}
@@ -172,21 +189,21 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
           <View style={s.kartuBiaya}>
             <View style={s.barisBiaya}>
               <Text style={[teks.kecil, s.labelBiaya]}>
-                Harga barang ({formatJumlah(qty, katalog.satuan)})
+                {t('biaya.hargaBarang', { porsi: formatJumlah(qty, satuan) })}
               </Text>
               <Text style={teks.kecil}>{formatRupiah(biaya.hargaBarang)}</Text>
             </View>
             <View style={s.barisBiaya}>
-              <Text style={[teks.kecil, s.labelBiaya]}>Ongkir (dibagi batch)</Text>
+              <Text style={[teks.kecil, s.labelBiaya]}>{t('biaya.ongkir')}</Text>
               <Text style={teks.kecil}>{formatRupiah(biaya.ongkir)}</Text>
             </View>
             <View style={s.barisBiaya}>
-              <Text style={[teks.kecil, s.labelBiaya]}>Biaya platform</Text>
+              <Text style={[teks.kecil, s.labelBiaya]}>{t('biaya.platform')}</Text>
               <Text style={teks.kecil}>{formatRupiah(biaya.platformFee)}</Text>
             </View>
             <View style={s.pisah} />
             <View style={s.barisBiaya}>
-              <Text style={teks.bodyMedium}>Total</Text>
+              <Text style={teks.bodyMedium}>{t('biaya.total')}</Text>
               <Text style={teks.bodyMedium}>{formatRupiah(biaya.total)}</Text>
             </View>
           </View>
@@ -194,24 +211,25 @@ export function SheetPilihPorsi({ kebutuhan, namaPanti, onTutup, onNyalur }: Pro
           <View style={s.catatan}>
             <Feather name="info" size={15} color={warna.biru} style={s.catatanIkon} />
             <Text style={[teks.mikro, s.catatanTeks]}>
-              Ongkir dibagi rata dengan donatur lain di batch pengiriman{' '}
-              {kebutuhan.batch_kirim}. Semakin ramai, makin murah.
+              {t('porsi.catatan', { hari: terjemahHari(kebutuhan.batch_kirim) })}
             </Text>
           </View>
 
           {!bisaNyalur && (
             <View style={s.kotakPenuh}>
               <Feather name="check-circle" size={16} color={warna.hijau} style={s.catatanIkon} />
-              <Text style={[teks.mikro, s.teksPenuh]}>
-                Kebutuhan ini sudah terpenuhi. Coba kebutuhan lain di panti ini.
-              </Text>
+              <Text style={[teks.mikro, s.teksPenuh]}>{t('porsi.penuh')}</Text>
             </View>
           )}
 
           {!!galat && <Text style={[teks.mikro, s.galat]}>{galat}</Text>}
 
           <Tombol
-            label={bisaNyalur ? `Nyalur ${formatJumlah(qty, katalog.satuan)}` : 'Sudah terpenuhi'}
+            label={
+              bisaNyalur
+                ? t('porsi.cta', { porsi: formatJumlah(qty, satuan) })
+                : t('porsi.ctaPenuh')
+            }
             varian="primer"
             ukuran="besar"
             loading={kirim}

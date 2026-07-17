@@ -2,18 +2,28 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Kartu, FotoPlaceholder } from './ui';
 import { warna, spacing, radius, teks, font } from '../constants/theme';
+import { fotoKatalog } from '../lib/gambar';
 import { formatRupiah } from '../lib/format';
+import { useBahasa } from '../lib/i18n';
 import type { Katalog } from '../lib/queries';
 
 export function KartuProduk({ item, onPress }: { item: Katalog; onPress?: () => void }) {
+  const { t, nb, sb } = useBahasa();
+
   return (
     <Kartu onPress={onPress} rapat style={s.kartu}>
-      <FotoPlaceholder url={item.foto_url} label={item.nama} tinggi={96} bulat={0} />
+      <FotoPlaceholder
+        sumber={fotoKatalog(item)}
+        url={item.foto_url}
+        label={nb(item)}
+        tinggi={96}
+        bulat={0}
+      />
       <View style={s.badan}>
         <Text style={[teks.kecil, s.nama]} numberOfLines={2}>
-          {item.nama}
+          {nb(item)}
         </Text>
-        <Text style={[teks.mikro, s.satuan]}>per {item.satuan}</Text>
+        <Text style={[teks.mikro, s.satuan]}>{t('katalog.perSatuan', { satuan: sb(item) })}</Text>
         <View style={s.kaki}>
           <Text style={teks.bodyMedium}>{formatRupiah(item.harga_per_satuan)}</Text>
           <View style={s.tambah}>

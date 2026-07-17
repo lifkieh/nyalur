@@ -1,35 +1,34 @@
 import { useEffect, useRef } from 'react';
 import { Modal, View, Text, Pressable, Animated, Easing, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { warna, spacing, radius, teks } from '../constants/theme';
-import { useSession, type Akun } from '../lib/session';
 import { useBahasa } from '../lib/i18n';
-import type { Kunci } from '../lib/teks';
 
-const inisial = (nama: string) =>
-  nama
-    .replace(/^Panti\s+|^Rumah\s+/i, '')
-    .split(' ')
-    .slice(0, 2)
-    .map((k) => k[0])
-    .join('')
-    .toUpperCase();
+/** Posisi bawaan: seluruh jangkauan gudang Nyalur. */
+export const AREA_SEMUA = 'semua';
 
-const LABEL_PERAN: Record<Akun['peran'], Kunci> = {
-  donatur: 'umum.donatur',
-  panti: 'umum.pengurusPanti',
-};
-
-const BERANDA: Record<Akun['peran'], string> = {
-  donatur: '/etalase',
-  panti: '/dashboard',
-};
-
-export function SheetSwitchAkun({ tampil, onTutup }: { tampil: boolean; onTutup: () => void }) {
-  const router = useRouter();
-  const { akun, daftarAkun, switchAkun } = useSession();
+/**
+ * Label satu opsi area. Nama kota datang dari data dan tidak diterjemahkan;
+ * yang perlu kamus cuma posisi bawaannya. Butuh `t`, jadi dipanggil dari dalam
+ * komponen — bukan lagi konstanta modul.
+ */
+export const useLabelArea = () => {
   const { t } = useBahasa();
+  return (area: string) => (area === AREA_SEMUA ? t('area.semua') : area);
+};
+
+type Props = {
+  tampil: boolean;
+  area: string;
+  /** kota tempat panti berada — diturunkan dari data, bukan daftar tetap */
+  daftarKota: string[];
+  onPilih: (area: string) => void;
+  onTutup: () => void;
+};
+
+export function SheetPilihArea({ tampil, area, daftarKota, onPilih, onTutup }: Props) {
+  const { t } = useBahasa();
+  const labelArea = useLabelArea();
   const anim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -56,21 +55,15 @@ export function SheetSwitchAkun({ tampil, onTutup }: { tampil: boolean; onTutup:
     });
   };
 
-  const pilih = (i: number) => {
-    const target = daftarAkun[i];
-    if (target.id === akun.id) {
-      tutup();
-      return;
-    }
-    // Ganti persona dulu, baru pindah beranda — supaya layar tujuan langsung
-    // membaca akun yang benar saat pertama render.
-    switchAkun(i);
-    tutup(() => router.replace(BERANDA[target.peran]));
+  const pilih = (nilai: string) => {
+    if (nilai === area) return tutup();
+    tutup(() => onPilih(nilai));
   };
 
   if (!tampil) return null;
 
   const geser = anim.interpolate({ inputRange: [0, 1], outputRange: [400, 0] });
+  const opsi = [AREA_SEMUA, ...daftarKota];
 
   return (
     <Modal visible transparent animationType="none" onRequestClose={() => tutup()} statusBarTranslucent>
@@ -84,44 +77,44 @@ export function SheetSwitchAkun({ tampil, onTutup }: { tampil: boolean; onTutup:
         </View>
 
         <View style={s.isi}>
-          <Text style={teks.title}>{t('switch.judul')}</Text>
-          <Text style={[teks.caption, s.sub]}>{t('switch.sub')}</Text>
+          <Text style={teks.title}>{t('area.judul')}</Text>
+          <Text style={[teks.caption, s.sub]}>{t('area.sub')}</Text>
 
           <View style={s.daftar}>
-            {daftarAkun.map((a, i) => {
-              const aktif = a.id === akun.id;
+            {opsi.map((o) => {
+              const aktif = o === area;
               return (
                 <Pressable
-                  key={a.id}
-                  onPress={() => pilih(i)}
+                  key={o}
+                  onPress={() => pilih(o)}
                   style={({ pressed }) => [s.baris, aktif && s.barisAktif, pressed && s.ditekan]}
                 >
-                  <View style={[s.avatar, a.peran === 'panti' ? s.avatarPanti : s.avatarDonatur]}>
-                    <Text style={s.avatarTeks}>{inisial(a.nama)}</Text>
+                  <View style={[s.ikon, aktif && s.ikonAktif]}>
+                    <Feather
+                      name={o === AREA_SEMUA ? 'globe' : 'map-pin'}
+                      size={17}
+                      color={aktif ? warna.biru : warna.muted}
+                    />
                   </View>
-
-                  <View style={s.info}>
-                    <View style={s.namaBaris}>
-                      <Text style={teks.bodyMedium} numberOfLines={1}>
-                        {a.nama}
-                      </Text>
-                      {a.peran === 'panti' && (
-                        <Feather name="check-circle" size={14} color={warna.biru} />
-                      )}
-                    </View>
-                    <Text style={teks.mikro}>{t(LABEL_PERAN[a.peran])}</Text>
-                  </View>
-
-                  {aktif ? (
+                  <Text style={[teks.bodyMedium, s.nama]} numberOfLines={1}>
+                    {labelArea(o)}
+                  </Text>
+                  {aktif && (
                     <View style={s.tandaAktif}>
-                      <Feather name="check" size={14} color={warna.putih} />
+                      <Feather name="check" size={13} color={warna.putih} />
                     </View>
-                  ) : (
-                    <Feather name="chevron-right" size={20} color={warna.placeholder} />
                   )}
                 </Pressable>
               );
             })}
+          </View>
+
+          {/* jarak_km di data diukur dari Tangsel dan tidak dihitung ulang —
+              jadi angkanya disembunyikan begitu posisimu pindah, bukan dibiarkan
+              memajang jarak yang salah. Lihat brief §10: jarak hardcode. */}
+          <View style={s.catatan}>
+            <Feather name="info" size={14} color={warna.muted} style={s.catatanIkon} />
+            <Text style={[teks.mikro, s.catatanTeks]}>{t('area.catatan')}</Text>
           </View>
         </View>
       </Animated.View>
@@ -145,7 +138,7 @@ const s = StyleSheet.create({
   peganganGaris: { width: 38, height: 4, borderRadius: radius.pill, backgroundColor: warna.border },
   isi: { paddingTop: spacing.sm, paddingHorizontal: spacing.lg, paddingBottom: 32 },
   sub: { marginTop: 2, marginBottom: spacing.lg },
-  daftar: { gap: spacing.md },
+  daftar: { gap: spacing.sm },
   baris: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -158,18 +151,16 @@ const s = StyleSheet.create({
   },
   barisAktif: { borderColor: warna.biru },
   ditekan: { opacity: 0.85 },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.pill,
+  ikon: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.tombol,
+    backgroundColor: warna.pageBg,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarDonatur: { backgroundColor: warna.biru },
-  avatarPanti: { backgroundColor: warna.navy },
-  avatarTeks: { ...teks.bodyMedium, color: warna.putih },
-  info: { flex: 1, minWidth: 0 },
-  namaBaris: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  ikonAktif: { backgroundColor: warna.skyTint },
+  nama: { flex: 1, minWidth: 0 },
   tandaAktif: {
     width: 22,
     height: 22,
@@ -178,4 +169,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  catatan: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg },
+  catatanIkon: { marginTop: 1 },
+  catatanTeks: { flex: 1, lineHeight: 17 },
 });

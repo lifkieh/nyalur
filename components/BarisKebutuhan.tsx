@@ -1,7 +1,9 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Kartu, Chip, Tombol, ProgressBar, FotoPlaceholder } from './ui';
 import { spacing, teks } from '../constants/theme';
-import { formatRupiah, formatJumlah, labelProgress, rasio, sisa } from '../lib/format';
+import { fotoKatalog } from '../lib/gambar';
+import { formatRupiah, formatJumlah, labelProgress, rasio, sisa, terjemahHari } from '../lib/format';
+import { useBahasa } from '../lib/i18n';
 import type { Request } from '../lib/queries';
 
 type Props = {
@@ -10,37 +12,44 @@ type Props = {
 };
 
 export function BarisKebutuhan({ kebutuhan, onNyalur }: Props) {
+  const { t, nb, sb } = useBahasa();
   const { katalog, jumlah_terpenuhi, jumlah_diminta, batch_kirim } = kebutuhan;
   const nilai = rasio(jumlah_terpenuhi, jumlah_diminta);
   const kurang = sisa(jumlah_terpenuhi, jumlah_diminta);
+  const satuan = sb(katalog);
 
   return (
     <Kartu>
       <View style={s.atas}>
-        <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={56} />
+        <FotoPlaceholder
+          sumber={fotoKatalog(katalog)}
+          url={katalog.foto_url}
+          label={nb(katalog)}
+          ukuran={56}
+        />
         <View style={s.info}>
           <Text style={teks.subjudul} numberOfLines={1}>
-            {katalog.nama}
+            {nb(katalog)}
           </Text>
           <Text style={[teks.caption, s.harga]}>
-            {formatRupiah(katalog.harga_per_satuan)} / {katalog.satuan}
+            {t('umum.perSatuan', { rp: formatRupiah(katalog.harga_per_satuan), satuan })}
           </Text>
         </View>
       </View>
 
       <ProgressBar
         nilai={nilai}
-        label={labelProgress(jumlah_terpenuhi, jumlah_diminta, katalog.satuan)}
+        label={labelProgress(jumlah_terpenuhi, jumlah_diminta, satuan)}
         keterangan={`${Math.round(nilai * 100)}%`}
         style={s.progress}
       />
 
       <View style={s.chips}>
-        <Chip label={`Sisa ${formatJumlah(kurang, katalog.satuan)}`} varian="pasif" />
-        <Chip label={`Kirim ${batch_kirim}`} varian="pasif" />
+        <Chip label={t('kebutuhan.sisa', { porsi: formatJumlah(kurang, satuan) })} varian="pasif" />
+        <Chip label={t('kebutuhan.kirim', { hari: terjemahHari(batch_kirim) })} varian="pasif" />
       </View>
 
-      <Tombol label="Nyalur" varian="primer" onPress={onNyalur} />
+      <Tombol label={t('kebutuhan.nyalur')} varian="primer" onPress={onNyalur} />
     </Kartu>
   );
 }

@@ -12,7 +12,10 @@ import {
   StatusLayar,
 } from '../../components/ui';
 import { warna, spacing, radius, teks } from '../../constants/theme';
-import { formatJumlah, formatRupiah, sisa } from '../../lib/format';
+import { fotoKatalog } from '../../lib/gambar';
+import { formatJumlah, formatRupiah, sisa, terjemahHari } from '../../lib/format';
+import { useBahasa } from '../../lib/i18n';
+import type { Kunci } from '../../lib/teks';
 import { useSession } from '../../lib/session';
 import {
   buatDonasi,
@@ -25,13 +28,19 @@ import {
 
 type Metode = 'qris' | 'va' | 'ewallet';
 
-const METODE: { kunci: Metode; nama: string; keterangan: string; ikon: 'grid' | 'credit-card' | 'smartphone' }[] = [
-  { kunci: 'qris', nama: 'QRIS', keterangan: 'Scan dari aplikasi bank atau e-wallet', ikon: 'grid' },
-  { kunci: 'va', nama: 'Virtual Account', keterangan: 'BCA, BNI, Mandiri, BRI', ikon: 'credit-card' },
-  { kunci: 'ewallet', nama: 'E-Wallet', keterangan: 'GoPay, OVO, DANA, ShopeePay', ikon: 'smartphone' },
+// Nama & keterangan metode tinggal berupa kunci kamus: scope modul tidak punya
+// akses hook, jadi kalimatnya baru diterjemahkan di dalam komponen.
+const METODE: { kunci: Metode; nama: Kunci; keterangan: Kunci; ikon: 'grid' | 'credit-card' | 'smartphone' }[] = [
+  { kunci: 'qris', nama: 'bayar.qris.nama', keterangan: 'bayar.qris.ket', ikon: 'grid' },
+  { kunci: 'va', nama: 'bayar.va.nama', keterangan: 'bayar.va.ket', ikon: 'credit-card' },
+  { kunci: 'ewallet', nama: 'bayar.ewallet.nama', keterangan: 'bayar.ewallet.ket', ikon: 'smartphone' },
 ];
 
-const NAMA_METODE: Record<Metode, string> = { qris: 'QRIS', va: 'Virtual Account', ewallet: 'E-Wallet' };
+const NAMA_METODE: Record<Metode, Kunci> = {
+  qris: 'bayar.qris.nama',
+  va: 'bayar.va.nama',
+  ewallet: 'bayar.ewallet.nama',
+};
 
 // Payment gateway asli cukup di slide — di sini pembayaran disimulasikan
 // (jeda singkat lalu sukses), tapi alur konfirmasinya lengkap: ringkasan
@@ -44,6 +53,7 @@ export default function Pembayaran() {
     jumlah: string;
   }>();
   const router = useRouter();
+  const { t, nb, sb } = useBahasa();
   const { akun } = useSession();
   const [data, setData] = useState<(RequestDenganDonasi & { panti: Panti }) | null>(null);
   const [muat, setMuat] = useState(true);
@@ -79,7 +89,7 @@ export default function Pembayaran() {
   if (muat) {
     return (
       <View style={s.layar}>
-        <BarKembali judul="Pembayaran" onKembali={kembali} />
+        <BarKembali judul={t('bayar.judul')} onKembali={kembali} />
         <View style={s.isi}>
           <SkeletonBaris />
           <Skeleton tinggi={130} bulat={12} style={s.jarakSkeleton} />
@@ -93,15 +103,16 @@ export default function Pembayaran() {
     return (
       <StatusLayar
         ikon="wifi-off"
-        judul="Gagal memuat pesanan"
-        pesan={galat ?? 'Pesanan tidak ditemukan.'}
-        aksiLabel="Kembali"
+        judul={t('bayar.galat')}
+        pesan={galat ?? t('bayar.takAda')}
+        aksiLabel={t('umum.kembali')}
         onAksi={kembali}
       />
     );
   }
 
   const { katalog, panti } = data;
+  const satuan = sb(katalog);
   const biaya = hitungBiaya(jumlah, katalog.harga_per_satuan);
   const sisaKini = sisa(data.jumlah_terpenuhi, data.jumlah_diminta);
   const kelebihan = jumlah > sisaKini;
@@ -122,20 +133,18 @@ export default function Pembayaran() {
         pathname: '/checkout',
         params: {
           donasiId,
-          barang: katalog.nama,
+          barang: nb(katalog),
           jumlah: String(jumlah),
-          satuan: katalog.satuan,
+          satuan,
           panti: panti.nama,
           batch: data.batch_kirim,
           total: String(biaya.total),
-          metode: NAMA_METODE[metode],
+          metode: t(NAMA_METODE[metode]),
         },
       });
     } catch (e) {
       if (e instanceof GalatOverfill) {
-        setGalatBayar(
-          `Donatur lain sudah mengisi kebutuhan ini — sisa tinggal ${formatJumlah(e.sisa, katalog.satuan)}. Kembali dan pilih ulang porsimu.`
-        );
+        setGalatBayar(t('bayar.direbut', { porsi: formatJumlah(e.sisa, satuan) }));
       } else {
         setGalatBayar(e instanceof Error ? e.message : String(e));
       }
@@ -145,50 +154,57 @@ export default function Pembayaran() {
 
   return (
     <View style={s.layar}>
-      <BarKembali judul="Pembayaran" onKembali={kembali} disabled={kirim} />
+      <BarKembali judul={t('bayar.judul')} onKembali={kembali} disabled={kirim} />
 
       <ScrollView contentContainerStyle={s.isi}>
-        <Text style={[teks.label, s.tajuk]}>Pesananmu</Text>
+        <Text style={[teks.label, s.tajuk]}>{t('bayar.pesananmu')}</Text>
         <Kartu style={s.pesanan}>
-          <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={52} />
+          <FotoPlaceholder
+            sumber={fotoKatalog(katalog)}
+            url={katalog.foto_url}
+            label={nb(katalog)}
+            ukuran={52}
+          />
           <View style={s.pesananInfo}>
             <Text style={teks.bodyMedium} numberOfLines={1}>
-              {katalog.nama} · {formatJumlah(jumlah, katalog.satuan)}
+              {nb(katalog)} · {formatJumlah(jumlah, satuan)}
             </Text>
             <Text style={[teks.mikro, s.pesananSub]} numberOfLines={1}>
-              ke {panti.nama}
+              {t('umum.kePanti', { panti: panti.nama })}
             </Text>
             <View style={s.batch}>
               <Feather name="calendar" size={12} color={warna.biru} />
-              <Text style={[teks.mikro, s.batchTeks]}>Batch {data.batch_kirim}</Text>
+              <Text style={[teks.mikro, s.batchTeks]}>
+                {t('umum.batch', { hari: terjemahHari(data.batch_kirim) })}
+              </Text>
             </View>
           </View>
         </Kartu>
 
-        <Text style={[teks.label, s.tajuk]}>Rincian biaya</Text>
+        <Text style={[teks.label, s.tajuk]}>{t('bayar.rincian')}</Text>
         <Kartu style={s.rincian}>
           <View style={s.baris}>
             <Text style={[teks.kecil, s.redup]}>
-              Harga barang ({formatJumlah(jumlah, katalog.satuan)})
+              {t('biaya.hargaBarang', { porsi: formatJumlah(jumlah, satuan) })}
             </Text>
             <Text style={teks.kecil}>{formatRupiah(biaya.hargaBarang)}</Text>
           </View>
           <View style={s.baris}>
-            <Text style={[teks.kecil, s.redup]}>Ongkir (dibagi batch)</Text>
+            <Text style={[teks.kecil, s.redup]}>{t('biaya.ongkir')}</Text>
             <Text style={teks.kecil}>{formatRupiah(biaya.ongkir)}</Text>
           </View>
           <View style={s.baris}>
-            <Text style={[teks.kecil, s.redup]}>Biaya platform</Text>
+            <Text style={[teks.kecil, s.redup]}>{t('biaya.platform')}</Text>
             <Text style={teks.kecil}>{formatRupiah(biaya.platformFee)}</Text>
           </View>
           <View style={s.pisah} />
           <View style={s.baris}>
-            <Text style={teks.bodyMedium}>Total bayar</Text>
+            <Text style={teks.bodyMedium}>{t('biaya.totalBayar')}</Text>
             <Text style={teks.bodyMedium}>{formatRupiah(biaya.total)}</Text>
           </View>
         </Kartu>
 
-        <Text style={[teks.label, s.tajuk]}>Metode pembayaran</Text>
+        <Text style={[teks.label, s.tajuk]}>{t('bayar.metode')}</Text>
         <View style={s.metodeDaftar}>
           {METODE.map((m) => {
             const aktif = metode === m.kunci;
@@ -207,8 +223,8 @@ export default function Pembayaran() {
                   <Feather name={m.ikon} size={18} color={aktif ? warna.biru : warna.muted} />
                 </View>
                 <View style={s.metodeInfo}>
-                  <Text style={teks.bodyMedium}>{m.nama}</Text>
-                  <Text style={teks.mikro}>{m.keterangan}</Text>
+                  <Text style={teks.bodyMedium}>{t(m.nama)}</Text>
+                  <Text style={teks.mikro}>{t(m.keterangan)}</Text>
                 </View>
                 <View style={[s.radio, aktif && s.radioAktif]}>
                   {aktif && <View style={s.radioIsi} />}
@@ -220,18 +236,14 @@ export default function Pembayaran() {
 
         <View style={s.catatan}>
           <Feather name="shield" size={15} color={warna.biru} style={s.catatanIkon} />
-          <Text style={[teks.mikro, s.catatanTeks]}>
-            Kamu membeli barang dari gudang Nyalur — tidak ada uang yang masuk ke rekening
-            panti. Yang sampai ke panti adalah barangnya.
-          </Text>
+          <Text style={[teks.mikro, s.catatanTeks]}>{t('bayar.catatan')}</Text>
         </View>
 
         {kelebihan && (
           <View style={s.kotakBahaya}>
             <Feather name="alert-triangle" size={16} color={warna.bahaya} style={s.catatanIkon} />
             <Text style={[teks.mikro, s.teksBahaya]}>
-              Sisa kebutuhan tinggal {formatJumlah(sisaKini, katalog.satuan)} — kembali dan
-              pilih ulang porsimu.
+              {t('bayar.kelebihan', { porsi: formatJumlah(sisaKini, satuan) })}
             </Text>
           </View>
         )}
@@ -246,11 +258,11 @@ export default function Pembayaran() {
 
       <View style={s.kaki}>
         <View style={s.kakiTotal}>
-          <Text style={teks.mikro}>Total bayar</Text>
+          <Text style={teks.mikro}>{t('biaya.totalBayar')}</Text>
           <Text style={s.kakiAngka}>{formatRupiah(biaya.total)}</Text>
         </View>
         <Tombol
-          label={`Bayar ${formatRupiah(biaya.total)}`}
+          label={t('bayar.cta', { rp: formatRupiah(biaya.total) })}
           varian="primer"
           ukuran="besar"
           loading={kirim}

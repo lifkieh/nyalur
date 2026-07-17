@@ -12,7 +12,9 @@ import {
 import { Feather } from '@expo/vector-icons';
 import { Tombol, FotoPlaceholder } from './ui';
 import { warna, spacing, radius, teks } from '../constants/theme';
+import { fotoKatalog } from '../lib/gambar';
 import { formatRupiah } from '../lib/format';
+import { useBahasa } from '../lib/i18n';
 import { GalatPlafon, type Katalog } from '../lib/queries';
 
 const MAKS_QTY = 999;
@@ -25,6 +27,7 @@ type Props = {
 };
 
 export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) {
+  const { t, nb, sb } = useBahasa();
   const [qty, setQty] = useState(1);
   const [kirim, setKirim] = useState(false);
   const [galat, setGalat] = useState<string | null>(null);
@@ -71,7 +74,10 @@ export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) 
       // dipamerkan, bukan error biasa.
       if (e instanceof GalatPlafon) {
         setGalat(
-          `Sistem menolak pengajuan ini: nilai kebutuhan ${formatRupiah(e.nilai)} melebihi sisa plafon bulan ini (${formatRupiah(e.sisa)}). Kurangi jumlahnya atau ajukan bulan depan.`
+          t('aturJumlah.ditolak', {
+            nilai: formatRupiah(e.nilai),
+            sisa: formatRupiah(e.sisa),
+          })
         );
       } else {
         setGalat(e instanceof Error ? e.message : String(e));
@@ -95,18 +101,26 @@ export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) 
 
         <ScrollView contentContainerStyle={s.isi}>
           <View style={s.kepala}>
-            <FotoPlaceholder url={item.foto_url} label={item.nama} ukuran={60} />
+            <FotoPlaceholder
+              sumber={fotoKatalog(item)}
+              url={item.foto_url}
+              label={nb(item)}
+              ukuran={60}
+            />
             <View style={s.kepalaInfo}>
               <Text style={teks.title} numberOfLines={1}>
-                {item.nama}
+                {nb(item)}
               </Text>
               <Text style={[teks.caption, s.kepalaMeta]}>
-                {formatRupiah(item.harga_per_satuan)} / {item.satuan}
+                {t('umum.perSatuan', {
+                  rp: formatRupiah(item.harga_per_satuan),
+                  satuan: sb(item),
+                })}
               </Text>
             </View>
           </View>
 
-          <Text style={[teks.label, s.tajuk]}>Jumlah</Text>
+          <Text style={[teks.label, s.tajuk]}>{t('aturJumlah.jumlah')}</Text>
 
           <View style={s.stepper}>
             <Pressable
@@ -120,7 +134,7 @@ export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) 
 
             <View style={s.qtyKotak}>
               <Text style={teks.display}>{qty}</Text>
-              <Text style={teks.mikro}>× {item.satuan}</Text>
+              <Text style={teks.mikro}>× {sb(item)}</Text>
             </View>
 
             <Pressable
@@ -140,16 +154,16 @@ export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) 
 
           <View style={s.kartuHitung}>
             <View style={s.baris}>
-              <Text style={teks.bodyMedium}>Total kebutuhan</Text>
+              <Text style={teks.bodyMedium}>{t('aturJumlah.totalKebutuhan')}</Text>
               <Text style={teks.bodyMedium}>{formatRupiah(total)}</Text>
             </View>
             <View style={s.pisah} />
             <View style={s.baris}>
-              <Text style={[teks.kecil, s.labelRedup]}>Sisa plafon sekarang</Text>
+              <Text style={[teks.kecil, s.labelRedup]}>{t('aturJumlah.sisaSekarang')}</Text>
               <Text style={teks.kecil}>{formatRupiah(sisaPlafon)}</Text>
             </View>
             <View style={s.baris}>
-              <Text style={[teks.kecil, s.labelRedup]}>Sisa plafon setelah ini</Text>
+              <Text style={[teks.kecil, s.labelRedup]}>{t('aturJumlah.sisaSetelah')}</Text>
               <Text style={[teks.bodyMedium, lewat ? s.nilaiBahaya : s.nilaiBiru]}>
                 {formatRupiah(sisaSetelah)}
               </Text>
@@ -160,16 +174,13 @@ export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) 
             <View style={s.kotakBahaya}>
               <Feather name="alert-triangle" size={16} color={warna.bahaya} style={s.ikonAtas} />
               <Text style={[teks.mikro, s.teksBahaya]}>
-                Melebihi plafon bulan ini sebesar {formatRupiah(Math.abs(sisaSetelah))}. Sistem
-                akan menolak pengajuan ini.
+                {t('aturJumlah.lewat', { rp: formatRupiah(Math.abs(sisaSetelah)) })}
               </Text>
             </View>
           ) : (
             <View style={s.catatan}>
               <Feather name="info" size={15} color={warna.biru} style={s.ikonAtas} />
-              <Text style={[teks.mikro, s.catatanTeks]}>
-                Kebutuhan tidak boleh melebihi sisa plafon bulan ini.
-              </Text>
+              <Text style={[teks.mikro, s.catatanTeks]}>{t('aturJumlah.catatan')}</Text>
             </View>
           )}
 
@@ -181,7 +192,7 @@ export function SheetAturJumlah({ item, sisaPlafon, onTutup, onAjukan }: Props) 
           )}
 
           <Tombol
-            label="Ajukan kebutuhan ini"
+            label={t('aturJumlah.cta')}
             varian="primer"
             ukuran="besar"
             loading={kirim}

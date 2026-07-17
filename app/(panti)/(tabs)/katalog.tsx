@@ -1,14 +1,15 @@
 import { useCallback, useMemo, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { KartuProduk } from '../../../components/KartuProduk';
 import { SheetAturJumlah } from '../../../components/SheetAturJumlah';
-import { Chip, Skeleton, StatusLayar } from '../../../components/ui';
+import { Chip, LayarTab, Skeleton, StatusLayar } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
 import { formatRupiah } from '../../../lib/format';
+import { useBahasa } from '../../../lib/i18n';
 import { useSession } from '../../../lib/session';
+import type { Kunci } from '../../../lib/teks';
 import {
   buatRequest,
   getKatalog,
@@ -19,15 +20,16 @@ import {
   type PantiDenganRequest,
 } from '../../../lib/queries';
 
-const KATEGORI: { nilai: Kategori; label: string }[] = [
-  { nilai: 'pangan', label: 'Pangan' },
-  { nilai: 'kebersihan', label: 'Kebersihan' },
-  { nilai: 'sekolah', label: 'Sekolah' },
-  { nilai: 'kesehatan', label: 'Kesehatan' },
+const KATEGORI: { nilai: Kategori; kunci: Kunci }[] = [
+  { nilai: 'pangan', kunci: 'beranda.filter.pangan' },
+  { nilai: 'kebersihan', kunci: 'beranda.filter.kebersihan' },
+  { nilai: 'sekolah', kunci: 'beranda.filter.sekolah' },
+  { nilai: 'kesehatan', kunci: 'beranda.filter.kesehatan' },
 ];
 
 export default function KatalogPanti() {
   const router = useRouter();
+  const { t, nb, sb } = useBahasa();
   const { akun } = useSession();
   const [katalog, setKatalog] = useState<Katalog[]>([]);
   const [panti, setPanti] = useState<PantiDenganRequest | null>(null);
@@ -38,7 +40,7 @@ export default function KatalogPanti() {
 
   const ambil = useCallback(async () => {
     if (!akun.pantiId) {
-      setGalat('Akun ini tidak terhubung ke panti mana pun.');
+      setGalat(t('dash.takTerhubung'));
       setMuat(false);
       return;
     }
@@ -76,13 +78,15 @@ export default function KatalogPanti() {
     });
     const item = dipilih;
     setDipilih(null);
+    // Nama & satuan dikirim sudah terlokalisasi: /terkirim cuma menerima params
+    // string, tidak punya objek Katalog, jadi tidak bisa memetakannya sendiri.
     router.push({
       pathname: '/terkirim',
       params: {
         requestId,
-        barang: item.nama,
+        barang: nb(item),
         jumlah: String(jumlah),
-        satuan: item.satuan,
+        satuan: sb(item),
         total: String(jumlah * item.harga_per_satuan),
       },
     });
@@ -91,18 +95,18 @@ export default function KatalogPanti() {
   const sisa = panti ? sisaPlafon(panti) : 0;
 
   return (
-    <SafeAreaView style={s.layar} edges={['top']}>
+    <LayarTab>
       <View style={s.header}>
         <View style={s.headerAtas}>
-          <Text style={[teks.judul, s.judul]}>Katalog</Text>
-          {!!panti && <Chip label={`Sisa ${formatRupiah(sisa)}`} varian="tint" />}
+          <Text style={[teks.judulTab, s.judul]}>{t('katalog.judul')}</Text>
+          {!!panti && <Chip label={t('katalog.sisa', { rp: formatRupiah(sisa) })} varian="tint" />}
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.filter}>
           {KATEGORI.map((k) => (
             <Chip
               key={k.nilai}
-              label={k.label}
+              label={t(k.kunci)}
               varian={kategori === k.nilai ? 'aktif' : 'pasif'}
               onPress={() => setKategori(k.nilai)}
             />
@@ -127,9 +131,9 @@ export default function KatalogPanti() {
       ) : galat ? (
         <StatusLayar
           ikon="wifi-off"
-          judul="Gagal memuat katalog"
+          judul={t('katalog.galat')}
           pesan={galat}
-          aksiLabel="Coba lagi"
+          aksiLabel={t('umum.cobaLagi')}
           onAksi={ambil}
         />
       ) : !tampil.length ? (
@@ -137,9 +141,7 @@ export default function KatalogPanti() {
           <View style={s.kosongIkon}>
             <Feather name="package" size={28} color={warna.biru} />
           </View>
-          <Text style={[teks.caption, s.rata, s.kosongTeks]}>
-            Belum ada barang di kategori ini. Katalog dikurasi bertahap — coba kategori lain.
-          </Text>
+          <Text style={[teks.caption, s.rata, s.kosongTeks]}>{t('katalog.kosong')}</Text>
         </View>
       ) : (
         <ScrollView contentContainerStyle={s.isi}>
@@ -159,12 +161,11 @@ export default function KatalogPanti() {
         onTutup={() => setDipilih(null)}
         onAjukan={ajukan}
       />
-    </SafeAreaView>
+    </LayarTab>
   );
 }
 
 const s = StyleSheet.create({
-  layar: { flex: 1, backgroundColor: warna.pageBg },
   header: {
     backgroundColor: warna.putih,
     borderBottomWidth: 1,

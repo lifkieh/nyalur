@@ -5,13 +5,15 @@ import { Feather } from '@expo/vector-icons';
 import { Kartu, Tombol, BarKembali } from '../../components/ui';
 import { warna, spacing, radius, teks, font } from '../../constants/theme';
 import { useSession } from '../../lib/session';
+import { useBahasa } from '../../lib/i18n';
+import type { Kunci } from '../../lib/teks';
 import { getPantiById } from '../../lib/queries';
 
-type Dokumen = { kunci: string; nama: string; berkas: string };
+type Dokumen = { kunci: string; nama: Kunci; berkas: string };
 
 const DOKUMEN_TERUNGGAH: Dokumen[] = [
-  { kunci: 'akta', nama: 'Akta yayasan', berkas: 'akta-yayasan.pdf' },
-  { kunci: 'nib', nama: 'NIB', berkas: 'nib-2024.pdf' },
+  { kunci: 'akta', nama: 'daftar.akta', berkas: 'akta-yayasan.pdf' },
+  { kunci: 'nib', nama: 'daftar.nib', berkas: 'nib-2024.pdf' },
 ];
 
 // A2 — form pendaftaran. Data panti sudah ada di seed, jadi layar ini tidak
@@ -20,6 +22,7 @@ const DOKUMEN_TERUNGGAH: Dokumen[] = [
 export default function DaftarPanti() {
   const router = useRouter();
   const { akun } = useSession();
+  const { t } = useBahasa();
   const [nama, setNama] = useState('');
   const [alamat, setAlamat] = useState('');
   const [anak, setAnak] = useState('');
@@ -44,24 +47,26 @@ export default function DaftarPanti() {
     }, [isi])
   );
 
-  const kembali = () => (router.canGoBack() ? router.back() : router.replace('/'));
+  // Kembali ke pilih peran, bukan '/' — '/' sekarang splash, dan mendarat di
+  // sana berarti kena timer auto-lanjut lagi.
+  const kembali = () => (router.canGoBack() ? router.back() : router.replace('/peran'));
 
   return (
     <View style={s.layar}>
-      <BarKembali judul="Daftar panti" onKembali={kembali} />
+      <BarKembali judul={t('daftar.judul')} onKembali={kembali} />
 
       <ScrollView contentContainerStyle={s.isi} keyboardShouldPersistTaps="handled">
         <View style={s.grup}>
           <View>
-            <Text style={[teks.caption, s.label]}>Nama panti</Text>
+            <Text style={[teks.caption, s.label]}>{t('daftar.nama')}</Text>
             <TextInput value={nama} onChangeText={setNama} style={s.input} />
           </View>
           <View>
-            <Text style={[teks.caption, s.label]}>Alamat</Text>
+            <Text style={[teks.caption, s.label]}>{t('daftar.alamat')}</Text>
             <TextInput value={alamat} onChangeText={setAlamat} style={s.input} multiline />
           </View>
           <View>
-            <Text style={[teks.caption, s.label]}>Jumlah penghuni</Text>
+            <Text style={[teks.caption, s.label]}>{t('daftar.penghuni')}</Text>
             <TextInput
               value={anak}
               onChangeText={setAnak}
@@ -71,7 +76,7 @@ export default function DaftarPanti() {
           </View>
         </View>
 
-        <Text style={[teks.label, s.tajuk]}>Dokumen legalitas</Text>
+        <Text style={[teks.label, s.tajuk]}>{t('daftar.dokumen')}</Text>
 
         <View style={s.dokumen}>
           {DOKUMEN_TERUNGGAH.map((d) => (
@@ -80,12 +85,12 @@ export default function DaftarPanti() {
                 <Feather name="file-text" size={20} color={warna.biru} />
               </View>
               <View style={s.berkasInfo}>
-                <Text style={[teks.kecil, s.berkasNama]}>{d.nama}</Text>
+                <Text style={[teks.kecil, s.berkasNama]}>{t(d.nama)}</Text>
                 <Text style={teks.mikro}>{d.berkas}</Text>
               </View>
               <View style={s.terunggah}>
                 <Feather name="check" size={14} color={warna.hijau} />
-                <Text style={[teks.mikro, s.terunggahTeks]}>Terunggah</Text>
+                <Text style={[teks.mikro, s.terunggahTeks]}>{t('daftar.terunggah')}</Text>
               </View>
             </Kartu>
           ))}
@@ -96,12 +101,12 @@ export default function DaftarPanti() {
                 <Feather name="file-text" size={20} color={warna.biru} />
               </View>
               <View style={s.berkasInfo}>
-                <Text style={[teks.kecil, s.berkasNama]}>SK Kemensos</Text>
+                <Text style={[teks.kecil, s.berkasNama]}>{t('daftar.sk')}</Text>
                 <Text style={teks.mikro}>sk-kemensos.pdf</Text>
               </View>
               <View style={s.terunggah}>
                 <Feather name="check" size={14} color={warna.hijau} />
-                <Text style={[teks.mikro, s.terunggahTeks]}>Terunggah</Text>
+                <Text style={[teks.mikro, s.terunggahTeks]}>{t('daftar.terunggah')}</Text>
               </View>
             </Kartu>
           ) : (
@@ -113,16 +118,16 @@ export default function DaftarPanti() {
                 <Feather name="upload" size={20} color={warna.muted} />
               </View>
               <View style={s.berkasInfo}>
-                <Text style={[teks.kecil, s.berkasNama]}>SK Kemensos</Text>
-                <Text style={teks.mikro}>Belum diunggah</Text>
+                <Text style={[teks.kecil, s.berkasNama]}>{t('daftar.sk')}</Text>
+                <Text style={teks.mikro}>{t('daftar.belumUnggah')}</Text>
               </View>
-              <Text style={[teks.caption, s.unggah]}>Unggah</Text>
+              <Text style={[teks.caption, s.unggah]}>{t('daftar.unggah')}</Text>
             </Pressable>
           )}
         </View>
 
         <Tombol
-          label="Ajukan verifikasi"
+          label={t('daftar.cta')}
           varian="primer"
           ukuran="besar"
           style={s.cta}

@@ -1,15 +1,21 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { Kartu, Badge, Chip, FotoPlaceholder } from './ui';
+import { Kartu, Badge, FotoPlaceholder } from './ui';
 import { spacing, teks } from '../constants/theme';
-import { formatAngka } from '../lib/format';
+import { fotoPanti } from '../lib/gambar';
+import { formatAngka, terjemahHari } from '../lib/format';
+import { useBahasa } from '../lib/i18n';
 import { requestAktif, type PantiDenganRequest } from '../lib/queries';
 
 type Props = {
   panti: PantiDenganRequest;
+  /** jarak_km diukur dari Tangsel dan tidak dihitung ulang — saat posisi donatur
+   *  bukan di sana, kotanya yang tampil, bukan jarak yang sudah tidak berlaku. */
+  tampilkanJarak?: boolean;
   onPress?: () => void;
 };
 
-export function KartuPanti({ panti, onPress }: Props) {
+export function KartuPanti({ panti, tampilkanJarak = true, onPress }: Props) {
+  const { t, tn } = useBahasa();
   // Kartu etalase tidak menyebut kebutuhan sama sekali — itu isi B2. Di sini
   // cukup identitas panti supaya daftar terbaca sekali lihat.
   const batch = requestAktif(panti)[0]?.batch_kirim;
@@ -17,7 +23,12 @@ export function KartuPanti({ panti, onPress }: Props) {
   return (
     <Kartu onPress={onPress} rapat>
       <View style={s.atas}>
-        <FotoPlaceholder url={panti.foto_url} label="foto panti" ukuran={64} />
+        <FotoPlaceholder
+          sumber={fotoPanti(panti)}
+          url={panti.foto_url}
+          label={t('umum.fotoPanti')}
+          ukuran={64}
+        />
 
         <View style={s.info}>
           <View style={s.judul}>
@@ -26,11 +37,22 @@ export function KartuPanti({ panti, onPress }: Props) {
             </Text>
           </View>
           <Text style={teks.caption}>
-            {panti.jumlah_anak} anak · {formatAngka(panti.jarak_km)} km
+            {tn('umum.anak', panti.jumlah_anak)} ·{' '}
+            {tampilkanJarak ? `${formatAngka(panti.jarak_km)} km` : panti.kota}
           </Text>
+          {/* Keduanya Badge, bukan Badge + Chip. Chip punya border dan teks
+              caption, Badge tidak dan pakai mikro — bersebelahan tingginya
+              selisih 8px dan barisnya terbaca miring. Dua penanda sebaris harus
+              satu komponen. */}
           <View style={s.tanda}>
-            <Badge label="Terverifikasi" varian="verified" />
-            {!!batch && <Chip label={`Batch ${batch}`} varian="netral" />}
+            <Badge label={t('umum.terverifikasi')} varian="verified" />
+            {!!batch && (
+              <Badge
+                label={t('umum.batch', { hari: terjemahHari(batch) })}
+                varian="netral"
+                ikon="calendar"
+              />
+            )}
           </View>
         </View>
       </View>

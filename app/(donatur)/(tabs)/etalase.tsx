@@ -8,44 +8,54 @@ import {
   RefreshControl,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { KartuPanti } from '../../../components/KartuPanti';
 import { BannerBatch } from '../../../components/BannerBatch';
 import { KartuMendesak } from '../../../components/KartuMendesak';
 import { SheetSwitchAkun } from '../../../components/SheetSwitchAkun';
-import { Chip, Skeleton, SkeletonKartuProgress, StatusLayar } from '../../../components/ui';
+import { SheetPilihArea, AREA_SEMUA, useLabelArea } from '../../../components/SheetPilihArea';
+import { Chip, LayarTab, Skeleton, SkeletonKartuProgress, StatusLayar } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
+import { useBahasa } from '../../../lib/i18n';
+import type { Kunci } from '../../../lib/teks';
+import { useSession } from '../../../lib/session';
 import {
+  belumSampai,
   getDaftarPanti,
-  getJumlahDonatur,
+  getDonasiByDonatur,
   kebutuhanMendesak,
   requestAktif,
+  type DonasiLengkap,
   type Kategori,
   type PantiDenganRequest,
 } from '../../../lib/queries';
 
 type Filter = 'terdekat' | Kategori;
 
-const FILTER: { nilai: Filter; label: string }[] = [
-  { nilai: 'terdekat', label: 'Terdekat' },
-  { nilai: 'pangan', label: 'Pangan' },
-  { nilai: 'kebersihan', label: 'Kebersihan' },
-  { nilai: 'sekolah', label: 'Sekolah' },
-  { nilai: 'kesehatan', label: 'Kesehatan' },
+const FILTER: { nilai: Filter; kunci: Kunci }[] = [
+  { nilai: 'terdekat', kunci: 'beranda.filter.terdekat' },
+  { nilai: 'pangan', kunci: 'beranda.filter.pangan' },
+  { nilai: 'kebersihan', kunci: 'beranda.filter.kebersihan' },
+  { nilai: 'sekolah', kunci: 'beranda.filter.sekolah' },
+  { nilai: 'kesehatan', kunci: 'beranda.filter.kesehatan' },
 ];
 
-export default function Etalase() {
+export default function Beranda() {
   const router = useRouter();
+  const { akun } = useSession();
+  const { t, tn } = useBahasa();
+  const labelArea = useLabelArea();
   const [switcher, setSwitcher] = useState(false);
+  const [pilihArea, setPilihArea] = useState(false);
   const [panti, setPanti] = useState<PantiDenganRequest[]>([]);
-  const [donatur, setDonatur] = useState(0);
+  const [batch, setBatch] = useState<DonasiLengkap[]>([]);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
   const [segar, setSegar] = useState(false);
   const [cari, setCari] = useState('');
   const [filter, setFilter] = useState<Filter>('terdekat');
+  const [area, setArea] = useState(AREA_SEMUA);
 
   // "Lihat semua" melompat ke daftar panti di layar yang sama — tidak ada layar
   // baru yang dijanjikan.
@@ -55,15 +65,18 @@ export default function Etalase() {
   const ambil = useCallback(async () => {
     try {
       setGalat(null);
-      const [daftar, jumlah] = await Promise.all([getDaftarPanti(), getJumlahDonatur()]);
+      const [daftar, donasi] = await Promise.all([
+        getDaftarPanti(),
+        getDonasiByDonatur(akun.id),
+      ]);
       setPanti(daftar);
-      setDonatur(jumlah);
+      setBatch(belumSampai(donasi));
     } catch (e) {
       setGalat(e instanceof Error ? e.message : String(e));
     } finally {
       setMuat(false);
     }
-  }, []);
+  }, [akun.id]);
 
   // Pengganti realtime: muat ulang tiap layar difokuskan.
   useFocusEffect(
@@ -78,9 +91,13 @@ export default function Etalase() {
     setSegar(false);
   }, [ambil]);
 
+  // Area diturunkan dari data, bukan daftar tetap — panti baru di kota baru
+  // langsung bisa dipilih tanpa menyentuh kode.
+  const daftarKota = useMemo(() => [...new Set(panti.map((p) => p.kota))].sort(), [panti]);
+
   const tampil = useMemo(() => {
     const kata = cari.trim().toLowerCase();
-    return panti.filter((p) => {
+    const cocok = panti.filter((p) => {
       const aktif = requestAktif(p);
 
       const cocokFilter =
@@ -94,7 +111,14 @@ export default function Etalase() {
 
       return cocokFilter && cocokCari;
     });
-  }, [panti, cari, filter]);
+
+    // Memilih area TIDAK menyaring panti — gudang Nyalur mengirim ke semuanya,
+    // dan 5 kartu yang hidup memang inti etalase (brief §10). Yang berubah cuma
+    // urutan: panti sekota naik ke atas. sort() stabil, jadi urutan jarak dari
+    // query tetap terjaga di dalam tiap kelompok.
+    if (area === AREA_SEMUA) return cocok;
+    return [...cocok].sort((a, b) => Number(b.kota === area) - Number(a.kota === area));
+  }, [panti, cari, filter, area]);
 
   // Satu kartu per panti, terdekat dulu — getDaftarPanti sudah urut jarak.
   const mendesak = useMemo(
@@ -107,20 +131,29 @@ export default function Etalase() {
     [tampil]
   );
 
+  const diTangsel = area === AREA_SEMUA;
+
   return (
-    <SafeAreaView style={s.layar} edges={['top']}>
+    <LayarTab>
       <View style={s.header}>
         <View style={s.headerAtas}>
-          <View>
-            <Text style={teks.judul}>Etalase</Text>
-            <View style={s.lokasi}>
+          <View style={s.headerKiri}>
+            <Text style={teks.judulTab}>{t('beranda.judul')}</Text>
+            <Pressable
+              onPress={() => setPilihArea(true)}
+              style={({ pressed }) => [s.lokasi, pressed && s.ditekan]}
+              hitSlop={8}
+            >
               <Feather name="map-pin" size={14} color={warna.muted} />
-              <Text style={teks.caption}>Tangerang Selatan</Text>
-            </View>
+              <Text style={[teks.caption, s.lokasiTeks]} numberOfLines={1}>
+                {labelArea(area)}
+              </Text>
+              <Feather name="chevron-down" size={14} color={warna.biru} />
+            </Pressable>
           </View>
           <Pressable
             onPress={() => setSwitcher(true)}
-            style={({ pressed }) => [s.avatar, pressed && s.avatarDitekan]}
+            style={({ pressed }) => [s.avatar, pressed && s.ditekan]}
             hitSlop={8}
           >
             <Feather name="user" size={20} color={warna.biru} />
@@ -132,7 +165,7 @@ export default function Etalase() {
           <TextInput
             value={cari}
             onChangeText={setCari}
-            placeholder="Cari panti atau barang"
+            placeholder={t('beranda.cari')}
             placeholderTextColor={warna.muted}
             style={s.cariInput}
             returnKeyType="search"
@@ -147,7 +180,7 @@ export default function Etalase() {
           {FILTER.map((f) => (
             <Chip
               key={f.nilai}
-              label={f.label}
+              label={t(f.kunci)}
               varian={filter === f.nilai ? 'aktif' : 'pasif'}
               onPress={() => setFilter(f.nilai)}
             />
@@ -165,17 +198,17 @@ export default function Etalase() {
       ) : galat ? (
         <StatusLayar
           ikon="wifi-off"
-          judul="Gagal memuat etalase"
+          judul={t('beranda.galat')}
           pesan={galat}
-          aksiLabel="Coba lagi"
+          aksiLabel={t('umum.cobaLagi')}
           onAksi={ambil}
         />
       ) : !tampil.length ? (
         <StatusLayar
           ikon="search"
-          judul="Tidak ada panti yang cocok"
-          pesan="Coba ubah kata kunci atau pilih filter lain."
-          aksiLabel="Hapus pencarian"
+          judul={t('beranda.kosongJudul')}
+          pesan={t('beranda.kosongPesan')}
+          aksiLabel={t('beranda.hapusCari')}
           onAksi={() => {
             setCari('');
             setFilter('terdekat');
@@ -194,17 +227,17 @@ export default function Etalase() {
             />
           }
         >
-          <BannerBatch donatur={donatur} />
+          <BannerBatch batch={batch} />
 
           {!!mendesak.length && (
             <>
               <View style={s.tajukRail}>
-                <Text style={teks.subjudul}>Kebutuhan mendesak</Text>
+                <Text style={teks.subjudul}>{t('beranda.mendesak')}</Text>
                 <Pressable
                   onPress={() => gulir.current?.scrollTo({ y: yDaftar.current, animated: true })}
                   hitSlop={8}
                 >
-                  <Text style={s.lihatSemua}>Lihat semua</Text>
+                  <Text style={s.lihatSemua}>{t('beranda.lihatSemua')}</Text>
                 </Pressable>
               </View>
               <ScrollView
@@ -226,13 +259,18 @@ export default function Etalase() {
           )}
 
           <View onLayout={(e) => (yDaftar.current = e.nativeEvent.layout.y)}>
-            <Text style={teks.subjudul}>Panti di sekitarmu</Text>
+            <Text style={teks.subjudul}>{t('beranda.daftarJudul')}</Text>
           </View>
-          <Text style={s.kaptenDaftar}>{tampil.length} panti terverifikasi di sekitarmu</Text>
+          <Text style={s.kaptenDaftar}>
+            {diTangsel
+              ? tn('beranda.daftarKaption', tampil.length)
+              : t('beranda.daftarKaptionArea', { n: tampil.length, area })}
+          </Text>
           {tampil.map((p) => (
             <KartuPanti
               key={p.id}
               panti={p}
+              tampilkanJarak={diTangsel}
               onPress={() => router.push(`/panti/${p.id}`)}
             />
           ))}
@@ -240,12 +278,18 @@ export default function Etalase() {
       )}
 
       <SheetSwitchAkun tampil={switcher} onTutup={() => setSwitcher(false)} />
-    </SafeAreaView>
+      <SheetPilihArea
+        tampil={pilihArea}
+        area={area}
+        daftarKota={daftarKota}
+        onPilih={setArea}
+        onTutup={() => setPilihArea(false)}
+      />
+    </LayarTab>
   );
 }
 
 const s = StyleSheet.create({
-  layar: { flex: 1, backgroundColor: warna.pageBg },
   header: {
     backgroundColor: warna.putih,
     borderBottomWidth: 1,
@@ -258,9 +302,13 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: spacing.md,
     marginBottom: spacing.md,
   },
-  lokasi: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
+  headerKiri: { flex: 1, minWidth: 0 },
+  lokasi: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
+  lokasiTeks: { flexShrink: 1 },
+  ditekan: { opacity: 0.7 },
   avatar: {
     width: 40,
     height: 40,
@@ -269,7 +317,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarDitekan: { opacity: 0.7 },
   cari: {
     flexDirection: 'row',
     alignItems: 'center',

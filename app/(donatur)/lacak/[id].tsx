@@ -78,8 +78,9 @@ export default function LacakDonasi() {
   const kini = URUTAN.indexOf(donasi.status);
 
   // Skema hanya menyimpan waktu donasi dibuat dan waktu serah terima. Langkah
-  // "dikirim" tidak punya timestamp — jadwal batch yang ditampilkan, bukan jam
-  // karangan.
+  // "dikirim" tidak punya timestamp, jadi setelah lewat ia cuma menyebut apa
+  // yang terjadi — bukan jam karangan, dan bukan jadwal batch yang sudah usang
+  // begitu barangnya jalan.
   const langkah = [
     {
       kunci: 'dikemas' as const,
@@ -92,7 +93,7 @@ export default function LacakDonasi() {
       kunci: 'dikirim' as const,
       judul: 'Dikirim',
       ikon: 'truck' as const,
-      selesaiTeks: `Batch ${request.batch_kirim}`,
+      selesaiTeks: 'Berangkat dari gudang',
       aktifTeks: 'Sedang dalam perjalanan',
       nantiTeks: `Menunggu batch ${request.batch_kirim}`,
     },

@@ -144,6 +144,11 @@ export class GalatOverfill extends Error {
 
 const FOTO_BUKTI = 'https://placehold.co/800x600/EAF2FE/1B5FE3?text=Bukti+Serah+Terima';
 
+// Donasi demo dicatat mundur dua hari supaya timeline B6 naik: dikemas dua hari
+// lalu, diterima barusan. Tanpa ini dikemas dan diterima jatuh di detik yang
+// sama — mock kurir jalan tepat setelah insert. Hapus bersama mock kurir.
+const MUNDUR_DEMO_MS = 2 * 24 * 60 * 60 * 1000;
+
 // MOCK KURIR — Opsi A di brief §10: "kurir upload dari app mitra" belum ada,
 // jadi serah terima dipalsukan tepat setelah donasi supaya alur
 // donasi -> lacak -> bukti bisa ditempuh saat demo. Hapus blok ini begitu
@@ -229,6 +234,7 @@ export async function buatDonasi(args: {
       platform_fee: biaya.platformFee,
       total: biaya.total,
       status: 'dikemas',
+      created_at: new Date(Date.now() - MUNDUR_DEMO_MS).toISOString(),
     })
     .select('id')
     .single();

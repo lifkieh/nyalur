@@ -1,8 +1,10 @@
 import { View, Text, Image, StyleSheet } from 'react-native';
-import type { ImageStyle, StyleProp, ViewStyle } from 'react-native';
+import type { ImageSourcePropType, ImageStyle, StyleProp, ViewStyle } from 'react-native';
 import { warna } from '../../constants/theme';
 
 type Props = {
+  /** aset lokal hasil require() — menang atas url; nol permintaan jaringan */
+  sumber?: ImageSourcePropType;
   /** kalau ada, foto asli dipakai; kalau null, tampil kotak placeholder */
   url?: string | null;
   /** teks di tengah placeholder, mis. "foto panti" */
@@ -13,17 +15,27 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-export function FotoPlaceholder({ url, label, ukuran, tinggi, bulat, style }: Props) {
+/**
+ * Urutan jatuh: aset lokal -> url -> kotak berlabel.
+ *
+ * Aset lokal sengaja menang atas url. foto_url di DB masih menyimpan URL
+ * placehold.co, dan menariknya lewat jaringan saat demo adalah risiko yang
+ * justru mau dibuang (lihat lib/gambar.ts). Kolomnya tidak dihapus supaya skema
+ * tetap utuh dan URL asli tetap bisa dipakai kalau suatu saat ada.
+ */
+export function FotoPlaceholder({ sumber, url, label, ukuran, tinggi, bulat, style }: Props) {
   const bentuk = {
     width: ukuran ?? '100%',
     height: tinggi ?? ukuran ?? 64,
     borderRadius: bulat ?? 10,
   } as const;
 
-  if (url) {
+  const asal: ImageSourcePropType | null = sumber ?? (url ? { uri: url } : null);
+
+  if (asal) {
     return (
       <Image
-        source={{ uri: url }}
+        source={asal}
         style={[bentuk, style] as StyleProp<ImageStyle>}
         resizeMode="cover"
       />

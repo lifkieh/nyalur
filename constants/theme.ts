@@ -41,12 +41,36 @@ export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24 } as const;
 export const font = {
   regular: 'PlusJakartaSans_400Regular',
   medium: 'PlusJakartaSans_500Medium',
+  bold: 'PlusJakartaSans_700Bold',
 } as const;
 
 // Skala tipografi dari design sheet — pakai spread ke <Text style={...}>
 export const teks = {
   display: { fontFamily: font.medium, fontSize: 28, lineHeight: 34, letterSpacing: -0.56, color: warna.ink },
+  // Wordmark NYALUR — splash & pilih peran. Tracking positif, bukan negatif
+  // seperti display: huruf kapital butuh dilonggarkan, bukan dirapatkan.
+  wordmark: {
+    fontFamily: font.bold,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: 2.4,
+    textTransform: 'uppercase' as const,
+    color: warna.ink,
+  },
   judul: { fontFamily: font.medium, fontSize: 22, lineHeight: 28, letterSpacing: -0.22, color: warna.ink },
+  // Judul layar bertab (Beranda, Riwayat, Profil, Dashboard, Katalog, Penerimaan).
+  // Kapital + bold, dan justru karena itu ukurannya turun dari judul biasa: huruf
+  // kapital menempati lebih banyak ruang optis, 22 caps membaca lebih besar dari
+  // 22 biasa. textTransform, bukan string yang dikapitalkan — supaya ID dan EN
+  // ikut tanpa dua entri kamus.
+  judulTab: {
+    fontFamily: font.bold,
+    fontSize: 18,
+    lineHeight: 24,
+    letterSpacing: 0.9,
+    textTransform: 'uppercase' as const,
+    color: warna.ink,
+  },
   title: { fontFamily: font.medium, fontSize: 20, lineHeight: 26, letterSpacing: -0.2, color: warna.ink },
   subjudul: { fontFamily: font.medium, fontSize: 16, lineHeight: 22, color: warna.ink },
   body: { fontFamily: font.regular, fontSize: 15, lineHeight: 21, color: warna.ink },

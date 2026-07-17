@@ -466,3 +466,27 @@ export async function buatRequest(args: {
 
 export const requestAktif = (p: PantiDenganRequest): Request[] =>
   (p.request ?? []).filter((r) => r.status === 'aktif');
+
+/**
+ * Satu kebutuhan per panti untuk rail "Kebutuhan mendesak" di B1: yang paling
+ * dekat penuh — makin dekat target, makin mendesak dilengkapi. Panti tanpa
+ * kebutuhan aktif tidak punya kartu di rail.
+ */
+export function kebutuhanMendesak(p: PantiDenganRequest): Request | null {
+  const aktif = requestAktif(p);
+  if (!aktif.length) return null;
+  return aktif.reduce((a, b) =>
+    b.jumlah_terpenuhi / b.jumlah_diminta > a.jumlah_terpenuhi / a.jumlah_diminta ? b : a
+  );
+}
+
+/**
+ * Berapa orang berbeda yang sudah menyalurkan — angka donatur di banner batch.
+ * Dihitung dari baris donasi, bukan ditulis tangan: banner ini menjual
+ * transparansi, jadi angkanya harus punya orang di belakangnya.
+ */
+export async function getJumlahDonatur(): Promise<number> {
+  const { data, error } = await supabase.from('donasi').select('donatur_id');
+  if (error) throw new Error(`Gagal memuat jumlah donatur: ${error.message}`);
+  return new Set((data ?? []).map((d) => d.donatur_id as string)).size;
+}

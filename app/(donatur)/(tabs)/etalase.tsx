@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -12,10 +12,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { KartuPanti } from '../../../components/KartuPanti';
+import { BannerBatch } from '../../../components/BannerBatch';
+import { KartuMendesak } from '../../../components/KartuMendesak';
 import { SheetSwitchAkun } from '../../../components/SheetSwitchAkun';
 import { Chip, Skeleton, SkeletonKartuProgress, StatusLayar } from '../../../components/ui';
 import { warna, spacing, radius, teks } from '../../../constants/theme';
-import { getDaftarPanti, requestAktif, type Kategori, type PantiDenganRequest } from '../../../lib/queries';
+import {
+  getDaftarPanti,
+  getJumlahDonatur,
+  kebutuhanMendesak,
+  requestAktif,
+  type Kategori,
+  type PantiDenganRequest,
+} from '../../../lib/queries';
 
 type Filter = 'terdekat' | Kategori;
 
@@ -31,16 +40,24 @@ export default function Etalase() {
   const router = useRouter();
   const [switcher, setSwitcher] = useState(false);
   const [panti, setPanti] = useState<PantiDenganRequest[]>([]);
+  const [donatur, setDonatur] = useState(0);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
   const [segar, setSegar] = useState(false);
   const [cari, setCari] = useState('');
   const [filter, setFilter] = useState<Filter>('terdekat');
 
+  // "Lihat semua" melompat ke daftar panti di layar yang sama — tidak ada layar
+  // baru yang dijanjikan.
+  const gulir = useRef<ScrollView>(null);
+  const yDaftar = useRef(0);
+
   const ambil = useCallback(async () => {
     try {
       setGalat(null);
-      setPanti(await getDaftarPanti());
+      const [daftar, jumlah] = await Promise.all([getDaftarPanti(), getJumlahDonatur()]);
+      setPanti(daftar);
+      setDonatur(jumlah);
     } catch (e) {
       setGalat(e instanceof Error ? e.message : String(e));
     } finally {
@@ -78,6 +95,17 @@ export default function Etalase() {
       return cocokFilter && cocokCari;
     });
   }, [panti, cari, filter]);
+
+  // Satu kartu per panti, terdekat dulu — getDaftarPanti sudah urut jarak.
+  const mendesak = useMemo(
+    () =>
+      tampil
+        .map((p) => ({ panti: p, kebutuhan: kebutuhanMendesak(p) }))
+        .filter((x): x is { panti: PantiDenganRequest; kebutuhan: NonNullable<typeof x.kebutuhan> } =>
+          Boolean(x.kebutuhan)
+        ),
+    [tampil]
+  );
 
   return (
     <SafeAreaView style={s.layar} edges={['top']}>
@@ -155,6 +183,7 @@ export default function Etalase() {
         />
       ) : (
         <ScrollView
+          ref={gulir}
           contentContainerStyle={s.isi}
           refreshControl={
             <RefreshControl
@@ -165,9 +194,41 @@ export default function Etalase() {
             />
           }
         >
-          <Text style={teks.caption}>
-            {tampil.length} panti terverifikasi di sekitarmu
-          </Text>
+          <BannerBatch donatur={donatur} />
+
+          {!!mendesak.length && (
+            <>
+              <View style={s.tajukRail}>
+                <Text style={teks.subjudul}>Kebutuhan mendesak</Text>
+                <Pressable
+                  onPress={() => gulir.current?.scrollTo({ y: yDaftar.current, animated: true })}
+                  hitSlop={8}
+                >
+                  <Text style={s.lihatSemua}>Lihat semua</Text>
+                </Pressable>
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={s.rail}
+                style={s.railLuar}
+              >
+                {mendesak.map(({ panti: p, kebutuhan }) => (
+                  <KartuMendesak
+                    key={kebutuhan.id}
+                    kebutuhan={kebutuhan}
+                    namaPanti={p.nama}
+                    onPress={() => router.push(`/panti/${p.id}`)}
+                  />
+                ))}
+              </ScrollView>
+            </>
+          )}
+
+          <View onLayout={(e) => (yDaftar.current = e.nativeEvent.layout.y)}>
+            <Text style={teks.subjudul}>Panti di sekitarmu</Text>
+          </View>
+          <Text style={s.kaptenDaftar}>{tampil.length} panti terverifikasi di sekitarmu</Text>
           {tampil.map((p) => (
             <KartuPanti
               key={p.id}
@@ -226,4 +287,10 @@ const s = StyleSheet.create({
   },
   filter: { gap: spacing.sm, marginTop: spacing.md },
   isi: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xl * 2 },
+  tajukRail: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  lihatSemua: { ...teks.caption, color: warna.biru },
+  // rail menembus gutter layar supaya kartu terakhir tidak terpotong rata tepi
+  railLuar: { marginHorizontal: -spacing.lg },
+  rail: { gap: spacing.md, paddingHorizontal: spacing.lg },
+  kaptenDaftar: { ...teks.caption, marginTop: -spacing.sm },
 });

@@ -50,6 +50,22 @@ export function formatJam(input: string | Date): string {
   return `${dua(d.getHours())}.${dua(d.getMinutes())} WIB`;
 }
 
+/** -> "Jumat, 18 Juli" (WIB, tanpa tahun) */
+export function formatTanggalPendek(input: string | Date): string {
+  const d = keWib(input);
+  return `${HARI[d.getDay()]}, ${d.getDate()} ${BULAN[d.getMonth()]}`;
+}
+
+/**
+ * Batch berangkat tiap Jumat. Kolom batch_kirim cuma menyimpan nama harinya,
+ * jadi tanggalnya dihitung, bukan disimpan. Hari Jumat memulangkan hari itu
+ * sendiri — batch hari ini masih batch berikutnya sampai ia berangkat.
+ */
+export function jumatBerikutnya(dari: string | Date = new Date()): Date {
+  const maju = (5 - keWib(dari).getDay() + 7) % 7;
+  return new Date(new Date(dari).getTime() + maju * 24 * 60 * 60 * 1000);
+}
+
 /** -> "Juli 2026" (WIB) */
 export function formatBulanTahun(input: string | Date = new Date()): string {
   const d = keWib(input);

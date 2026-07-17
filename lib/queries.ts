@@ -466,19 +466,3 @@ export async function buatRequest(args: {
 
 export const requestAktif = (p: PantiDenganRequest): Request[] =>
   (p.request ?? []).filter((r) => r.status === 'aktif');
-
-/**
- * Kebutuhan yang ditonjolkan di kartu etalase: yang aktif dan paling dekat
- * penuh — makin dekat target, makin mendesak dilengkapi.
- * Kalau tidak ada yang aktif, pakai yang sudah diterima supaya kartu tetap
- * bercerita (progress hijau, bukan kartu kosong).
- */
-export function kebutuhanSorotan(p: PantiDenganRequest): Request | null {
-  const aktif = requestAktif(p);
-  if (aktif.length) {
-    return aktif.reduce((a, b) =>
-      b.jumlah_terpenuhi / b.jumlah_diminta > a.jumlah_terpenuhi / a.jumlah_diminta ? b : a
-    );
-  }
-  return (p.request ?? []).find((r) => r.status === 'diterima') ?? null;
-}

@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { Kartu, Badge, Chip, ProgressBar, FotoPlaceholder } from './ui';
-import { warna, spacing, teks } from '../constants/theme';
-import { formatAngka, labelProgress, rasio } from '../lib/format';
-import { kebutuhanSorotan, requestAktif, type PantiDenganRequest } from '../lib/queries';
+import { Kartu, Badge, Chip, FotoPlaceholder } from './ui';
+import { spacing, teks } from '../constants/theme';
+import { formatAngka } from '../lib/format';
+import { requestAktif, type PantiDenganRequest } from '../lib/queries';
 
 type Props = {
   panti: PantiDenganRequest;
@@ -10,10 +10,9 @@ type Props = {
 };
 
 export function KartuPanti({ panti, onPress }: Props) {
-  const sorotan = kebutuhanSorotan(panti);
-  const terkirim = sorotan?.status === 'diterima';
-  // Kartu menonjolkan satu kebutuhan; sisanya cukup disebut jumlahnya.
-  const lainnya = Math.max(0, requestAktif(panti).length - (terkirim ? 0 : 1));
+  // Kartu etalase tidak menyebut kebutuhan sama sekali — itu isi B2. Di sini
+  // cukup identitas panti supaya daftar terbaca sekali lihat.
+  const batch = requestAktif(panti)[0]?.batch_kirim;
 
   return (
     <Kartu onPress={onPress} rapat>
@@ -31,41 +30,10 @@ export function KartuPanti({ panti, onPress }: Props) {
           </Text>
           <View style={s.tanda}>
             <Badge label="Terverifikasi" varian="verified" />
-            {!!sorotan && <Chip label={`Batch ${sorotan.batch_kirim}`} varian="netral" />}
+            {!!batch && <Chip label={`Batch ${batch}`} varian="netral" />}
           </View>
         </View>
       </View>
-
-      {!!sorotan && (
-        <View style={s.bawah}>
-          <View style={s.pisah} />
-          <View style={s.barisKebutuhan}>
-            <Text style={teks.kecil} numberOfLines={1}>
-              {sorotan.katalog.nama}
-            </Text>
-            {terkirim ? (
-              <Badge label="Terkirim" varian="terkirim" />
-            ) : (
-              <Text style={teks.mikro}>
-                {labelProgress(
-                  sorotan.jumlah_terpenuhi,
-                  sorotan.jumlah_diminta,
-                  sorotan.katalog.satuan
-                )}
-              </Text>
-            )}
-          </View>
-          <ProgressBar
-            nilai={rasio(sorotan.jumlah_terpenuhi, sorotan.jumlah_diminta)}
-            selesai={terkirim}
-          />
-          {lainnya > 0 && (
-            <Text style={[teks.mikro, s.lainnya]}>
-              +{lainnya} kebutuhan lain menunggu donatur
-            </Text>
-          )}
-        </View>
-      )}
     </Kartu>
   );
 }
@@ -75,14 +43,4 @@ const s = StyleSheet.create({
   info: { flex: 1, minWidth: 0, gap: 2 },
   judul: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   tanda: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 },
-  bawah: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg },
-  pisah: { height: 1, backgroundColor: warna.border, marginBottom: spacing.md },
-  barisKebutuhan: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-    gap: spacing.sm,
-  },
-  lainnya: { marginTop: spacing.sm },
 });

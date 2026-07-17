@@ -11,7 +11,7 @@ import {
   Skeleton,
   StatusLayar,
 } from '../../components/ui';
-import { warna, spacing, radius, teks, font } from '../../constants/theme';
+import { warna, spacing, radius, teks } from '../../constants/theme';
 import { formatJumlah, formatRupiah, sisa } from '../../lib/format';
 import { useSession } from '../../lib/session';
 import {
@@ -271,15 +271,15 @@ const s = StyleSheet.create({
   pesanan: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.lg },
   pesananInfo: { flex: 1, minWidth: 0, gap: 2 },
   pesananSub: { marginBottom: 2 },
-  batch: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start' },
+  batch: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start' },
   batchTeks: { color: warna.biru },
 
-  rincian: { gap: 10, marginBottom: spacing.lg },
+  rincian: { gap: spacing.sm, marginBottom: spacing.lg },
   baris: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm },
   redup: { color: warna.muted },
   pisah: { height: 1, backgroundColor: warna.border },
 
-  metodeDaftar: { gap: 10, marginBottom: spacing.lg },
+  metodeDaftar: { gap: spacing.md, marginBottom: spacing.lg },
   metode: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -288,7 +288,7 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: warna.border,
     borderRadius: radius.kartu,
-    padding: 14,
+    padding: spacing.md,
   },
   metodeAktif: { borderColor: warna.biru },
   ditekan: { opacity: 0.85 },
@@ -338,9 +338,9 @@ const s = StyleSheet.create({
     borderTopColor: warna.border,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
-    paddingBottom: 30,
+    paddingBottom: 32,
     gap: spacing.md,
   },
   kakiTotal: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  kakiAngka: { fontFamily: font.medium, fontSize: 18, letterSpacing: -0.18, color: warna.ink },
+  kakiAngka: { ...teks.title },
 });

@@ -29,13 +29,13 @@ export default function DonasiBerhasil() {
     <View style={s.layar}>
       <View style={s.tengah}>
         <Animated.View style={[s.ikon, ikonMasuk]}>
-          <Feather name="check-circle" size={48} color={warna.hijau} />
+          <Feather name="check-circle" size={44} color={warna.hijau} />
         </Animated.View>
 
         <Animated.View style={[s.blokTeks, teksMasuk]}>
           <Text style={teks.display}>Nyalur berhasil</Text>
 
-          <Text style={[teks.subjudul, s.pesan]}>
+          <Text style={[teks.body, s.pesan]}>
             {porsi} {barang?.toLowerCase()} kamu akan dikirim ke{' '}
             <Text style={s.tebal}>{panti}</Text> hari <Text style={s.tebal}>{batch}</Text>.
           </Text>
@@ -73,24 +73,23 @@ export default function DonasiBerhasil() {
 }
 
 const s = StyleSheet.create({
-  layar: { flex: 1, backgroundColor: warna.putih, paddingHorizontal: 24 },
+  layar: { flex: 1, backgroundColor: warna.putih, paddingHorizontal: spacing.xl },
   tengah: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   ikon: {
-    width: 92,
-    height: 92,
+    width: 88,
+    height: 88,
     borderRadius: radius.pill,
     backgroundColor: warna.hijauTint,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 22,
+    marginBottom: spacing.xl,
   },
   blokTeks: { alignItems: 'center' },
   pesan: {
     color: warna.muted,
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: spacing.sm,
     maxWidth: 300,
-    lineHeight: 25,
   },
   tebal: { color: warna.ink },
   batch: {
@@ -99,9 +98,9 @@ const s = StyleSheet.create({
     gap: 6,
     backgroundColor: warna.skyTint,
     paddingVertical: spacing.sm,
-    paddingHorizontal: 14,
+    paddingHorizontal: spacing.md,
     borderRadius: radius.tombol,
-    marginTop: 20,
+    marginTop: spacing.lg,
   },
   batchTeks: { color: warna.biru },
   struk: { marginTop: spacing.md },

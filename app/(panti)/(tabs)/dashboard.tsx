@@ -14,7 +14,7 @@ import {
   SkeletonKartuProgress,
   StatusLayar,
 } from '../../../components/ui';
-import { warna, spacing, radius, teks, bayangan, font } from '../../../constants/theme';
+import { warna, spacing, radius, teks, bayangan } from '../../../constants/theme';
 import { formatJumlah, labelProgress, rasio } from '../../../lib/format';
 import { useSession } from '../../../lib/session';
 import { STATUS_REQUEST } from '../../../lib/status';
@@ -114,7 +114,7 @@ export default function DashboardPanti() {
         <KartuPlafon panti={panti} />
 
         <View style={s.tajukDaftar}>
-          <Text style={teks.bodyMedium}>Kebutuhan diajukan</Text>
+          <Text style={teks.label}>Kebutuhan diajukan</Text>
           <Text style={teks.caption}>{daftar.length} kebutuhan</Text>
         </View>
 
@@ -122,14 +122,9 @@ export default function DashboardPanti() {
           {daftar.map((r) => {
             const st = STATUS_REQUEST[r.status];
             return (
-              <Kartu key={r.id} style={s.baris}>
+              <Kartu key={r.id}>
                 <View style={s.barisAtas}>
-                  <FotoPlaceholder
-                    url={r.katalog.foto_url}
-                    label={r.katalog.nama}
-                    ukuran={42}
-                    bulat={9}
-                  />
+                  <FotoPlaceholder url={r.katalog.foto_url} label={r.katalog.nama} ukuran={44} />
                   <View style={s.barisInfo}>
                     <Text style={teks.bodyMedium} numberOfLines={1}>
                       {r.katalog.nama} · {formatJumlah(r.jumlah_diminta, r.katalog.satuan)}
@@ -181,41 +176,40 @@ const s = StyleSheet.create({
     backgroundColor: warna.putih,
     borderBottomWidth: 1,
     borderBottomColor: warna.border,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.lg,
   },
   judul: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: 2 },
-  headerSkeleton: { marginTop: 8 },
-  daftarSkeleton: { gap: 10, marginTop: 20 },
+  headerSkeleton: { marginTop: spacing.sm },
+  daftarSkeleton: { gap: spacing.md, marginTop: spacing.xl },
   kosong: { alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.xl },
   isi: { padding: spacing.lg, paddingBottom: 110 },
   tajukDaftar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: spacing.xl,
     marginBottom: spacing.md,
   },
-  daftar: { gap: 10 },
-  baris: { paddingVertical: 14 },
+  daftar: { gap: spacing.md },
   barisAtas: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   barisInfo: { flex: 1, minWidth: 0 },
   progress: { marginTop: spacing.md },
   fab: {
     position: 'absolute',
-    right: 18,
-    bottom: 28,
+    right: spacing.lg,
+    bottom: spacing.xl,
     height: 52,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
     borderRadius: radius.pill,
     backgroundColor: warna.biru,
     ...bayangan.biru,
   },
   fabDitekan: { opacity: 0.9 },
-  fabTeks: { fontFamily: font.medium, fontSize: 15, color: warna.putih },
+  fabTeks: { ...teks.bodyMedium, color: warna.putih },
   rata: { textAlign: 'center' },
 });

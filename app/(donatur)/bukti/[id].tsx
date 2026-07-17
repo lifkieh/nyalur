@@ -148,7 +148,7 @@ export default function BuktiSerahTerima() {
 
             <View style={s.strip}>
               <View style={s.perisai}>
-                <Feather name="shield" size={19} color={warna.biru} />
+                <Feather name="shield" size={18} color={warna.biru} />
               </View>
               <View style={s.stripInfo}>
                 <Text style={[teks.caption, s.stripJudul]}>Diverifikasi oleh Nyalur</Text>
@@ -192,13 +192,13 @@ const s = StyleSheet.create({
     left: spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
     backgroundColor: warna.fotoScrim,
-    paddingVertical: 5,
-    paddingHorizontal: 9,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     borderRadius: radius.badge,
   },
-  gpsTeks: { fontFamily: font.regular, fontSize: 11, color: warna.putih },
+  gpsTeks: { ...teks.mikro, color: warna.putih },
 
   pilBaris: { alignItems: 'center', marginTop: -24, paddingHorizontal: 20 },
   pil: {
@@ -211,17 +211,17 @@ const s = StyleSheet.create({
     borderRadius: radius.pill,
     ...bayangan.hijau,
   },
-  pilTeks: { fontFamily: font.medium, fontSize: 15, color: warna.putih },
+  pilTeks: { ...teks.bodyMedium, color: warna.putih },
 
-  badan: { paddingTop: spacing.lg, paddingHorizontal: 22, paddingBottom: spacing.xl },
+  badan: { paddingTop: spacing.lg, paddingHorizontal: spacing.lg, paddingBottom: spacing.xl },
   rata: { textAlign: 'center' },
-  kalimat: { marginTop: 10 },
+  kalimat: { marginTop: spacing.sm },
   sub: { color: warna.muted, marginTop: 4 },
   putus: {
     borderBottomWidth: 1,
     borderStyle: 'dashed',
     borderColor: warna.border,
-    marginVertical: 20,
+    marginVertical: spacing.lg,
   },
 
   penerima: {
@@ -230,7 +230,7 @@ const s = StyleSheet.create({
     gap: spacing.md,
     backgroundColor: warna.pageBg,
     borderRadius: radius.kartu,
-    padding: 14,
+    padding: spacing.lg,
   },
   avatar: {
     width: 44,
@@ -245,16 +245,16 @@ const s = StyleSheet.create({
   strip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: spacing.md,
     borderWidth: 1,
     borderColor: warna.border,
     borderRadius: radius.kartu,
-    padding: 14,
+    padding: spacing.lg,
     marginTop: spacing.md,
   },
   perisai: {
-    width: 34,
-    height: 34,
+    width: 40,
+    height: 40,
     borderRadius: radius.tombol,
     backgroundColor: warna.skyTint,
     alignItems: 'center',
@@ -263,6 +263,6 @@ const s = StyleSheet.create({
   stripInfo: { flex: 1, gap: 1 },
   stripJudul: { fontFamily: font.medium, color: warna.ink },
 
-  aksi: { flexDirection: 'row', gap: 10, marginTop: spacing.lg },
+  aksi: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg },
   tombolAksi: { flex: 1 },
 });

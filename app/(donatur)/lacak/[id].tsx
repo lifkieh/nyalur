@@ -123,7 +123,7 @@ export default function LacakDonasi() {
         </Kartu>
 
         <Kartu style={s.kartuTimeline}>
-          <Text style={[teks.caption, s.tajuk]}>Status barang</Text>
+          <Text style={[teks.label, s.tajuk]}>Status barang</Text>
 
           {langkah.map((l, i) => {
             // Langkah terakhir tidak pernah "sedang berjalan" — begitu barang
@@ -177,7 +177,7 @@ export default function LacakDonasi() {
         </Kartu>
 
         <Kartu style={s.rincian}>
-          <Text style={teks.caption}>Rincian transaksi</Text>
+          <Text style={[teks.label, s.tajukRincian]}>Rincian transaksi</Text>
           <View style={s.barisRincian}>
             <Text style={[teks.kecil, s.labelRedup]}>
               Harga barang ({formatJumlah(donasi.jumlah, request.katalog.satuan)})
@@ -238,13 +238,14 @@ const s = StyleSheet.create({
   ringkas: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.lg },
   ringkasInfo: { flex: 1, minWidth: 0 },
   ringkasSub: { marginTop: 2 },
-  kartuTimeline: { paddingVertical: 20, paddingHorizontal: 18 },
-  tajuk: { marginBottom: 18 },
-  rincian: { marginTop: spacing.lg, paddingVertical: 16, paddingHorizontal: 18, gap: 10 },
+  kartuTimeline: { padding: spacing.lg },
+  tajuk: { marginBottom: spacing.lg },
+  tajukRincian: { marginBottom: 2 },
+  rincian: { marginTop: spacing.lg, padding: spacing.lg, gap: spacing.sm },
   barisRincian: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm },
   labelRedup: { color: warna.muted },
   pisah: { height: 1, backgroundColor: warna.border },
-  langkah: { flexDirection: 'row', gap: 14 },
+  langkah: { flexDirection: 'row', gap: spacing.md },
   rel: { alignItems: 'center' },
   bulat: {
     width: 26,
@@ -262,10 +263,10 @@ const s = StyleSheet.create({
   },
   garis: { width: 2, flex: 1, minHeight: 28 },
   langkahIsi: { flex: 1 },
-  langkahJarak: { paddingBottom: 20 },
+  langkahJarak: { paddingBottom: spacing.lg },
   langkahWaktu: { marginTop: 2 },
   teksNanti: { color: warna.placeholder },
-  catatan: { flexDirection: 'row', gap: spacing.sm, marginTop: 14 },
+  catatan: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg },
   catatanIkon: { marginTop: 1 },
   catatanTeks: { flex: 1, lineHeight: 18 },
   buktiCta: {
@@ -279,8 +280,8 @@ const s = StyleSheet.create({
   },
   buktiCtaDitekan: { opacity: 0.85 },
   buktiIkon: {
-    width: 38,
-    height: 38,
+    width: 40,
+    height: 40,
     borderRadius: radius.tombol,
     backgroundColor: warna.putih,
     alignItems: 'center',

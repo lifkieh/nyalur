@@ -71,7 +71,7 @@ export default function DaftarPanti() {
           </View>
         </View>
 
-        <Text style={[teks.caption, s.tajuk]}>Dokumen legalitas</Text>
+        <Text style={[teks.label, s.tajuk]}>Dokumen legalitas</Text>
 
         <View style={s.dokumen}>
           {DOKUMEN_TERUNGGAH.map((d) => (
@@ -146,9 +146,9 @@ const s = StyleSheet.create({
     padding: spacing.md,
     ...teks.body,
   },
-  tajuk: { marginTop: spacing.lg, marginBottom: spacing.md },
-  dokumen: { gap: 10 },
-  baris: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: 14 },
+  tajuk: { marginTop: spacing.xl, marginBottom: spacing.md },
+  dokumen: { gap: spacing.md },
+  baris: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md },
   barisKosong: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -158,7 +158,7 @@ const s = StyleSheet.create({
     borderStyle: 'dashed',
     borderColor: warna.placeholder,
     borderRadius: radius.kartu,
-    padding: 14,
+    padding: spacing.md,
   },
   ditekan: { opacity: 0.85 },
   ikonBerkas: {
@@ -182,5 +182,5 @@ const s = StyleSheet.create({
   terunggah: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   terunggahTeks: { color: warna.hijau },
   unggah: { color: warna.biru, fontFamily: font.medium },
-  cta: { marginTop: spacing.lg },
+  cta: { marginTop: spacing.xl },
 });

@@ -95,11 +95,7 @@ export default function KatalogPanti() {
       <View style={s.header}>
         <View style={s.headerAtas}>
           <Text style={[teks.judul, s.judul]}>Katalog</Text>
-          {!!panti && (
-            <View style={s.chipSisa}>
-              <Text style={[teks.mikro, s.chipSisaTeks]}>Sisa {formatRupiah(sisa)}</Text>
-            </View>
-          )}
+          {!!panti && <Chip label={`Sisa ${formatRupiah(sisa)}`} varian="tint" />}
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.filter}>
@@ -139,7 +135,7 @@ export default function KatalogPanti() {
       ) : !tampil.length ? (
         <View style={s.kosong}>
           <View style={s.kosongIkon}>
-            <Feather name="package" size={24} color={warna.biru} />
+            <Feather name="package" size={28} color={warna.biru} />
           </View>
           <Text style={[teks.caption, s.rata, s.kosongTeks]}>
             Belum ada barang di kategori ini. Katalog dikurasi bertahap — coba kategori lain.
@@ -175,17 +171,10 @@ const s = StyleSheet.create({
     borderBottomColor: warna.border,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.lg,
   },
   headerAtas: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   judul: { flex: 1 },
-  chipSisa: {
-    backgroundColor: warna.skyTint,
-    borderRadius: radius.tombol,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-  },
-  chipSisaTeks: { color: warna.biru },
   filter: { gap: spacing.sm, marginTop: spacing.md },
   isi: { padding: spacing.lg, paddingBottom: 40 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
@@ -197,7 +186,7 @@ const s = StyleSheet.create({
     borderRadius: radius.kartu,
     overflow: 'hidden',
   },
-  skeletonBadan: { padding: spacing.md, gap: 8 },
+  skeletonBadan: { padding: spacing.md, gap: spacing.sm },
   kosong: {
     flex: 1,
     alignItems: 'center',
@@ -206,8 +195,8 @@ const s = StyleSheet.create({
     padding: spacing.xl,
   },
   kosongIkon: {
-    width: 52,
-    height: 52,
+    width: 56,
+    height: 56,
     borderRadius: radius.pill,
     backgroundColor: warna.skyTint,
     alignItems: 'center',

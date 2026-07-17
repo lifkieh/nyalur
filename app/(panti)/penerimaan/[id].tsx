@@ -13,7 +13,7 @@ import {
   SkeletonBaris,
   StatusLayar,
 } from '../../../components/ui';
-import { warna, spacing, radius, teks, font } from '../../../constants/theme';
+import { warna, spacing, radius, teks } from '../../../constants/theme';
 import {
   formatJumlah,
   formatRupiah,
@@ -104,7 +104,7 @@ export default function DetailPenerimaan() {
       <ScrollView contentContainerStyle={s.isi}>
         <Kartu>
           <View style={s.atas}>
-            <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={56} bulat={10} />
+            <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={56} />
             <View style={s.info}>
               <Text style={teks.subjudul} numberOfLines={1}>
                 {katalog.nama}
@@ -213,10 +213,10 @@ function KartuDonasi({
           style={({ pressed }) => [s.bukti, pressed && s.ditekan]}
         >
           <View style={s.buktiIkon}>
-            <Feather name="shield" size={17} color={warna.hijau} />
+            <Feather name="shield" size={18} color={warna.hijau} />
           </View>
           <View style={s.info}>
-            <Text style={[teks.caption, s.buktiJudul]}>Bukti serah terima</Text>
+            <Text style={s.buktiJudul}>Bukti serah terima</Text>
             <Text style={teks.mono}>{bukti.kode_bukti}</Text>
           </View>
           <Feather name="chevron-right" size={18} color={warna.placeholder} />
@@ -230,12 +230,12 @@ const s = StyleSheet.create({
   layar: { flex: 1, backgroundColor: warna.pageBg },
   isi: { padding: spacing.lg, paddingBottom: 40 },
   jarakSkeleton: { marginTop: spacing.md },
-  daftarSkeleton: { gap: 10, marginTop: spacing.xl },
+  daftarSkeleton: { gap: spacing.md, marginTop: spacing.xl },
   atas: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   info: { flex: 1, minWidth: 0 },
   harga: { marginTop: 2 },
-  progress: { marginTop: 14 },
-  chips: { flexDirection: 'row', gap: spacing.sm, marginTop: 14 },
+  progress: { marginTop: spacing.md },
+  chips: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
 
   sorot: {
     flexDirection: 'row',
@@ -258,7 +258,7 @@ const s = StyleSheet.create({
   sorotJudul: { color: warna.navy },
 
   tajuk: { marginTop: spacing.xl, marginBottom: spacing.md },
-  daftar: { gap: 10 },
+  daftar: { gap: spacing.md },
 
   donaturBaris: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   avatar: {
@@ -269,9 +269,9 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarTeks: { fontFamily: font.medium, fontSize: 14, color: warna.putih },
+  avatarTeks: { ...teks.bodyMedium, color: warna.putih },
   pisah: { height: 1, backgroundColor: warna.border, marginVertical: spacing.md },
-  rincian: { gap: 10 },
+  rincian: { gap: spacing.sm },
   baris: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm },
   redup: { color: warna.muted },
 
@@ -285,13 +285,13 @@ const s = StyleSheet.create({
     marginTop: spacing.md,
   },
   buktiIkon: {
-    width: 34,
-    height: 34,
+    width: 40,
+    height: 40,
     borderRadius: radius.tombol,
     backgroundColor: warna.putih,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buktiJudul: { fontFamily: font.medium, color: warna.hijau },
+  buktiJudul: { ...teks.bodyMedium, color: warna.hijau },
   ditekan: { opacity: 0.85 },
 });

@@ -100,7 +100,7 @@ export default function Riwayat() {
             const { katalog, panti } = d.request;
             return (
               <Kartu key={d.id} onPress={() => router.push(`/lacak/${d.id}`)} style={s.baris}>
-                <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={48} bulat={10} />
+                <FotoPlaceholder url={katalog.foto_url} label={katalog.nama} ukuran={48} />
 
                 <View style={s.info}>
                   <Text style={teks.bodyMedium} numberOfLines={1}>
@@ -133,14 +133,14 @@ const s = StyleSheet.create({
     backgroundColor: warna.putih,
     borderBottomWidth: 1,
     borderBottomColor: warna.border,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.lg,
     gap: 2,
   },
-  isi: { padding: spacing.lg, gap: 10, paddingBottom: spacing.xl },
-  baris: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: 14 },
-  info: { flex: 1, minWidth: 0, gap: 1 },
-  kaki: { marginTop: 3 },
+  isi: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xl },
+  baris: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  info: { flex: 1, minWidth: 0, gap: 2 },
+  kaki: { marginTop: 2 },
   kanan: { alignItems: 'flex-end', gap: 6 },
 });

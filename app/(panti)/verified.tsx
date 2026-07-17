@@ -3,7 +3,7 @@ import { View, Text, Animated, ActivityIndicator, StyleSheet } from 'react-nativ
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol, useMuncul, useMunculPegas } from '../../components/ui';
-import { warna, spacing, radius, teks, font } from '../../constants/theme';
+import { warna, spacing, radius, teks } from '../../constants/theme';
 import { formatRupiah } from '../../lib/format';
 import { useSession } from '../../lib/session';
 import { getPantiById, PLAFON_PER_ANAK, type PantiDenganRequest } from '../../lib/queries';
@@ -52,11 +52,11 @@ export default function Verified() {
     <View style={s.layar}>
       <View style={s.tengah}>
         <Animated.View style={[s.ikon, ikonMasuk]}>
-          <Feather name="shield" size={46} color={warna.biru} />
+          <Feather name="shield" size={44} color={warna.biru} />
         </Animated.View>
 
         <Animated.View style={[s.blok, isiMasuk]}>
-          <Text style={[teks.display, s.rata, s.judul]}>Panti terverifikasi</Text>
+          <Text style={[teks.display, s.rata]}>Panti terverifikasi</Text>
           <Text style={[teks.body, s.rata, s.sub]}>
             Legalitas {panti?.nama ?? akun.nama} sudah dicek dan lolos verifikasi Nyalur.
           </Text>
@@ -89,7 +89,7 @@ export default function Verified() {
 }
 
 const s = StyleSheet.create({
-  layar: { flex: 1, backgroundColor: warna.putih, paddingHorizontal: 24 },
+  layar: { flex: 1, backgroundColor: warna.putih, paddingHorizontal: spacing.xl },
   pusat: { alignItems: 'center', justifyContent: 'center' },
   tengah: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   ikon: {
@@ -99,28 +99,21 @@ const s = StyleSheet.create({
     backgroundColor: warna.skyTint,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 22,
+    marginBottom: spacing.xl,
   },
   rata: { textAlign: 'center' },
   blok: { alignSelf: 'stretch', alignItems: 'center' },
-  judul: { fontSize: 26 },
-  sub: { color: warna.muted, marginTop: spacing.sm, maxWidth: 280, lineHeight: 23 },
+  sub: { color: warna.muted, marginTop: spacing.sm, maxWidth: 300 },
   kartu: {
     alignSelf: 'stretch',
     backgroundColor: warna.pageBg,
     borderWidth: 1,
     borderColor: warna.border,
     borderRadius: radius.kartu,
-    padding: 18,
-    marginTop: 28,
+    padding: spacing.lg,
+    marginTop: spacing.xl,
   },
-  plafon: {
-    fontFamily: font.medium,
-    fontSize: 28,
-    letterSpacing: -0.28,
-    color: warna.ink,
-    marginTop: 4,
-  },
+  plafon: { ...teks.display, marginTop: 4 },
   rumus: {
     flexDirection: 'row',
     alignItems: 'center',

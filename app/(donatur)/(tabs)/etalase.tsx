@@ -189,7 +189,7 @@ const s = StyleSheet.create({
     backgroundColor: warna.putih,
     borderBottomWidth: 1,
     borderBottomColor: warna.border,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
   },
@@ -197,9 +197,9 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: spacing.md,
   },
-  lokasi: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
+  lokasi: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
   avatar: {
     width: 40,
     height: 40,
@@ -212,7 +212,7 @@ const s = StyleSheet.create({
   cari: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: spacing.sm,
     borderWidth: 1,
     borderColor: warna.border,
     borderRadius: radius.tombol,
@@ -221,9 +221,9 @@ const s = StyleSheet.create({
   },
   cariInput: {
     flex: 1,
-    paddingVertical: 11,
+    paddingVertical: spacing.md,
     ...teks.kecil,
   },
   filter: { gap: spacing.sm, marginTop: spacing.md },
-  isi: { padding: spacing.lg, gap: 14, paddingBottom: spacing.xl * 2 },
+  isi: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xl * 2 },
 });

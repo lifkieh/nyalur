@@ -111,12 +111,7 @@ export default function Penerimaan() {
             return (
               <Kartu key={r.id} onPress={() => router.push(`/penerimaan/${r.id}`)}>
                 <View style={s.atas}>
-                  <FotoPlaceholder
-                    url={r.katalog.foto_url}
-                    label={r.katalog.nama}
-                    ukuran={44}
-                    bulat={9}
-                  />
+                  <FotoPlaceholder url={r.katalog.foto_url} label={r.katalog.nama} ukuran={44} />
                   <View style={s.info}>
                     <Text style={teks.bodyMedium} numberOfLines={1}>
                       {r.katalog.nama}
@@ -162,20 +157,20 @@ const s = StyleSheet.create({
     backgroundColor: warna.putih,
     borderBottomWidth: 1,
     borderBottomColor: warna.border,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.lg,
     gap: 2,
   },
-  isi: { padding: spacing.lg, gap: 10, paddingBottom: spacing.xl },
+  isi: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xl },
   atas: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   info: { flex: 1, minWidth: 0 },
-  progress: { marginTop: 14 },
+  progress: { marginTop: spacing.md },
   kaki: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 14,
+    marginTop: spacing.md,
     paddingTop: spacing.md,
     borderTopWidth: 1,
     borderTopColor: warna.border,

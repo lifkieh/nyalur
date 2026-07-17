@@ -2,7 +2,7 @@ import { View, Text, Pressable, ScrollView, Animated, StyleSheet } from 'react-n
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol, useMuncul, useMunculPegas } from '../../components/ui';
-import { warna, spacing, radius, teks, font } from '../../constants/theme';
+import { warna, spacing, radius, teks } from '../../constants/theme';
 import { formatJumlah, formatRupiah } from '../../lib/format';
 import { useSession } from '../../lib/session';
 
@@ -46,11 +46,11 @@ export default function RequestTerkirim() {
     <ScrollView style={s.layar} contentContainerStyle={s.isi}>
       <View style={s.tengah}>
         <Animated.View style={[s.ikon, ikonMasuk]}>
-          <Feather name="check-circle" size={42} color={warna.biru} />
+          <Feather name="check-circle" size={44} color={warna.biru} />
         </Animated.View>
 
         <Animated.View style={[s.blok, isiMasuk]}>
-          <Text style={[teks.display, s.rata, s.judul]}>Kebutuhan diajukan</Text>
+          <Text style={[teks.display, s.rata]}>Kebutuhan diajukan</Text>
           <Text style={[teks.body, s.rata, s.sub]}>
             Kebutuhan ini sudah tayang di etalase donatur. Kamu akan dikabari saat ada yang
             menyalurkan.
@@ -106,21 +106,20 @@ export default function RequestTerkirim() {
 
 const s = StyleSheet.create({
   layar: { flex: 1, backgroundColor: warna.putih },
-  isi: { flexGrow: 1, paddingHorizontal: 24, paddingTop: 60, paddingBottom: 40 },
+  isi: { flexGrow: 1, paddingHorizontal: spacing.xl, paddingTop: 60, paddingBottom: 40 },
   tengah: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   ikon: {
-    width: 80,
-    height: 80,
+    width: 88,
+    height: 88,
     borderRadius: radius.pill,
     backgroundColor: warna.skyTint,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   rata: { textAlign: 'center' },
   blok: { alignSelf: 'stretch', alignItems: 'center' },
-  judul: { fontSize: 24 },
-  sub: { color: warna.muted, marginTop: spacing.sm, maxWidth: 290, lineHeight: 23 },
+  sub: { color: warna.muted, marginTop: spacing.sm, maxWidth: 300 },
   ringkas: {
     alignSelf: 'stretch',
     backgroundColor: warna.pageBg,
@@ -147,9 +146,9 @@ const s = StyleSheet.create({
     borderColor: warna.border,
     borderRadius: radius.kartu,
     backgroundColor: warna.pageBg,
-    padding: 6,
+    padding: spacing.xs,
   },
-  switchLabel: { paddingHorizontal: 10, paddingTop: spacing.sm, paddingBottom: 6 },
+  switchLabel: { paddingHorizontal: spacing.sm, paddingTop: spacing.sm, paddingBottom: 6 },
   switchTombol: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -169,6 +168,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarTeks: { fontFamily: font.medium, fontSize: 15, color: warna.putih },
+  avatarTeks: { ...teks.bodyMedium, color: warna.putih },
   switchInfo: { flex: 1 },
 });

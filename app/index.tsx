@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Tombol } from '../components/ui';
-import { warna, spacing, teks, font } from '../constants/theme';
+import { warna, spacing, teks } from '../constants/theme';
 import { useSession } from '../lib/session';
 
 // A1 — pilih peran. Bukan login: tidak ada auth, peran menentukan persona.
@@ -46,7 +46,7 @@ export default function Onboarding() {
 }
 
 const s = StyleSheet.create({
-  layar: { flex: 1, backgroundColor: warna.putih, paddingHorizontal: 28 },
+  layar: { flex: 1, backgroundColor: warna.putih, paddingHorizontal: spacing.xl },
   tengah: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   logo: {
     width: 64,
@@ -55,14 +55,9 @@ const s = StyleSheet.create({
     backgroundColor: warna.biru,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 22,
+    marginBottom: spacing.xl,
   },
-  nama: {
-    fontFamily: font.medium,
-    fontSize: 30,
-    letterSpacing: -0.6,
-    color: warna.ink,
-  },
+  nama: { ...teks.display },
   tagline: { color: warna.muted, marginTop: spacing.sm },
   aksi: { paddingBottom: 44, gap: spacing.md },
   label: { textAlign: 'center', marginBottom: spacing.xs },

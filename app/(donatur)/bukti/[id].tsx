@@ -25,10 +25,12 @@ import {
   formatWaktuLengkap,
 } from '../../../lib/format';
 import { buktiDari, getDonasiById, type DonasiLengkap } from '../../../lib/queries';
+import { useSession } from '../../../lib/session';
 
 export default function BuktiSerahTerima() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { akun } = useSession();
   const [donasi, setDonasi] = useState<DonasiLengkap | null>(null);
   const [muat, setMuat] = useState(true);
   const [galat, setGalat] = useState<string | null>(null);
@@ -159,16 +161,21 @@ export default function BuktiSerahTerima() {
           </View>
         </Animated.View>
 
-        <Animated.View style={[s.aksi, aksiMasuk]}>
-          <Tombol
-            label="Bagikan"
-            varian="sekunder"
-            onPress={bagikan}
-            style={s.tombolAksi}
-            ikon={<Feather name="share-2" size={17} color={warna.biru} />}
-          />
-          <Tombol label="Nyalur lagi" varian="primer" onPress={keEtalase} style={s.tombolAksi} />
-        </Animated.View>
+        {/* Layar bukti dipakai kedua POV — panti membukanya dari penerimaan.
+            Keduanya CTA donatur: "Bagikan" berbunyi "dari saya", dan "Nyalur
+            lagi" melempar pengurus panti ke etalase donasi. */}
+        {akun.peran === 'donatur' && (
+          <Animated.View style={[s.aksi, aksiMasuk]}>
+            <Tombol
+              label="Bagikan"
+              varian="sekunder"
+              onPress={bagikan}
+              style={s.tombolAksi}
+              ikon={<Feather name="share-2" size={17} color={warna.biru} />}
+            />
+            <Tombol label="Nyalur lagi" varian="primer" onPress={keEtalase} style={s.tombolAksi} />
+          </Animated.View>
+        )}
       </ScrollView>
     </View>
   );

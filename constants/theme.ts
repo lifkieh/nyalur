@@ -45,23 +45,24 @@ export const font = {
 
 // Skala tipografi dari design sheet — pakai spread ke <Text style={...}>
 export const teks = {
-  display: { fontFamily: font.medium, fontSize: 28, letterSpacing: -0.56, color: warna.ink },
-  judul: { fontFamily: font.medium, fontSize: 22, letterSpacing: -0.22, color: warna.ink },
-  title: { fontFamily: font.medium, fontSize: 20, letterSpacing: -0.2, color: warna.ink },
-  subjudul: { fontFamily: font.medium, fontSize: 16, color: warna.ink },
-  body: { fontFamily: font.regular, fontSize: 15, color: warna.ink },
-  bodyMedium: { fontFamily: font.medium, fontSize: 15, color: warna.ink },
-  kecil: { fontFamily: font.regular, fontSize: 14, color: warna.ink },
-  caption: { fontFamily: font.regular, fontSize: 13, color: warna.muted },
-  mikro: { fontFamily: font.regular, fontSize: 12, color: warna.muted },
+  display: { fontFamily: font.medium, fontSize: 28, lineHeight: 34, letterSpacing: -0.56, color: warna.ink },
+  judul: { fontFamily: font.medium, fontSize: 22, lineHeight: 28, letterSpacing: -0.22, color: warna.ink },
+  title: { fontFamily: font.medium, fontSize: 20, lineHeight: 26, letterSpacing: -0.2, color: warna.ink },
+  subjudul: { fontFamily: font.medium, fontSize: 16, lineHeight: 22, color: warna.ink },
+  body: { fontFamily: font.regular, fontSize: 15, lineHeight: 21, color: warna.ink },
+  bodyMedium: { fontFamily: font.medium, fontSize: 15, lineHeight: 21, color: warna.ink },
+  kecil: { fontFamily: font.regular, fontSize: 14, lineHeight: 20, color: warna.ink },
+  caption: { fontFamily: font.regular, fontSize: 13, lineHeight: 18, color: warna.muted },
+  mikro: { fontFamily: font.regular, fontSize: 12, lineHeight: 16, color: warna.muted },
   label: {
     fontFamily: font.medium,
     fontSize: 12,
+    lineHeight: 16,
     color: warna.muted,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.72,
   },
-  mono: { fontFamily: 'monospace', fontSize: 12, color: warna.muted },
+  mono: { fontFamily: 'monospace', fontSize: 12, lineHeight: 16, color: warna.muted },
 } as const;
 
 export const bayangan = {

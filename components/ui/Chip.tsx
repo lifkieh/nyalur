@@ -41,8 +41,8 @@ export function Chip({ label, varian = 'pasif', onPress, style }: Props) {
 
 const s = StyleSheet.create({
   dasar: {
-    paddingVertical: 7,
-    paddingHorizontal: 13,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: radius.chip,
     borderWidth: 1,
     borderColor: 'transparent',

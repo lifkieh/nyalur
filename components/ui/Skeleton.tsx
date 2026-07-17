@@ -87,6 +87,6 @@ const s = StyleSheet.create({
     padding: spacing.lg,
   },
   baris: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  kolom: { flex: 1, gap: 8 },
-  progress: { marginTop: 14 },
+  kolom: { flex: 1, gap: spacing.sm },
+  progress: { marginTop: spacing.md },
 });

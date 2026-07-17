@@ -37,9 +37,9 @@ const s = StyleSheet.create({
   dasar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    paddingVertical: 5,
-    paddingHorizontal: 9,
+    gap: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     borderRadius: radius.badge,
     alignSelf: 'flex-start',
   },
